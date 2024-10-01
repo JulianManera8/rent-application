@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Links,
   Meta,
@@ -5,21 +6,34 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import "./tailwind.css";
 
-export default function App() {
+export const meta = () => {
+  return [
+    { title: "RentApp" }
+  ];
+};
+
+export function Layout({ children }) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon" />
         <Meta />
         <Links />
       </head>
       <body>
-        <Outlet />
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   );
 }
+
+export default function App() {
+  return <Outlet />;
+}
+
