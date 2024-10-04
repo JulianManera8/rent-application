@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 // import { BeatLoader } from "react-spinner";
 // import pkg from 'react-spinner';
 // const {BeatLoader} = pkg;
@@ -26,7 +26,7 @@ export default function LoginForm() {
         <form>
           <Card>
             <CardHeader>
-              <CardTitle className="text-center">Login</CardTitle>
+              {/* <CardTitle className="text-center">Login</CardTitle> */}
               <CardDescription>
                 {/* {error && <Error errorMessage={error.message} />} */}
               </CardDescription>
@@ -40,6 +40,7 @@ export default function LoginForm() {
                   name="email"
                   placeholder="Email"
                   autoComplete="email"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -51,6 +52,7 @@ export default function LoginForm() {
                   name="password"
                   placeholder="Password"
                   autoComplete="current-password"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {passEye ? (
                   <Eye
@@ -69,7 +71,7 @@ export default function LoginForm() {
             </CardContent>
   
             <CardFooter className="flex justify-center gap-5 flex-col">
-              <Button onClick={handleLogin}>
+              <Button onClick={handleLogin} className="w-fit px-5 text-lg mt-3">
                 {/* {loading ? <BeatLoader size={10} color="teal" /> : "Login"} */}
                 Login
               </Button>

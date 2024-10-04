@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 // import { BeatLoader } from "react-spinner";
@@ -24,13 +24,13 @@ export default function SignupForm() {
         <form>
           <Card>
             <CardHeader>
-              <CardTitle className='text-center'>Create Account</CardTitle>
+              {/* <CardTitle className='text-center'>Create Account</CardTitle> */}
               <CardDescription>
                 {/* {error && <Error errorMessage={error.message} />} */}
               </CardDescription>
             </CardHeader>
   
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-5">
               <div>
                 <Input
                 //   onChange={handleInputChange}
@@ -38,6 +38,7 @@ export default function SignupForm() {
                   name="name"
                   placeholder="Name"
                   autoComplete="email"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -48,6 +49,7 @@ export default function SignupForm() {
                   name="lastname"
                   placeholder="Lastname"
                   autoComplete="email"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -59,6 +61,7 @@ export default function SignupForm() {
                   name="email"
                   placeholder="Email"
                   autoComplete="email"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -70,6 +73,7 @@ export default function SignupForm() {
                   name="password"
                   placeholder="Password"
                   autoComplete="current-password"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {passEye ? (
                   <Eye
@@ -92,6 +96,7 @@ export default function SignupForm() {
                   name="password"
                   placeholder="Confirm password"
                   autoComplete="current-password"
+                  className="text-lg w-4/5 mx-auto"
                 />
                 {passEye ? (
                   <Eye
@@ -111,7 +116,7 @@ export default function SignupForm() {
   
             <CardFooter className="flex justify-center gap-5 flex-col">
 
-              <Button onClick={handleSignup}>
+              <Button onClick={handleSignup} className="w-fit px-5 text-lg mt-3">
                 {/* {loading ? <BeatLoader size={10} color="teal" /> : "Login"} */}
                 Create account
               </Button>
