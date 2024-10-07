@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
-import DashboardDeptos from '../components/dashboardDeptos'
-import DashboardMoney from '../components/dashboardMoney'
+import DashboardDeptos from 'app/components/DashboardDeptos.jsx'
+import DashboardMoney from '<app />
+<components />
+<DashboardMoney></DashboardMoney>.jsx'
 
 export default function DashboardIndexPage() {
     return (
