@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import DashboardDeptos from '../components/dashboardDeptos'
+import DashboardDeptos from '../components/DashboardDeptos'
 import DashboardMoney from '../components/DashboardMoney'
 
 
