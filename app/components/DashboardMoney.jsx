@@ -3,7 +3,7 @@ import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { CheckCircle, FileSpreadsheet } from "lucide-react"
 
-export default function MoneyHistorial() {
+export default function DashboardMoney() {
   return (
     <Card className="w-full mx-auto border-none border-b-[1px]">
       <CardHeader>
