@@ -6,6 +6,8 @@ import {
 } from "../components/ui/tabs";
 import SignupForm from "../components/signupForm";
 import LoginForm from "../components/loginForm";
+import { Button } from "~/components/ui/button";
+import { NavLink } from "@remix-run/react";
 
 export const meta = () => {
   return [{ title: "RentApp" }];
@@ -35,6 +37,7 @@ export default function Index() {
               <TabsContent value="signip">
                 <SignupForm />
               </TabsContent>
+              <Button className="bg-red-300 hover:bg-red-500 mx-"> <NavLink to="/dashboard/general"> Ir al dashboard </NavLink></Button>
             </Tabs>
           </div>
       </section>
