@@ -38,6 +38,7 @@ export const loader = async () => {
 
 export default function MoneyHistorial() {
   const { months } = useLoaderData();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
 

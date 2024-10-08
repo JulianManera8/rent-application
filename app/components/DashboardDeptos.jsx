@@ -44,6 +44,7 @@ const departamentos = [
   { id: 15, foto: "/placeholder.svg", direccion: "Juan Manuel de Rosas 7234", propietario: "Veronica Manera", facturador: 'Marcelo Manera', cobrador: 'Julian Manera', inquilino: "Tiger Woods", estado: "Ocupado" },
 ]
 
+
 export default function DashboardDeptos({rows, border, showBtn, showAll}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("sinfiltro");
