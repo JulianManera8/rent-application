@@ -8,7 +8,7 @@ export default function DashboardIndexPage() {
       <div className="fixed">
         <Sidebar />
       </div>
-      <div className="ml-[280px] flex flex-1">
+      <div className="ml-[300px] flex flex-1 overflow-hidden">
         <Outlet />
       </div>
     </div>

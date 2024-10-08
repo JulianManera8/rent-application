@@ -6,7 +6,7 @@ import { CheckCircle, FileSpreadsheet } from "lucide-react"
 export default function DashboardMoney() {
   return (
     <Card className="w-full mx-auto border-none border-b-[1px]">
-      <CardHeader>
+      <CardHeader className='px-0'>
         <CardTitle className="text-3xl font-extrabold text-[#194567]">
             Balances Monetarios
         </CardTitle>
