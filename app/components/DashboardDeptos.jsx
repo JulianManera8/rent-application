@@ -145,15 +145,15 @@ export default function DashboardDeptos() {
         <TableBody>
           {paginatedDepartamentos.map((dep) => (
             <TableRow key={dep.id} className="text-lg">
-              <TableCell>
+              <TableCell className="w-1/5 ">
                 <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded">
                   <ImageIcon className="w-8 h-8 text-gray-500" />
                 </div>
               </TableCell>
-              <TableCell>{dep.direccion}</TableCell>
-              <TableCell>{dep.propietario}</TableCell>
-              <TableCell>{dep.inquilino}</TableCell>
-              <TableCell>
+              <TableCell className="w-1/5 ">{dep.direccion}</TableCell>
+              <TableCell className="w-1/5 ">{dep.propietario}</TableCell>
+              <TableCell className="w-1/5 ">{dep.inquilino}</TableCell>
+              <TableCell className="w-1/5 ">
                 <span
                   className={`px-2 py-1 rounded-full text-md font-semibold ${
                     dep.estado === "Ocupado"

@@ -27,7 +27,7 @@ export default function Sidebar() {
  const location = useLocation()
 
   return (
-    <div className="flex flex-col h-screen w-64 min-w-64 bg-[#003156] text-white p-4 mr-5">
+    <div className="flex flex-col h-screen w-64 min-w-64 bg-[#003156] text-white p-4">
       <div className="flex flex-col flex-1 space-y-8 items-center mt-8">
         <LoadLogo />
         <div className="space-y-1">

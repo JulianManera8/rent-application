@@ -1,13 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { Outlet } from '@remix-run/react'
-import Sidebar from '../components/Sidebar'
+import { Outlet } from "@remix-run/react";
+import Sidebar from "../components/Sidebar";
 
 export default function DashboardIndexPage() {
-    return (
-        <div className='flex font-inter'> 
-            <Sidebar />
-            {/* aca en outlet se va a mostrar las rutas q sean dashboard.xx */}
-            <Outlet />
-        </div>
-    )
+  return (
+    <div className="flex font-inter">
+      <div className="fixed">
+        <Sidebar />
+      </div>
+      <div className="ml-[280px] flex flex-1">
+        <Outlet />
+      </div>
+    </div>
+  );
 }
