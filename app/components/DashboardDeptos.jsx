@@ -82,7 +82,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
   return (
     <div className={`container mx-auto w-full py-10 px-0 ${border}`}>
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-extrabold text-[#194567]">Todos los Departamentos</h1>
+        <h1 className="text-3xl font-extrabold text-[#194567]">Todas las Propiedades</h1>
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

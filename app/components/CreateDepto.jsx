@@ -1,81 +1,79 @@
 import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 
-// import { Button } from "../components/ui/button";
-// import { NavLink } from "@remix-run/react";
-
 export default function CreateDepto() {
   return (
-    <div className="container mx-auto w-full mr-14 px-0">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl text-gray-300 font-extrabold font-inter mb-10 mt-8">
-          {" "}
-          Agregar Nuevo Departamento{" "}
-        </h1>
-      </div>
-      <section>
-        <div>
-          <label htmlFor="ubicacion">Ubicacion</label>
-          <Input name="ubicacion" />
+    <div className="container mx-auto w-full mr-14 px-0 mt-10">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
+        <div className="min-w-56">
+          <label htmlFor="ubicacion" className="font-bold">Ubicación</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: San Juan 382 piso 7" name="ubicacion" />
         </div>
-        <div>
-          <label htmlFor="propietario">propietario</label>
-          <Input name="propietario" />
+        <div className="min-w-56">
+          <label htmlFor="propietario" className="font-bold">Propietario</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: Lionel Messi" name="propietario" />
         </div>
-        <div>
-          <label htmlFor="usufructuario">usufructuario</label>
-          <Input name="usufructuario" />
+        <div className="min-w-56">
+          <label htmlFor="usufructuario" className="font-bold">Usufructuario</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: Lionel Messi" name="usufructuario" />
         </div>
-        <div>
-          <label htmlFor="locador">locador</label>
-          <Input name="locador" />
+        <div className="min-w-56">
+          <label htmlFor="locador" className="font-bold">Locador</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: Angel Di Maria" name="locador" />
         </div>
-        <div>
-          <label htmlFor="locatario">locatario</label>
-          <Input name="locatario" />
+        <div className="min-w-56">
+          <label htmlFor="locatario" className="font-bold">Locatario / Inquilino </label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: Mateo Messi" name="locatario" />
         </div>
-        <div>
-          <label htmlFor="facturador">facturador</label>
-          <Input name="facturador" />
+        <div className="min-w-56">
+          <label htmlFor="facturador" className="font-bold">Facturador</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: Angel Di Maria" name="facturador" />
         </div>
-        <div>
-          <label htmlFor="descripcion">descripcion</label>
-          <Textarea name="descripcion" />
+        <div className="min-w-56">
+          <label htmlFor="descripcion" className="font-bold">Descripción</label>
+          <Textarea className="mt-2 text-md p-2" placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta y parrilla en la terraza." name="descripcion" />
         </div>
-        <div>
-          <label htmlFor="vencimientoUsufructo">vencimientoUsufructo</label>
-          <Input type="date" name="vencimientoUsufructo" />
+        <div className="min-w-56">
+          <label htmlFor="vencimientoUsufructo" className="font-bold">Vencimiento del Usufructo</label>
+          <Input className="mt-2 text-md p-2" type="date" name="vencimientoUsufructo" />
         </div>
-        <div>
-          <label htmlFor="Contrato">Contrato</label>
-          <Input type="file" name="Contrato" />
+        <div className="min-w-56">
+          <label htmlFor="Contrato" className="font-bold">Contrato</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: " type="file" name="Contrato" />
         </div>
-        <div>
-          <label htmlFor="precioInicio">Precio al inicio</label>
-          <Input type="number" name="precioInicio" />
+        <div className="min-w-56">
+          <label htmlFor="precioInicio" className="font-bold">Precio al inicio</label>
+          <div className="relative">
+            <span className="absolute top-[6px] left-[8px] font-bold"> $ </span>
+            <Input className="mt-2 text-md p-2 pl-6" placeholder="160.000,00" type="number" name="precioInicio" />
+          </div>
         </div>
-        <div>
-          <label htmlFor="precioActual">Precio Actual</label>
-          <Input type="number" name="precioActual" />
+        <div className="min-w-56">
+          <label htmlFor="precioActual" className="font-bold">Precio Actual</label>
+          <div className="relative">
+            <span className="absolute top-[6px] left-[8px] font-bold"> $ </span>
+            <Input className="mt-2 text-md p-2 pl-6" placeholder="360.000,00" type="number" name="precioActual" />
+          </div>
         </div>
-        <div>
-          <label htmlFor="ultimaActualizacionPrecio">
-            Ultima actualizacion del precio
+        <div className="min-w-56">
+          <label htmlFor="ultimaActualizacionPrecio" className="font-bold">
+            Ultima  actualización del precio
           </label>
-          <Input type="date" name="ultimaActualizacionPrecio" />
+          <Input className="mt-2 text-md p-2" placeholder="" type="date" name="ultimaActualizacionPrecio" />
         </div>
-        <div>
-          <label htmlFor="reli">Inscripto en RELI</label>
-          <Checkbox name="reli" />
+        <div className="min-w-56 flex items-center gap-5 mt-[44px]">
+          <label htmlFor="reli" className="font-bold">Inscripto en RELI</label>
+          <Checkbox className="h-6 w-6" name="reli" />
         </div>
-        <div>
-          <label htmlFor="documentosVarios">Documentos varios</label>
-          <Input type="text" name="documentosVarios" />
+        <div className="min-w-56">
+          <label htmlFor="documentosVarios" className="font-bold">Documentos varios</label>
+          <Input className="mt-2 text-md p-2" placeholder="" type="text" name="documentosVarios" />
         </div>
-        <div>
-          <label htmlFor="obsDatos"> Observaciones / datos extras</label>
-          <Textarea name="obsDatos" />
+        <div className="min-w-56">
+          <label htmlFor="obsDatos" className="font-bold"> Observaciónes / datos extras</label>
+          <Textarea className="mt-2 text-md p-2" placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar." name="obsDatos" />
         </div>
 
         <div>
@@ -83,6 +81,11 @@ export default function CreateDepto() {
         </div>
 
       </section>
+
+      <div className="flex justify-center gap-10">
+        <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"> GUARDAR PROPIEDAD </Button>
+        <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800"> CANCELAR Y VOLVER </Button>
+      </div>
     </div>
   );
 }

@@ -43,7 +43,7 @@ export default function Sidebar() {
 
         <NavLink to="/dashboard/deptos" className={`flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-[#1c4570] ${location.pathname == "/dashboard/deptos" ? "bg-[#005291]" : "bg-[#003156]"}`}>
           <Building className="h-8 w-8" />
-          <span className="text-xl">Departamentos</span>
+          <span className="text-xl">Propiedades</span>
         </NavLink>
         <NavLink to="/dashboard/money" className={`flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-[#1c4570] ${location.pathname == "/dashboard/money" ? "bg-[#005291]" : "bg-[#003156]"}`}>
           <DollarSign className="h-8 w-8" />
