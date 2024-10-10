@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Button } from "./ui/button";
-import { NavLink } from "@remix-run/react";
+import { NavLink, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -51,6 +51,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = rows;
   const totalPages = Math.ceil(departamentos.length / itemsPerPage);
+  const navigate = useNavigate()
 
   useEffect(() => {
     setFilterValue(filterValue)
@@ -78,6 +79,10 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const handleSelectDepto = (idDepto) => {
+    navigate(`/dashboard/deptos/${idDepto}`)
+  }
 
   return (
     <div className={`container mx-auto w-full py-10 px-0 ${border}`}>
@@ -120,7 +125,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
         <TableBody>
           {showAll 
           ? filteredDepartamentos.map((dep) => (
-            <TableRow key={dep.id} className="text-md">
+            <TableRow key={dep.id} className="text-md cursor-pointer" onClick={() => handleSelectDepto(dep.id)}>
               <TableCell className="w-1/6">{dep.direccion}</TableCell>
               <TableCell className="w-1/6">{dep.propietario}</TableCell>
               <TableCell className="w-1/6">{dep.facturador}</TableCell>
@@ -140,7 +145,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
             </TableRow>
           ))
           : paginatedDepartamentos.map((dep) => (
-            <TableRow key={dep.id} className="text-md">
+            <TableRow key={dep.id} className="text-md cursor-pointer" onClick={() => handleSelectDepto(dep.id)}>
               <TableCell className="w-1/6">{dep.direccion}</TableCell>
               <TableCell className="w-1/6">{dep.propietario}</TableCell>
               <TableCell className="w-1/6">{dep.facturador}</TableCell>
