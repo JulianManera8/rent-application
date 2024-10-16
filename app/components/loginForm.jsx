@@ -1,19 +1,36 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 // import { BeatLoader } from "react-spinner";
 // import pkg from 'react-spinner';
 // const {BeatLoader} = pkg;
 import { Eye, EyeOff } from "lucide-react";
+import supabase, {getSupabaseSession} from "../lib/supabase";
+import { useState, useEffect } from "react";
+import { useLoaderData, useNavigate  } from "@remix-run/react";
 
-import supabase from "../lib/supabase";
-import { useEffect, useState } from "react";
-import { useNavigate } from "@remix-run/react";
+
+// export async function loader({ request }) {
+//   const session = await getSupabaseSession(request);
+
+//   if (!session) {
+//     return null;
+//   }
+
+//   return session.user; // Retornas el usuario si la sesión existe
+// }
 
 export default function LoginForm() {
-
+    // const session = useLoaderData();
+    // console.log(session)
     const navigate = useNavigate()
+    // useEffect(() => {
+    //   if (session) {
+    //     navigate('/dashboard/general');
+    //   }
+    // }, [session]);
 
     const [passEye, setPassEye] = useState(true)
     const [loading, setLoading] = useState(false)
@@ -25,6 +42,8 @@ export default function LoginForm() {
     const handleLogin = async (e) => {
       e.preventDefault()
 
+      if(userInfo.email === '' || userInfo.password === '') return console.error('completa todo')
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: userInfo.email,
         password: userInfo.password
@@ -33,6 +52,7 @@ export default function LoginForm() {
       if(error) {
         return console.error(error)
       }
+      console.log(data)
       
       navigate('/dashboard/general')
     }
@@ -98,11 +118,4 @@ export default function LoginForm() {
           </Card>
         </form>
       );
-}
-
-export async function loader() {
-
-    const {data} = await supabase.auth.getUser();
-    console.log(data)
-    return data
 }

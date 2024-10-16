@@ -1,30 +1,55 @@
 /* eslint-disable no-unused-vars */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 // import { BeatLoader } from "react-spinner";
 import { Eye, EyeOff } from "lucide-react";
-// import { FaGithub } from "react-icons/fa";
-// import { FcGoogle } from "react-icons/fc";
 
 import supabase from "../lib/supabase";
 import { useState } from "react";
+import { useNavigate } from "@remix-run/react";
 
 export default function SignupForm() {
 
+    const navigate = useNavigate()
+
     const [passEye, setPassEye] = useState(true)
     const [loading, setLoading] = useState(false)
+    const [userInfo, setUserInfo] = useState({
+      name: '',
+      lastname: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    })
 
-    const handleSignup = (e) => {
+    const handleSignup = async (e) => {
       e.preventDefault()
 
+      if(userInfo.name === '' || userInfo.lastname === '' || userInfo.email === '' || userInfo.password === '' || userInfo.confirmPassword === '') return console.error('completa todo')
+
+      if(userInfo.password !== userInfo.confirmPassword) return console.error('contraseñas no coinciden')  
+        
+      const { data, error } = await supabase.auth.signUp({
+        email: userInfo.email,
+        password: userInfo.password,
+        options: {
+          data: {
+            name: userInfo.name,
+            lastname: userInfo.lastname
+          },
+        }
+      })
+
+      if(error) return console.error(error)
+      
+      navigate('/dashboard/general')
     }
 
     return (
         <form>
           <Card>
             <CardHeader>
-              {/* <CardTitle className='text-center'>Create Account</CardTitle> */}
               <CardDescription>
                 {/* {error && <Error errorMessage={error.message} />} */}
               </CardDescription>
@@ -39,6 +64,8 @@ export default function SignupForm() {
                   placeholder="Name"
                   autoComplete="email"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.name}
+                  onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -50,6 +77,8 @@ export default function SignupForm() {
                   placeholder="Lastname"
                   autoComplete="email"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.lastname}
+                  onChange={(e) => setUserInfo({...userInfo, lastname: e.target.value})}
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -62,6 +91,8 @@ export default function SignupForm() {
                   placeholder="Email"
                   autoComplete="email"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.email}
+                  onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -74,6 +105,8 @@ export default function SignupForm() {
                   placeholder="Password"
                   autoComplete="current-password"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.password}
+                  onChange={(e) => setUserInfo({...userInfo, password: e.target.value})}
                 />
                 {passEye ? (
                   <Eye
@@ -97,6 +130,8 @@ export default function SignupForm() {
                   placeholder="Confirm password"
                   autoComplete="current-password"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.confirmPassword}
+                  onChange={(e) => setUserInfo({...userInfo, confirmPassword: e.target.value})}
                 />
                 {passEye ? (
                   <Eye
