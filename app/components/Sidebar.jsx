@@ -1,8 +1,10 @@
 import { Button } from "./ui/button"
-import { NavLink, useLocation } from "@remix-run/react"
+import { NavLink, useLocation, useNavigate } from "@remix-run/react"
 import { Building, DollarSign, Home } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Skeleton } from "./ui/skeleton"
+import supabase from "../lib/supabase";
+
 
 const LoadLogo = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -25,6 +27,19 @@ const LoadLogo = () => {
 export default function Sidebar() {
 
  const location = useLocation()
+ const navigate = useNavigate()
+
+ const handleLogout = async (e) => {
+    e.preventDefault()
+
+    const { error } = await supabase.auth.signOut()
+
+    if(error) {
+      console.error(error)
+    }
+
+    navigate('/')
+ }
 
   return (
     <div className="flex flex-col h-screen w-64 min-w-64 bg-[#003156] text-white p-4">
@@ -52,8 +67,8 @@ export default function Sidebar() {
       </nav>
       
       <div className="mb-8 space-y-4 mx-auto flex flex-1 items-end">
-        <Button className="h-14 w-32 text-xl border-[3px] border-red-600 rounded-lg bg-[#003156]">
-          <NavLink to="/"> Log out </NavLink>
+        <Button className="h-14 w-32 text-xl border-[3px] border-red-600 rounded-lg bg-[#003156]" onClick={handleLogout}>
+          Log out 
         </Button>
       </div>
     </div>

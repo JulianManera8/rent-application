@@ -6,27 +6,41 @@ import { Button } from "./ui/button";
 // import pkg from 'react-spinner';
 // const {BeatLoader} = pkg;
 import { Eye, EyeOff } from "lucide-react";
-// import { FaGithub } from "react-icons/fa";
-// import { FcGoogle } from "react-icons/fc";
 
 import supabase from "../lib/supabase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "@remix-run/react";
 
 export default function LoginForm() {
 
+    const navigate = useNavigate()
+
     const [passEye, setPassEye] = useState(true)
     const [loading, setLoading] = useState(false)
+    const [userInfo, setUserInfo] = useState({
+      email: '',
+      password: '',
+    })
     
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
       e.preventDefault()
 
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: userInfo.email,
+        password: userInfo.password
+      });
+
+      if(error) {
+        return console.error(error)
+      }
+      
+      navigate('/dashboard/general')
     }
 
     return (
         <form>
           <Card>
             <CardHeader>
-              {/* <CardTitle className="text-center">Login</CardTitle> */}
               <CardDescription>
                 {/* {error && <Error errorMessage={error.message} />} */}
               </CardDescription>
@@ -41,6 +55,9 @@ export default function LoginForm() {
                   placeholder="Email"
                   autoComplete="email"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.email}
+                  onChange={(e) => setUserInfo( { ...userInfo, email: e.target.value } )}
+
                 />
                 {/* {errors.email && <Error errorMessage={errors.email} />} */}
               </div>
@@ -53,6 +70,8 @@ export default function LoginForm() {
                   placeholder="Password"
                   autoComplete="current-password"
                   className="text-lg w-4/5 mx-auto"
+                  value={userInfo.password}
+                  onChange={(e) => setUserInfo({...userInfo, password: e.target.value})}
                 />
                 {passEye ? (
                   <Eye
@@ -71,24 +90,10 @@ export default function LoginForm() {
             </CardContent>
   
             <CardFooter className="flex justify-center gap-5 flex-col">
-              <Button onClick={handleLogin} className="w-fit px-5 text-lg mt-3">
+              <Button onClick={(e) => handleLogin(e)} className="w-fit px-5 text-lg mt-3">
                 {/* {loading ? <BeatLoader size={10} color="teal" /> : "Login"} */}
                 Login
               </Button>
-  
-              {/* <span className="mt-3"> Or if you prefer, you can also login with:</span> */}
-  
-              <div className="space-x-7">
-  
-                {/* <Button onClick={handleLoginGoogle}>
-                  <FcGoogle className="mr-2 h-4 w-4" /> Google
-                </Button> */}
-  
-                {/* <Button onClick={handleLoginGithub}>
-                  <FaGithub className="mr-2 h-4 w-4" /> Github
-                </Button> */}
-
-              </div>
             </CardFooter>
           </Card>
         </form>

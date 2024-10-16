@@ -11,6 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@clerk/remix": "^4.2.37",
     "@fontsource/roboto": "^5.1.0",
     "@hookform/resolvers": "^3.9.0",
     "@netlify/functions": "^2.6.0",
