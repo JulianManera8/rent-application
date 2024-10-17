@@ -1,30 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button } from "./ui/button";
 import { NavLink, useNavigate } from "@remix-run/react";
-import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Search,
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from "lucide-react";
+import  useFetch  from '../hooks/use-fetch'
+import { getDeptos } from "../database/crudDatabase";
+import supabase from "../lib/supabase";
 
 const departamentos = [
   { id: 1, foto: "/placeholder.svg", direccion: "Salta 1234", propietario: "Marcelo Manera", facturador: 'Marcelo Manera', cobrador: 'Javier Deptos', inquilino: "Julio Cesar", estado: "Ocupado" },
@@ -49,9 +35,37 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("sinfiltro");
   const [currentPage, setCurrentPage] = useState(1);
+  const [userLoged_id, setUserLogedId] = useState(null)
   const itemsPerPage = rows;
   const totalPages = Math.ceil(departamentos.length / itemsPerPage);
   const navigate = useNavigate()
+
+ 
+
+  const { loading, data: deptos, error, fn } = useFetch(getDeptos, {user_id: userLoged_id});
+
+  // Obtiene el ID del usuario logueado
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data) {
+        console.log(data.user.id);
+        setUserLogedId(data.user.id);
+      }
+      if (error) {
+        console.error("Error al obtener el usuario:", error);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  // Llama a la función para obtener los departamentos cuando se tenga el ID del usuario
+  useEffect(() => {
+    if (userLoged_id) {
+      fn(userLoged_id);  // Solo llamamos a fn cuando userLoged_id está definido
+    }
+  }, [userLoged_id]);
 
   useEffect(() => {
     setFilterValue(filterValue)
@@ -73,7 +87,6 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
     return matchesSearchTerm && matchesFilter;
   });
 
-// console.log(departamentos[0].estado.toLowerCase().includes(filterValue.toLowerCase()))
 
   const paginatedDepartamentos = filteredDepartamentos.slice(
     (currentPage - 1) * itemsPerPage,
@@ -83,6 +96,10 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
   const handleSelectDepto = (idDepto) => {
     navigate(`/dashboard/deptos/${idDepto}`)
   }
+
+
+
+
 
   return (
     <div className={`container mx-auto w-full py-10 px-0 ${border}`}>

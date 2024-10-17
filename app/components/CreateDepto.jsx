@@ -44,6 +44,10 @@ export default function CreateDepto() {
           <Input className="mt-2 text-md p-2" placeholder="Ej: " type="file" name="Contrato" />
         </div>
         <div className="min-w-56">
+          <label htmlFor="metodoCobro" className="font-bold">Metodo de cobro</label>
+          <Input className="mt-2 text-md p-2" placeholder="Ej: Efectivo" name="metodoCobro" />
+        </div>
+        <div className="min-w-56">
           <label htmlFor="precioInicio" className="font-bold">Precio al inicio</label>
           <div className="relative">
             <span className="absolute top-[6px] left-[8px] font-bold"> $ </span>

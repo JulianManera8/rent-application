@@ -104,7 +104,7 @@ export default function SignupForm() {
               type="text"
               name="name"
               placeholder="Name"
-              autoComplete="email"
+              autoComplete="name"
               className="text-lg w-4/5 mx-auto"
               value={userInfo.name}
               onChange={(e) =>
@@ -119,7 +119,7 @@ export default function SignupForm() {
               type="text"
               name="lastname"
               placeholder="Lastname"
-              autoComplete="email"
+              autoComplete="lastname"
               className="text-lg w-4/5 mx-auto"
               value={userInfo.lastname}
               onChange={(e) =>

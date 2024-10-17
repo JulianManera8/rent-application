@@ -17,6 +17,7 @@ const departamentos = [
     cobrador: "Javier Deptos",
     inquilino: "Julio Cesar",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const departamentos = [
     cobrador: "Javier Deptos",
     inquilino: "-",
     estado: "Desocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 3,
@@ -37,6 +39,7 @@ const departamentos = [
     cobrador: "Javier Deptos",
     inquilino: "-",
     estado: "Desocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 4,
@@ -47,6 +50,7 @@ const departamentos = [
     cobrador: "Javier Deptos",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 5,
@@ -57,6 +61,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 6,
@@ -67,6 +72,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 7,
@@ -77,6 +83,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 8,
@@ -87,6 +94,7 @@ const departamentos = [
     cobrador: "Javier Deptos",
     inquilino: "-",
     estado: "Desocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 9,
@@ -97,6 +105,7 @@ const departamentos = [
     cobrador: "Javier Deptos",
     inquilino: "Lionel Messi",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 10,
@@ -107,6 +116,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 11,
@@ -117,6 +127,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 12,
@@ -127,6 +138,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Lionel Messi",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 13,
@@ -137,6 +149,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 14,
@@ -147,6 +160,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Lionel Messi",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
   {
     id: 15,
@@ -157,6 +171,7 @@ const departamentos = [
     cobrador: "Julian Manera",
     inquilino: "Tiger Woods",
     estado: "Ocupado",
+    metodoCobro: 'Efectivo'
   },
 ];
 
@@ -305,6 +320,16 @@ export default function DeptoSelected({ slug }) {
               type="file"
               name="Contrato"
               value={deptoObjetoPrueba.contrato}
+              readOnly={!edit}
+            />
+          </div>
+          <div className="min-w-56">
+            <label htmlFor="metodoCobro" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Metodo de cobro </label>
+            <Input
+              className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
+              placeholder="Ej: Efectivo"
+              name="metodoCobro"
+              value={deptoObjetoPrueba.metodoCobro}
               readOnly={!edit}
             />
           </div>
