@@ -4,7 +4,7 @@ import { Building, DollarSign, Home } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Skeleton } from "./ui/skeleton"
 import supabase from "../lib/supabase";
-
+import Spinner from '../components/loaderIcon'
 
 const LoadLogo = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -28,17 +28,24 @@ export default function Sidebar() {
 
  const location = useLocation()
  const navigate = useNavigate()
+ const [loading, setLoading] = useState(false);
+
 
  const handleLogout = async (e) => {
+    setLoading(true)
     e.preventDefault()
 
     const { error } = await supabase.auth.signOut()
 
     if(error) {
+      setLoading(false)
       console.error(error)
     }
 
-    navigate('/')
+    setTimeout(() => {
+      setLoading(false)
+      navigate("/");
+    }, 1000);
  }
 
   return (
@@ -68,7 +75,8 @@ export default function Sidebar() {
       
       <div className="mb-8 space-y-4 mx-auto flex flex-1 items-end">
         <Button className="h-14 w-32 text-xl border-[3px] border-red-600 rounded-lg bg-[#003156]" onClick={handleLogout}>
-          Log out 
+        {loading ? <Spinner/> : "Log Out"}
+
         </Button>
       </div>
     </div>
