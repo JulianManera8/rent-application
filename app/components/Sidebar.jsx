@@ -6,29 +6,32 @@ import { Skeleton } from "./ui/skeleton"
 import supabase from "../lib/supabase";
 import Spinner from '../components/loaderIcon'
 
-const LoadLogo = () => {
-    const [isLoading, setIsLoading] = useState(true)
-  
-    useEffect(() => {
-      // Simulate loading delay
-      const timer = setTimeout(() => setIsLoading(false), 750)
-      return () => clearTimeout(timer)
-    }, [])
-  
-    if (isLoading) {
-      return <Skeleton className="h-20 w-20 rounded-full" />
-    }
-  
-    return (
-        <img src="/logo.png" alt="" className="w-20 h-20"/>
-    )
-}
-
 export default function Sidebar() {
 
  const location = useLocation()
  const navigate = useNavigate()
  const [loading, setLoading] = useState(false);
+ const [name, setName ] = useState(null);
+ const [loadingUser, setLoadingUser] = useState(true)
+
+ useEffect(() => {
+  setLoadingUser(true) 
+
+  const getUser = async () => {
+    const {data} = await supabase.auth.getUser();
+
+    setLoadingUser(false)
+    setName(data?.user.user_metadata.name)
+  }
+
+   // Fetch user after 1 second
+  const timer = setTimeout(() => {
+    getUser();
+  }, 1000);
+
+
+  return () => clearTimeout(timer);
+ }, [])
 
 
  const handleLogout = async (e) => {
@@ -50,11 +53,24 @@ export default function Sidebar() {
 
   return (
     <div className="flex flex-col h-screen w-64 min-w-64 bg-[#003156] text-white p-4">
+
       <div className="flex flex-col flex-1 space-y-8 items-center mt-8">
-        <LoadLogo />
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Welcome, {}***** </h2>
-        </div>
+        {loadingUser ? (
+          <>
+            <Skeleton className="h-20 w-20 rounded-full bg-gray-200 opacity-30"/>
+            <div className="space-y-1">
+              <Skeleton className="h-5 w-20 bg-gray-200 opacity-30"/>
+            </div>
+          </>
+        ) : (
+          <>
+            <img src="/logo.png" alt="" className="w-20 h-20" />
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold">Welcome, {name} </h2>
+            </div>
+          </>
+        )}
+        
       </div>
       
       <nav className="space-y-8 flex-grow flex-1">
