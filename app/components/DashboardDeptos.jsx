@@ -80,7 +80,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
 
 
   return (
-    <div className={`container mx-auto w-full py-10 px-0 ${border}`}>
+    <div className={`w-full py-10 px-0 ${border}`}>
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl font-extrabold text-[#194567]">
           Todas las Propiedades
@@ -129,7 +129,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
           ) : (
             <>
               {showAll
-                ? filteredDepartamentos.map((dep) => (
+                ? (filteredDepartamentos.length ? filteredDepartamentos.map((dep) => (
                     <TableRow
                       key={dep.id}
                       className="text-md cursor-pointer"
@@ -153,8 +153,14 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                       </TableCell>
 
                     </TableRow>
+                  )): (
+                    <TableRow className="hover:bg-transparent">
+                      <TableCell colSpan={6} className="text-center py-4">
+                        No hay propiedades todavia, agrega una!
+                      </TableCell>
+                    </TableRow>
                   ))
-                : paginatedDepartamentos.map((dep) => (
+                : (paginatedDepartamentos.length ? paginatedDepartamentos.map((dep) => (
                     <TableRow
                       key={dep.id}
                       className="text-md cursor-pointer"
@@ -175,6 +181,12 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                         >
                           {dep.ocupado ? "Ocupado" : "Desocupado"}
                         </span>
+                      </TableCell>
+                    </TableRow>
+                  )): (
+                    <TableRow className="hover:bg-transparent">
+                      <TableCell colSpan={6} className="text-center py-4">
+                        No hay propiedades todavia. <NavLink to="/dashboard/deptos/createDepto"> <Button className="ml-3 bg-green-600 color-white"> Agregar una </Button></NavLink>
                       </TableCell>
                     </TableRow>
                   ))}

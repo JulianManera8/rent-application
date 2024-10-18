@@ -47,14 +47,14 @@ export default function MoneyHistorial() {
   );
 
   return (
-    <div className="container mx-auto w-full mr-14 px-0">
+    <div className="container mx-auto w-full mr-14 px-0 ">
       <div className="flex justify-between items-center">  
         <h1 className="text-3xl text-gray-300 font-extrabold font-inter mb-10 mt-8">
           {" "}
           DASHBOARD - Balances Monetarios{" "}
         </h1>
         <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"> 
-            <NavLink to="/dashboard/deptos/createDepto"> Agregar Departamento </NavLink>
+            <NavLink to="/dashboard/deptos/createDepto"> Agregar Balance </NavLink>
         </Button>
       </div>
       <div className="flex justify-between items-center mb-6">
