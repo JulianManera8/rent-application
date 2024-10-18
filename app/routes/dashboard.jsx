@@ -39,7 +39,7 @@ export default function DashboardIndexPage() {
           <div className="fixed">
             <Sidebar />
           </div>
-          <div className="ml-[350px] flex flex-1 overflow-hidden">
+          <div className="ml-[315px] flex flex-1 overflow-hidden mr-5">
             <Outlet />
           </div>
         </>
