@@ -2,7 +2,6 @@
 import supabase from '../lib/supabase';
 
 export async function getDeptos({user_id}) {
-    console.log(user_id);
     const { data, error } = await supabase
     .from('departamentos')
     .select('*')

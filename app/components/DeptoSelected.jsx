@@ -6,206 +6,21 @@ import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 import { Lock, LockOpen } from "lucide-react";
 import { useState } from "react";
+import { useLocation } from "@remix-run/react";
 
-const departamentos = [
-  {
-    id: 1,
-    foto: "/placeholder.svg",
-    direccion: "Salta 1234",
-    propietario: "Marcelo Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Javier Deptos",
-    inquilino: "Julio Cesar",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 2,
-    foto: "/placeholder.svg",
-    direccion: "Rioja 765",
-    propietario: "Marcelo Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Javier Deptos",
-    inquilino: "-",
-    estado: "Desocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 3,
-    foto: "/placeholder.svg",
-    direccion: "Buenos aires 234",
-    propietario: "Veronica Manera",
-    facturador: "Veronica Manera",
-    cobrador: "Javier Deptos",
-    inquilino: "-",
-    estado: "Desocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 4,
-    foto: "/placeholder.svg",
-    direccion: "Urquiza 6754",
-    propietario: "Veronica Manera",
-    facturador: "Veronica Manera",
-    cobrador: "Javier Deptos",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 5,
-    foto: "/placeholder.svg",
-    direccion: "Urquiza 754",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 6,
-    foto: "/placeholder.svg",
-    direccion: "Santa Fe 1754",
-    propietario: "Veronica Manera",
-    facturador: "Veronica Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 7,
-    foto: "/placeholder.svg",
-    direccion: "Rioja 2754",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 8,
-    foto: "/placeholder.svg",
-    direccion: "Buenos Aires 3754",
-    propietario: "Veronica Manera",
-    facturador: "Veronica Manera",
-    cobrador: "Javier Deptos",
-    inquilino: "-",
-    estado: "Desocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 9,
-    foto: "/placeholder.svg",
-    direccion: "San Lorenzo 354",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Javier Deptos",
-    inquilino: "Lionel Messi",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 10,
-    foto: "/placeholder.svg",
-    direccion: "Brown 1754",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 11,
-    foto: "/placeholder.svg",
-    direccion: "Brown 714",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 12,
-    foto: "/placeholder.svg",
-    direccion: "Rioja 254",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Lionel Messi",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 13,
-    foto: "/placeholder.svg",
-    direccion: "San Juan 54",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 14,
-    foto: "/placeholder.svg",
-    direccion: "Alem 1354",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Lionel Messi",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-  {
-    id: 15,
-    foto: "/placeholder.svg",
-    direccion: "Juan Manuel de Rosas 7234",
-    propietario: "Veronica Manera",
-    facturador: "Marcelo Manera",
-    cobrador: "Julian Manera",
-    inquilino: "Tiger Woods",
-    estado: "Ocupado",
-    metodoCobro: 'Efectivo'
-  },
-];
 
-export async function loader({ params }) {
-  const slug = params.slug;
-  return slug;
-}
-
-export default function DeptoSelected({ slug }) {
+export default function DeptoSelected() {
 
   const [edit, setEdit] = useState(false)
+  const location = useLocation()
+  const infoDepto = location.state.infoDepto
+//   {
+//     "foto_url": null,
+//     "cobrador_name": "Javier Gomez",
+//     "vencimiento_contrato": "2024-12-31",
+//     "user_id": "59379584-7ad7-4766-be55-0d14086056b4"
 
-  const deptoSelected = departamentos.filter(
-    (depto) => parseInt(slug) === depto.id
-  );
-
-  const deptoObjetoPrueba = {
-    estado: deptoSelected[0].estado,
-    ubicacion: deptoSelected[0].direccion,
-    propietario: deptoSelected[0].propietario,
-    usufructuario: "Marcelo Manera",
-    locador: "Marcelo Manera",
-    locatario: "Marcelo Manera",
-    facturador: deptoSelected[0].facturador,
-    descripcion: "3 dormitorios, terraza y cocina nueva.",
-    vencimientoUsufructo: "20/05/2025",
-    contrato: "",
-    precioInicio: 300000,
-    precioActual: 600000,
-    ultimaActualizacionPrecio: "20/05/2025",
-    reli: true,
-    documentosVarios: "",
-    obsDatos: "3 dormitorios, terraza y cocina nueva.",
-  };
+// }
 
   return (
     <div>
@@ -217,12 +32,12 @@ export default function DeptoSelected({ slug }) {
           <div className="flex items-center">
             <span
               className={`px-5 py-3 rounded-full text-xl font-semibold ${
-                deptoObjetoPrueba.estado === "Ocupado"
+                infoDepto.ocupado === true
                   ? "bg-green-100 text-green-800 border-2 border-green-600"
                   : "bg-red-100 text-red-800 border-2 border-red-600"
               }`}
             >
-              {deptoObjetoPrueba.estado}
+              {infoDepto.ocupado ? "Ocupado" : "Desocupado"}
             </span>
           </div>
           <button onClick={() => setEdit(!edit)} className="flex items-center border border-gray-200 shadow-md rounded-full h-20 w-20 justify-center hover:shadow-lg transition-all cursor-pointer">
@@ -238,7 +53,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: San Juan 382 piso 7"
               name="ubicacion"
-              value={deptoObjetoPrueba.ubicacion}
+              value={infoDepto.ubicacion ? infoDepto.ubicacion : 'No hay info.'}
               readOnly={!edit}
             />
           </div>
@@ -248,7 +63,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Lionel Messi"
               name="propietario"
-              value={deptoObjetoPrueba.propietario}
+              value={infoDepto.propietario_name ? infoDepto.propietario_name : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -258,7 +73,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Lionel Messi"
               name="usufructuario"
-              value={deptoObjetoPrueba.usufructuario}
+              value={infoDepto.usufructuario_name ? infoDepto.usufructuario_name : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -268,7 +83,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Angel Di Maria"
               name="locador"
-              value={deptoObjetoPrueba.locador}
+              value={infoDepto.locador_name ? infoDepto.locador_name : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -278,7 +93,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Mateo Messi"
               name="locatario"
-              value={deptoObjetoPrueba.locatario}
+              value={infoDepto.inquilino_name ? infoDepto.inquilino_name : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -288,7 +103,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Angel Di Maria"
               name="facturador"
-              value={deptoObjetoPrueba.facturador}
+              value={infoDepto.facturador_name ? infoDepto.facturador_name : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -298,7 +113,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta y parrilla en la terraza."
               name="descripcion"
-              value={deptoObjetoPrueba.descripcion}
+              value={infoDepto.descripcion ? infoDepto.descripcion : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -308,7 +123,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               type="date"
               name="vencimientoUsufructo"
-              value={deptoObjetoPrueba.vencimientoUsufructo}
+              value={infoDepto.vencimiento_usufructo ? infoDepto.vencimiento_usufructo : 'No hay info.'}
               readOnly={!edit}
             />
           </div>
@@ -319,7 +134,7 @@ export default function DeptoSelected({ slug }) {
               placeholder="Ej: "
               type="file"
               name="Contrato"
-              value={deptoObjetoPrueba.contrato}
+              value={infoDepto.contrato_url ? infoDepto.contrato_url : ''}
               readOnly={!edit}
             />
           </div>
@@ -329,7 +144,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Efectivo"
               name="metodoCobro"
-              value={deptoObjetoPrueba.metodoCobro}
+              value={infoDepto.metodo_cobro ? infoDepto.metodo_cobro : 'No hay info.' }
               readOnly={!edit}
             />
           </div>
@@ -342,7 +157,7 @@ export default function DeptoSelected({ slug }) {
                 placeholder="160.000,00"
                 type="number"
                 name="precioInicio"
-                value={deptoObjetoPrueba.precioInicio}
+                value={infoDepto.monto_cobro_inicio ? infoDepto.monto_cobro_inicio : 'No hay info.'}
                 readOnly={!edit}
               />
             </div>
@@ -356,7 +171,7 @@ export default function DeptoSelected({ slug }) {
               placeholder="360.000,00"
                 type="number"
                 name="precioActual"
-                value={deptoObjetoPrueba.precioActual}
+                value={infoDepto.monto_cobro ? infoDepto.monto_cobro : 'No hay info.' }
                 readOnly={!edit}
               />
             </div>
@@ -368,7 +183,7 @@ export default function DeptoSelected({ slug }) {
               placeholder=""
               type="date"
               name="ultimaActualizacionPrecio"
-              value={deptoObjetoPrueba.ultimaActualizacionPrecio}
+              value={infoDepto.fecha_actuallizacion_cobro ? infoDepto.fecha_actuallizacion_cobro : 'No hay info.'}
               readOnly={!edit}
             />
           </div>
@@ -377,8 +192,8 @@ export default function DeptoSelected({ slug }) {
             <Checkbox
               className="h-6 w-6"
               name="reli"
-              value={deptoObjetoPrueba.reli}
               readOnly={!edit}
+              checked={infoDepto.inscripto_reli ? infoDepto.inscripto_reli : false}
             />
           </div>
           <div className="min-w-56">
@@ -388,7 +203,7 @@ export default function DeptoSelected({ slug }) {
               placeholder=""
               type="text"
               name="documentosVarios"
-              value={deptoObjetoPrueba.documentosVarios}
+              value={infoDepto.documentos ? infoDepto.documentos : ''}
               readOnly={!edit}
             />
           </div>
@@ -398,7 +213,7 @@ export default function DeptoSelected({ slug }) {
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
               name="obsDatos"
-              value={deptoObjetoPrueba.obsDatos}
+              value={infoDepto.obs_datos ? infoDepto.obs_datos : 'No hay info.'}
               readOnly={!edit}
             />
           </div>

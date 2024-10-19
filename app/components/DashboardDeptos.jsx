@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button } from "./ui/button";
-import { NavLink, useNavigate } from "@remix-run/react";
+import { Link, NavLink, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Input } from "./ui/input";
@@ -30,7 +30,6 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (data) {
-        console.log(data.user.id);
         setUserLogedId(data.user.id);
       }
       if (error) {
@@ -72,12 +71,6 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const handleSelectDepto = (idDepto) => {
-    navigate(`/dashboard/deptos/${idDepto}`)
-  }
-
-
 
   return (
     <div className={`w-full py-10 px-0 ${border}`}>
@@ -130,13 +123,13 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
             <>
               {showAll
                 ? (filteredDepartamentos.length ? filteredDepartamentos.map((dep) => (
-                    <TableRow
+                      <TableRow
                       key={dep.id}
                       className="text-md cursor-pointer"
-                      onClick={() => handleSelectDepto(dep.id)}
+                      onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { infoDepto: dep }})}
                     >
-                      <TableCell className="w-1/6">{dep.ubicacion}</TableCell>
-                      <TableCell className="w-1/6"> {dep.propietario_name} </TableCell>
+                      <TableCell className="w-1/6"> {dep.ubicacion}</TableCell>
+                      <TableCell className="w-1/6">  {dep.propietario_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.facturador_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.cobrador_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.inquilino_name} </TableCell>
@@ -152,7 +145,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                         </span>
                       </TableCell>
 
-                    </TableRow>
+                      </TableRow>
                   )): (
                     <TableRow className="hover:bg-transparent">
                       <TableCell colSpan={6} className="text-center py-4">
@@ -164,7 +157,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                     <TableRow
                       key={dep.id}
                       className="text-md cursor-pointer"
-                      onClick={() => handleSelectDepto(dep.id)}
+                      onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { infoDepto: dep }})}
                     >
                       <TableCell className="w-1/6">{dep.ubicacion}</TableCell>
                       <TableCell className="w-1/6"> {dep.propietario_name} </TableCell>
