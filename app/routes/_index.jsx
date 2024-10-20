@@ -15,11 +15,11 @@ export default function Index() {
   return (
     <div className="font-sans flex md:flex-row flex-col items-center justify-evenly bg-slate-100 min-h-screen">
       <section className="md:w-1/2 w-full md:h-screen mt-8 flex items-center justify-center relative">
-        <div className="md:absolute top-[10%] md:top-[15%] flex flex-col text-center items-center space-y-7">
+        <div className="md:absolute top-[10%] md:top-[15%] flex flex-col text-center items-center md:space-y-7 space-y-3 ">
           <img
             src="/logo.png"
             alt="Logo"
-            className="w-32 shadow-xl border rounded-full mb-5 hover:shadow-2xl transition-all"
+            className="md:w-32 w-24 shadow-xl border rounded-full mb-5 hover:shadow-2xl transition-all"
           />
           <h1 className="text-3xl md:text-5xl font-bold">Welcome to RentApp</h1>
           <p className="text-lg md:text-2xl">Login to your account, or create one.</p>
