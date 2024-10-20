@@ -160,12 +160,12 @@ export default function SignupForm() {
             />
             {passEye ? (
               <Eye
-                className="absolute inset-y-0 my-auto right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             ) : (
               <EyeOff
-                className="absolute inset-y-0 my-auto right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             )}
@@ -188,12 +188,12 @@ export default function SignupForm() {
             />
             {passEye ? (
               <Eye
-                className="absolute inset-y-0 my-auto right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             ) : (
               <EyeOff
-                className="absolute inset-y-0 my-auto right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             )}
