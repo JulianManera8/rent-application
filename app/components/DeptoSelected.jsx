@@ -48,7 +48,7 @@ export default function DeptoSelected() {
       <div className="container mx-auto w-full mr-14 px-0 mt-10">
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
           <div className="min-w-56">
-            <label htmlFor="ubicacion" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Ubicación </label>
+            <label htmlFor="ubicacion" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Ubicación </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: San Juan 382 piso 7"
@@ -58,7 +58,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="propietario" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Propietario </label>
+            <label htmlFor="propietario" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Propietario </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Lionel Messi"
@@ -68,7 +68,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="usufructuario" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Usufructuario </label>
+            <label htmlFor="usufructuario" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Usufructuario </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Lionel Messi"
@@ -78,7 +78,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="locador" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Locador </label>
+            <label htmlFor="locador" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Locador </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Angel Di Maria"
@@ -88,7 +88,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="locatario" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Locatario / Inquilino{" "} </label>
+            <label htmlFor="locatario" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Locatario / Inquilino{" "} </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Mateo Messi"
@@ -98,7 +98,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="facturador" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Facturador </label>
+            <label htmlFor="facturador" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Facturador </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Angel Di Maria"
@@ -108,17 +108,18 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="descripcion" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Descripción </label>
+            <label htmlFor="descripcion" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Descripción </label>
             <Textarea
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta y parrilla en la terraza."
               name="descripcion"
               value={infoDepto.descripcion ? infoDepto.descripcion : 'No hay info.' }
               readOnly={!edit}
+              rows={4}
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="vencimientoUsufructo" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Vencimiento del Usufructo </label>
+            <label htmlFor="vencimientoUsufructo" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Vencimiento del Usufructo </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               type="date"
@@ -128,7 +129,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="Contrato" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Contrato </label>
+            <label htmlFor="Contrato" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Contrato </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: "
@@ -139,7 +140,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="metodoCobro" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Metodo de cobro </label>
+            <label htmlFor="metodoCobro" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Metodo de cobro </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Efectivo"
@@ -149,7 +150,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="precioInicio" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}> Precio al inicio </label>
+            <label htmlFor="precioInicio" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Precio al inicio </label>
             <div className="relative">
               <span className="absolute top-[6px] left-[8px] font-bold"> $ </span>
               <Input
@@ -163,7 +164,7 @@ export default function DeptoSelected() {
             </div>
           </div>
           <div className="min-w-56">
-            <label htmlFor="precioActual" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}>Precio Actual</label>
+            <label htmlFor="precioActual" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}>Precio Actual</label>
             <div className="relative">
             <span className="absolute top-[6px] left-[8px] font-bold"> $ </span>
               <Input
@@ -177,7 +178,7 @@ export default function DeptoSelected() {
             </div>
           </div>
           <div className="min-w-56">
-            <label htmlFor="ultimaActualizacionPrecio" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}>Ultima actualización del precio</label>
+            <label htmlFor="ultimaActualizacionPrecio" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}>Ultima actualización del precio</label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder=""
@@ -188,7 +189,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-            <label htmlFor="reli" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}>Inscripto en RELI</label>
+            <label htmlFor="reli" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}>Inscripto en RELI</label>
             <Checkbox
               className="h-6 w-6"
               name="reli"
@@ -197,7 +198,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="documentosVarios" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}>Documentos varios</label>
+            <label htmlFor="documentosVarios" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}>Documentos varios</label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder=""
@@ -208,7 +209,7 @@ export default function DeptoSelected() {
             />
           </div>
           <div className="min-w-56">
-            <label htmlFor="obsDatos" className={`font-bold text-md ${!edit ? 'text-[#dbdbdb] p-2' : 'text-black border-none p-2'}`}>{" "}Observaciónes / datos extras</label>
+            <label htmlFor="obsDatos" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}>{" "}Observaciónes / datos extras</label>
             <Textarea
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
@@ -221,15 +222,21 @@ export default function DeptoSelected() {
           <div>Galeria de fotos</div>
         </section>
 
-        <div className="flex justify-center gap-10">
-          <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800">
-            {" "}
-            GUARDAR PROPIEDAD{" "}
-          </Button>
-          <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
-            {" "}
-            CANCELAR Y VOLVER{" "}
-          </Button>
+        <div className="flex justify-center gap-10 my-8">
+          {!edit 
+          ? (<Button className="bg-[#003156] text-white h-10 px-6 font-bold text-md hover:bg-blue-600"> Editar </Button>) 
+          : ( <>
+                <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800">
+                {" "}
+                GUARDAR{" "}
+                </Button>
+                <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
+                {" "}
+                CANCELAR{" "}
+                </Button>
+              </>)
+          }
+          
         </div>
       </div>
     </div>
