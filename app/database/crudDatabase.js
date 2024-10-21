@@ -50,22 +50,48 @@ export async function createDepto({ newDepto }) {
     return data;
 }
 
-export async function createPrueba( { objPrueba }) {
-    const {data, error} = await supabase
-    .from('pruebas')
-    .insert([
+export async function createPrueba({ objPrueba }) {
+    const { data, error } = await supabase
+      .from("departamentos")
+      .insert([
         {
-            text: objPrueba.text,
-            number: objPrueba.number,
-            date: objPrueba.date
-        }
-    ])
-    .select();
+          ubicacion_completa: objPrueba.ubicacion_completa,
+          user_id: objPrueba.user_id,
+        },
+      ])
+      .select();
   
     if (error) {
-        console.error(error.message)
-        throw new Error("Error creating new prueba");
+      console.error(error.message);
+      throw new Error("Error creating new prueba");
     }
-    console.log('data');
-    return data;
+  
+    if (data && objPrueba.files.length > 0) {
+        let idDeptoCreado = data[0].id;
+    
+        // Recorre cada archivo en objPrueba.files
+        for (let file of objPrueba.files) {
+            const filePath = `documentos/doc${idDeptoCreado}/${Date.now()}_${file.name}`;
+    
+            try {
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                  .from("documentos")
+                  .upload(filePath, file);
+    
+                if (uploadError) {
+                    console.error(uploadError.message);
+                    throw new Error("Error uploading the file");
+                }
+    
+                console.log("Archivo subido:", uploadData);
+            } catch (error) {
+                console.error("Error en la subida del archivo", error);
+            }
+        }
+
+        objPrueba.files = [];
+
+    }
+  
+    return data; // Retorna los datos del departamento creado
 }

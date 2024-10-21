@@ -53,7 +53,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
 
   const filteredDepartamentos = (deptos || []).filter((dep) => {
     const matchesSearchTerm =
-      dep.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      dep.ubicacion_completa.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dep.propietario_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dep.facturador_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dep.cobrador_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,7 +128,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                       className="text-md cursor-pointer"
                       onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { infoDepto: dep }})}
                     >
-                      <TableCell className="w-1/6"> {dep.ubicacion}</TableCell>
+                      <TableCell className="w-1/6"> {dep.ubicacion_completa}</TableCell>
                       <TableCell className="w-1/6">  {dep.propietario_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.facturador_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.cobrador_name} </TableCell>
@@ -159,7 +159,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                       className="text-md cursor-pointer"
                       onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { infoDepto: dep }})}
                     >
-                      <TableCell className="w-1/6">{dep.ubicacion}</TableCell>
+                      <TableCell className="w-1/6">{dep.ubicacion_completa}</TableCell>
                       <TableCell className="w-1/6"> {dep.propietario_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.facturador_name} </TableCell>
                       <TableCell className="w-1/6"> {dep.cobrador_name} </TableCell>

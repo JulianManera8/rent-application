@@ -48,12 +48,12 @@ export default function DeptoSelected() {
       <div className="container mx-auto w-full mr-14 px-0 mt-10">
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
           <div className="min-w-56">
-            <label htmlFor="ubicacion" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Ubicación </label>
+            <label htmlFor="ubicacion_completa" className={`font-bold text-md ${!edit ? 'text-[#d4d4d4] p-2' : 'text-black border-none p-2'}`}> Ubicación </label>
             <Input
               className={`mt-2 text-xl  ${edit ? 'text-gray-600 p-2' : 'text-black border-none p-2'}`}
               placeholder="Ej: San Juan 382 piso 7"
-              name="ubicacion"
-              value={infoDepto.ubicacion ? infoDepto.ubicacion : 'No hay info.'}
+              name="ubicacion_completa"
+              value={infoDepto.ubicacion_completa ? infoDepto.ubicacion_completa : 'No hay info.'}
               readOnly={!edit}
             />
           </div>

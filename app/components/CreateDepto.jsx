@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -7,12 +8,15 @@ import { useEffect, useState } from "react";
 import { createPrueba, createDepto } from '../database/crudDatabase'
 import useFetch from '../hooks/use-fetch'
 import Error from '../components/Error'
-import { Form } from "@remix-run/react";
+import { Form, json } from "@remix-run/react";
 import { useActionData } from "@remix-run/react";
+import supabase from "../lib/supabase";
+
 
 export async function action({request}) {
+
   const body = await request.formData();
-  const ubicacion = body.get('ubicacion')
+  const ubicacion_completa = body.get('ubicacion_completa')
   const descripcion = body.get('descripcion')
   const ocupado = body.get('ocupado')
   const propietario_name = body.get('propietario_name')
@@ -29,18 +33,95 @@ export async function action({request}) {
   const monto_cobro_inicio = body.get('monto_cobro_inicio')
   const obs_datos = body.get('obs_datos')
   const fecha_actualizacion_cobro = body.get('fecha_actualizacion_cobro')
-  //contrato
-  //documentos varios
+  //fotos
+  //documentos
 
-  // const errors = {}
+  const errors = {}
+  if(!ubicacion_completa || ubicacion_completa === null || ubicacion_completa === '') {
+    errors.ubicacion_completa = 'Ubicacion_completa no valida.'
+  }
+  if(!descripcion || descripcion === null || descripcion === '') {
+    errors.descripcion = 'Descripcion no valida.'
+  }
+  if(!propietario_name || propietario_name === null || propietario_name === '') {
+    errors.propietario_name = 'Propietario no valido.'
+  }
+  if(!locador_name || locador_name === null || locador_name === '') {
+    errors.locador_name = 'Locador no valido.'
+  }
+  if(!inquilino_name || inquilino_name === null || inquilino_name === '') {
+    errors.inquilino_name = 'Inquilino no valido.'
+  }
+  if(!cobrador_name || cobrador_name === null || cobrador_name === '') {
+    errors.cobrador_name = 'Cobrador no valido.'
+  }
+  if(!facturador_name || facturador_name === null || facturador_name === '') {
+    errors.facturador_name = 'Facturador no valido.'
+  }
+  if(!usufructuario_name || usufructuario_name === null || usufructuario_name === '') {
+    errors.usufructuario_name = 'Usufructuario no valido.'
+  }
+  if(!metodo_cobro || metodo_cobro === null || metodo_cobro === '') {
+    errors.metodo_cobro = 'Metodo de cobro no valido.'
+  }
+  if(!vencimiento_contrato || vencimiento_contrato === null || vencimiento_contrato === '') {
+    errors.vencimiento_contrato = 'Fecha de vencimiento del contrato no valida.'
+  }
+  if(!vencimiento_usufructo || vencimiento_usufructo === null || vencimiento_usufructo === '') {
+    errors.vencimiento_usufructo = 'Fecha de vencimiento del usufructo no valida.'
+  }
+  if(!monto_cobro || monto_cobro === null || monto_cobro === '') {
+    errors.monto_cobro = 'Monto a cobrar no valido.'
+  }
+  if(!monto_cobro_inicio || monto_cobro_inicio === null || monto_cobro_inicio === '') {
+    errors.monto_cobro_inicio = 'Monto a cobrar al inicio no valido.'
+  }
+  if(!fecha_actualizacion_cobro || fecha_actualizacion_cobro === null || fecha_actualizacion_cobro === '') {
+    errors.fecha_actualizacion_cobro = 'Fecha de ultima actualizacion de cobro no valida.'
+  }
+
+  if(Object.keys(errors).length > 0) {
+    return json({errors})
+  }
+
+
 }
 
 export default function CreateDepto() {
-  const erros = useActionData()
 
+  const [userLoged_id, setUserLogedId] = useState(null)
+  const [files, setFiles] = useState([]); // For file upload
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data) {
+        setUserLogedId(data.user.id);
+      }
+      if (error) {
+        console.error("Error al obtener el usuario:", error);
+      }
+    };
+
+    getUser()
+  }, []);
+
+  const handleFileChange = (e) => {
+    setFiles((f) => [...f, ...e.target.files]); 
+  };
+
+  const objPrueba = {
+    ubicacion_completa: 'Hola',
+    user_id: userLoged_id,
+    files: files,
+  }
+
+  const { loading, fn: dbCreatePrueba } = useFetch(createPrueba, {objPrueba});
+
+  const actionData = useActionData()
 
   const [newDepto, setNewDepto] = useState({
-    ubicacion: '',
+    ubicacion_completa: '',
     descripcion: '',
     ocupado: '',
     propietario_name: '',
@@ -60,36 +141,37 @@ export default function CreateDepto() {
     obs_datos: '',
   })
 
-  // const objPrueba = {
-  //   text: 'Hola',
-  //   number: '200000',
-  //   date: '2024-10-20'
-  // }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // const { loading, data: deptos, error, fn } = useFetch(createPrueba, {objPrueba});
+    if (userLoged_id !== null) {
+      dbCreatePrueba(objPrueba);
+    }
+
+    setFiles([])
+
+  };
+
   
-  // useEffect(() => {
-  //   fn(objPrueba)
-  // }, [])
-  // console.log(error)
   return (
     <div className="container mx-auto w-full mr-14 px-0 mt-10">
-      <Form 
-      method="POST"
+      <button onClick={(e) => handleSubmit(e)} className="bg-red-400 w-full">awd</button>
+      <form 
+      
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg "
       >
         <div className="min-w-56">
-          <label htmlFor="ubicacion" className="font-bold">
+          <label htmlFor="ubicacion_completa" className="font-bold">
             Ubicación
-          </label>
+          </label> 
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: San Juan 382 piso 7"
-            name="ubicacion"
+            name="ubicacion_completa"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          {actionData?.errors?.ubicacion_completa && <Error errorMessage={actionData?.errors?.ubicacion_completa} />}
         </div>
-        <div className="min-w-56">
+        {/* <div className="min-w-56">
           <label htmlFor="propietario_name" className="font-bold">
             Propietario
           </label>
@@ -98,7 +180,6 @@ export default function CreateDepto() {
             placeholder="Ej: Lionel Messi"
             name="propietario_name"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
         </div>
         <div className="min-w-56">
           <label htmlFor="usufructuario_name" className="font-bold">
@@ -109,7 +190,7 @@ export default function CreateDepto() {
             placeholder="Ej: Lionel Messi"
             name="usufructuario_name"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="locador_name" className="font-bold">
@@ -120,7 +201,7 @@ export default function CreateDepto() {
             placeholder="Ej: Angel Di Maria"
             name="locador_name"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="inquilino_name" className="font-bold">
@@ -131,7 +212,7 @@ export default function CreateDepto() {
             placeholder="Ej: Mateo Messi"
             name="inquilino_name"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="facturador_name" className="font-bold">
@@ -142,7 +223,7 @@ export default function CreateDepto() {
             placeholder="Ej: Angel Di Maria"
             name="facturador_name"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="descripcion" className="font-bold">
@@ -153,7 +234,7 @@ export default function CreateDepto() {
             placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta y parrilla en la terraza."
             name="descripcion"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="vencimiento_usufructo" className="font-bold">
@@ -164,19 +245,7 @@ export default function CreateDepto() {
             type="date"
             name="vencimiento_usufructo"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
-        </div>
-        <div className="min-w-56">
-          <label htmlFor="Contrato" className="font-bold">
-            Contrato
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: "
-            type="file"
-            name="Contrato"
-          />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="metodo_cobro" className="font-bold">
@@ -187,7 +256,7 @@ export default function CreateDepto() {
             placeholder="Ej: Efectivo"
             name="metodo_cobro"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56">
           <label htmlFor="monto_cobro_inicio" className="font-bold">
@@ -201,7 +270,7 @@ export default function CreateDepto() {
               type="number"
               name="monto_cobro_inicio"
             />
-            {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+            
           </div>
         </div>
         <div className="min-w-56">
@@ -216,7 +285,7 @@ export default function CreateDepto() {
               type="number"
               name="monto_cobro"
             />
-            {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+            
           </div>
         </div>
         <div className="min-w-56">
@@ -229,28 +298,35 @@ export default function CreateDepto() {
             type="date"
             name="fecha_actualizacion_cobro"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
         <div className="min-w-56 flex items-center gap-5 mt-[44px]">
           <label htmlFor="inscripto_reli" className="font-bold">
             Inscripto en RELI
           </label>
           <Checkbox className="h-6 w-6" name="inscripto_reli" />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
+          
         </div>
+        <div className="min-w-56 flex items-center gap-5 mt-[44px]">
+          <label htmlFor="ocupado" className="font-bold">
+            Propiedad ocupada
+          </label>
+          <Checkbox className="h-6 w-6" name="ocupado" />
+          
+        </div> */}
         <div className="min-w-56">
           <label htmlFor="documentosVarios" className="font-bold">
-            Documentos varios
+            Documentos
           </label>
           <Input
             className="mt-2 text-md p-2"
-            placeholder=""
-            type="text"
-            name="documentosVarios"
+            type="file"
+            name="file"
+            multiple
+            onChange={handleFileChange} // Capture file change
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
         </div>
-        <div className="min-w-56">
+        {/*<div className="min-w-56">
           <label htmlFor="obs_datos" className="font-bold">
             {" "}
             Observaciónes / datos extras
@@ -260,20 +336,21 @@ export default function CreateDepto() {
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
             name="obs_datos"
           />
-          {/* {errors.auth && <Error errorMessage={errors.auth} />} */}
-        </div>
+          
+        </div> */}
 
         <div>Galeria de fotos</div>
-      </Form>
-
-      <div className="flex justify-center gap-10 my-8">
-        <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800">
+        <div className="flex justify-center gap-10 my-8">
+        <Button type="submit" className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800">
           GUARDAR
         </Button>
         <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
           CANCELAR
         </Button>
       </div>
+      </form>
+
+      
     </div>
   );
 }
