@@ -26,7 +26,7 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="flex flex-1 w-full md:w-[600px] h-[50vh] md:h-screen items-center justify-center relative">
+      <section className="flex flex-1 w-full md:w-[600px] h-[50vh] md:h-screen items-center justify-center relative mb-10">
         <div className="flex flex-col items-start gap-10 mx-auto w-[90%] md:w-[65%] absolute top-[7%] md:top-[15%]">
           <Tabs defaultValue="account" className="w-full shadow-2xl bg-transparent border border-gray-300 rounded-md">
             <TabsList className="grid grid-cols-2 w-full h-16 md:h-20 bg-[#003156]">

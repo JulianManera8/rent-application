@@ -92,7 +92,7 @@ export default function SignupForm() {
   };
 
   return (
-    <form className="mb-10">
+    <form>
       <Card>
         <CardHeader>
         </CardHeader>
