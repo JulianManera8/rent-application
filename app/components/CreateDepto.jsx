@@ -11,6 +11,12 @@ import Error from '../components/Error'
 import { Form, json } from "@remix-run/react";
 import { useActionData } from "@remix-run/react";
 import supabase from "../lib/supabase";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../components/ui/collapsible"
+import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react"
 
 
 export async function action({request}) {
@@ -91,6 +97,7 @@ export default function CreateDepto() {
 
   const [userLoged_id, setUserLogedId] = useState(null)
   const [files, setFiles] = useState([]); // For file upload
+  const [showFiles, setShowFiles] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -155,21 +162,22 @@ export default function CreateDepto() {
   
   return (
     <div className="container mx-auto w-full mr-14 px-0 mt-10">
-      <button onClick={(e) => handleSubmit(e)} className="bg-red-400 w-full">awd</button>
-      <form 
-      
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg "
-      >
+      <button onClick={(e) => handleSubmit(e)} className="bg-red-400 w-full">
+        awd
+      </button>
+      <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
         <div className="min-w-56">
           <label htmlFor="ubicacion_completa" className="font-bold">
             Ubicación
-          </label> 
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: San Juan 382 piso 7"
             name="ubicacion_completa"
           />
-          {actionData?.errors?.ubicacion_completa && <Error errorMessage={actionData?.errors?.ubicacion_completa} />}
+          {actionData?.errors?.ubicacion_completa && (
+            <Error errorMessage={actionData?.errors?.ubicacion_completa} />
+          )}
         </div>
         {/* <div className="min-w-56">
           <label htmlFor="propietario_name" className="font-bold">
@@ -319,13 +327,36 @@ export default function CreateDepto() {
             Documentos
           </label>
           <Input
-            className="mt-2 text-md p-2"
+            className="mt-2 text-[16px]  p-2 text-white"
             type="file"
             name="file"
             multiple
             onChange={handleFileChange} // Capture file change
           />
+
+          {files.length > 0 && (
+            <div>
+              <Collapsible className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${showFiles ? 'h-auto' : 'h-10'}`}>
+                <CollapsibleTrigger onClick={() => setShowFiles(!showFiles)}>
+                <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
+                  <ChevronsUpDown size={23}/>
+                  <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">Ver documentos seleccionados </p>
+                </div>
+                </CollapsibleTrigger>
+                {files.map((file, index) => (
+                  <div key={index}>
+                    <CollapsibleContent className=" pl-6 pr-2 flex gap-3 h-12 items-center">
+                      <FileCheckIcon size={23}/>
+                      <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm"> {file.name} </p>
+                      <X className="text-red-600 cursor-pointer" onClick={() => {console.log(file.name)}}/>
+                    </CollapsibleContent>
+                  </div>
+                ))}
+              </Collapsible>
+            </div>
+          )}
         </div>
+
         {/*<div className="min-w-56">
           <label htmlFor="obs_datos" className="font-bold">
             {" "}
@@ -341,16 +372,17 @@ export default function CreateDepto() {
 
         <div>Galeria de fotos</div>
         <div className="flex justify-center gap-10 my-8">
-        <Button type="submit" className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800">
-          GUARDAR
-        </Button>
-        <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
-          CANCELAR
-        </Button>
-      </div>
+          <Button
+            type="submit"
+            className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"
+          >
+            GUARDAR
+          </Button>
+          <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
+            CANCELAR
+          </Button>
+        </div>
       </form>
-
-      
     </div>
   );
 }
