@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 import { useEffect, useState } from "react";
@@ -114,7 +115,7 @@ export default function CreateDepto() {
   }, []);
 
   const handleFileChange = (e) => {
-    setFiles((f) => [...f, ...e.target.files]); 
+    setFiles((f) => [...f, ...e.target.files]);
   };
 
   const objPrueba = {
@@ -152,11 +153,22 @@ export default function CreateDepto() {
     e.preventDefault();
 
     if (userLoged_id !== null) {
-      dbCreatePrueba(objPrueba);
+      try {
+        await dbCreatePrueba(objPrueba);
+
+        setFiles([])
+      } catch (error) {
+        console.error('error al cargar el depto o los docs')
+      }
     }
 
-    setFiles([])
+  };
 
+  const removeFile = (index) => {
+    setFiles((f) => f.filter((_, i) => i !== index));
+    if(files.length === 0) {
+      return setShowFiles(false)
+    }
   };
 
   
@@ -326,35 +338,61 @@ export default function CreateDepto() {
           <label htmlFor="documentosVarios" className="font-bold">
             Documentos
           </label>
-          <Input
-            className="mt-2 text-[16px]  p-2 text-white"
-            type="file"
-            name="file"
-            multiple
-            onChange={handleFileChange} // Capture file change
-          />
+          <div className="file-upload">
+            <Label
+              htmlFor="file-upload"
+              className="cursor-pointer text-black px-4 py-2 h-10 mt-2 rounded-lg border flex items-center justify-between"
+            >
+              <span>Cargar documentos</span>
+              <Plus size={20} color="green" className="border-[3px] border-green-500 w-5 h-5 rounded-full"/> {/* Ícono opcional, puedes cambiarlo */}
+            </Label>
+            <Input
+              id="file-upload"
+              className="hidden" // Ocultamos el input real
+              type="file"
+              multiple
+              onChange={handleFileChange}
+            />
+          </div>
 
-          {files.length > 0 && (
-            <div>
-              <Collapsible className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${showFiles ? 'h-auto' : 'h-10'}`}>
-                <CollapsibleTrigger onClick={() => setShowFiles(!showFiles)}>
+          <div>
+            <Collapsible
+              className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${
+                showFiles ? "h-auto" : "h-10"
+              }`}
+            >
+              <CollapsibleTrigger onClick={() => setShowFiles(!showFiles)}>
                 <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
-                  <ChevronsUpDown size={23}/>
-                  <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">Ver documentos seleccionados </p>
+                  <ChevronsUpDown size={20} />
+                  <p className="w-3/4 text-xs whitespace-nowrap overflow-hidden text-ellipsis pt-0">
+                    Ver documentos seleccionados{" "}
+                  </p>
                 </div>
-                </CollapsibleTrigger>
-                {files.map((file, index) => (
+              </CollapsibleTrigger>
+
+              {files.length > 0 ? (
+                files.map((file, index) => (
                   <div key={index}>
                     <CollapsibleContent className=" pl-6 pr-2 flex gap-3 h-12 items-center">
-                      <FileCheckIcon size={23}/>
-                      <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm"> {file.name} </p>
-                      <X className="text-red-600 cursor-pointer" onClick={() => {console.log(file.name)}}/>
+                      <FileCheckIcon size={23} />
+                      <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                        {" "}
+                        {file.name}{" "}
+                      </p>
+                      <X
+                        className="text-red-600 cursor-pointer"
+                        onClick={() => removeFile(index)}
+                      />
                     </CollapsibleContent>
                   </div>
-                ))}
-              </Collapsible>
-            </div>
-          )}
+                ))
+              ) : (
+                <CollapsibleContent className="flex text-center justify-center gap-3 h-12 items-center">
+                  <p className=" text-xs"> No hay documentos seleccionados</p>
+                </CollapsibleContent>
+              )}
+            </Collapsible>
+          </div>
         </div>
 
         {/*<div className="min-w-56">
