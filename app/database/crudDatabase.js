@@ -76,7 +76,7 @@ export async function createPrueba({ objPrueba }) {
     // Recorre cada archivo en objPrueba.files y espera que todos terminen
     await Promise.all(
       objPrueba.files.map(async (file) => {
-        const filePath = `documentos/doc${idDeptoCreado}/${Date.now()}_${file.name}`;
+        const filePath = `documentos/docs${idDeptoCreado}/${Date.now()}_${file.name}`;
 
         try {
           const { data: uploadData, error: uploadError } = await supabase.storage
@@ -104,14 +104,57 @@ export async function createPrueba({ objPrueba }) {
   // LLAMA LA FUNCION PARA CARGAR ESOS URL A LA TABLA DE DOCS Y ASIGNARLOS AL ID DE CADA DEPTO
   await insertDocs(data[0].id, listaDocs);
 
+
+  
+
+
+  //FUNCION PARA CARGAR LAS FOTOS AL BUCKETS
+  if (data && objPrueba.fotos.length > 0) {
+    let idDeptoCreado = data[0].id;
+
+    // Recorre cada archivo en objPrueba.files y espera que todos terminen
+    await Promise.all(
+      objPrueba.fotos.map(async (foto) => {
+        const filePath = `fotos_depto/fotos${idDeptoCreado}/${Date.now()}_${foto.name}`;
+
+        try {
+          const { data: uploadFoto, error: uploadError } = await supabase.storage
+            .from("fotos_depto")
+            .upload(filePath, foto);
+
+          if (uploadError) {
+            console.error(uploadError.message);
+            throw new Error("Error uploading the photo");
+          }
+
+        } catch (error) {
+          alert("Error en la subida de la foto, intenta nuevamente o con otra foto", error);
+        }
+      })
+    );
+
+    // Limpia el arreglo de archivos después de subir todos
+    objPrueba.fotos = [];
+  }
+
+  // LLAMA LA FUNCION PARA CAPTAR LOS URL DE LOS DOCS CREADOS
+  const listaFotos = await getFotosFromBucket(data[0].id);
+
+  // LLAMA LA FUNCION PARA CARGAR ESOS URL A LA TABLA DE FOTOS Y ASIGNARLOS AL ID DE CADA DEPTO
+  await insertFotos(data[0].id, listaFotos);
+
+
+  
+
   return data; // Retorna los datos del departamento creado
 }
+
 
 // FUNCION PARA CAPTAR LAS URL CREADAS PARA LOS DOCUMENTOS DE CADA DEPTO
 async function getDocsFromBucket(idDeptoCreado) {
   const { data: docsBucket, error: errorDocs } = await supabase.storage
     .from('documentos')
-    .list('documentos/doc' + idDeptoCreado);
+    .list('documentos/docs' + idDeptoCreado);
 
   if (errorDocs) {
     console.error(errorDocs.message);
@@ -120,10 +163,29 @@ async function getDocsFromBucket(idDeptoCreado) {
 
   // Construir las URLs de los documentos
   const urlDocs = docsBucket.map((doc) => {
-    return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/documentos/documentos/doc${idDeptoCreado}/${doc.name}`;
+    return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/documentos/documentos/docs${idDeptoCreado}/${doc.name}`;
   });
 
   return urlDocs;
+}
+
+// FUNCION PARA CAPTAR LAS URL CREADAS PARA LAS FOTOS DE CADA DEPTO
+async function getFotosFromBucket(idDeptoCreado) {
+  const { data: fotosBucket, error: errorFotos } = await supabase.storage
+    .from('fotos_depto')
+    .list('fotos_depto/fotos' + idDeptoCreado);
+
+  if (errorFotos) {
+    console.error(errorFotos.message);
+    throw new Error("Error fetching photos from bucket");
+  }
+
+  // Construir las URLs de los documentos
+  const urlFotos = fotosBucket.map((foto) => {
+    return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/documentos/documentos/docs${idDeptoCreado}/${foto.name}`;
+  });
+
+  return urlFotos;
 }
 
 // FUNCION PARA INSERTAR LAS URL DE LOS DOCS EN LA TABLA
@@ -146,6 +208,30 @@ async function insertDocs(idDeptoCreado, listaDocs) {
       }
 
       return docsInserted;
+    })
+  );
+}
+
+// FUNCION PARA INSERTAR LAS URL DE LOS DOCS EN LA TABLA
+async function insertFotos(idDeptoCreado, listaFotos) {
+  // Inserta cada URL en la tabla docs_fotos
+  await Promise.all(
+    listaFotos.map(async (url) => {
+      const { data: fotosInserted, error: errorInsertFotos } = await supabase
+        .from('fotos_deptos')
+        .insert([
+          {
+            depto_id: idDeptoCreado,
+            foto_url: url,
+          },
+        ]);
+
+      if (errorInsertFotos) {
+        console.error(errorInsertFotos.message);
+        throw new Error("Error inserting document URLs");
+      }
+
+      return fotosInserted;
     })
   );
 }
