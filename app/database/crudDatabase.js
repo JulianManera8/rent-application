@@ -144,7 +144,7 @@ export async function createPrueba({ newDepto }) {
           }
 
         } catch (error) {
-          alert("Error en la subida de la foto, intenta nuevamente o con otra foto" + error.message);
+          alert("Error en la subida de la foto, intenta nuevamente o con otra foto");
         }
       })
     );

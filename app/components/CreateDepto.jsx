@@ -152,13 +152,14 @@ export default function CreateDepto() {
   return (
     <div className="container mx-auto w-full mr-14 px-0 mt-10">
       <Form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
+        
         <div className="min-w-56">
-          <Label htmlFor="ubicacion_completa" className="font-bold">
-            Ubicación
-          </Label>
+          <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">
+            <p>Ubicacion</p> <span className='text-gray-400 text-xs'>Calle numero, piso-departamento</span>
+          </label>
           <Input
             className="mt-2 text-md p-2"
-            placeholder="Ej: San Juan 382 piso 7"
+            placeholder="Ej: San Juan 382, 7-A"
             name="ubicacion_completa"
             value={newDepto.ubicacion_completa}
             onChange={(e) =>
@@ -171,9 +172,9 @@ export default function CreateDepto() {
         </div>
         
         <div className="min-w-56">
-          <Label htmlFor="propietario_name" className="font-bold">
+          <label htmlFor="propietario_name" className="font-bold">
             Propietario
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Lionel Messi"
@@ -186,9 +187,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="usufructuario_name" className="font-bold">
+          <label htmlFor="usufructuario_name" className="font-bold">
             Usufructuario
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Lionel Messi"
@@ -201,9 +202,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="locador_name" className="font-bold">
+          <label htmlFor="locador_name" className="font-bold">
             Locador
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Angel Di Maria"
@@ -216,9 +217,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="inquilino_name" className="font-bold">
+          <label htmlFor="inquilino_name" className="font-bold">
             Locatario / Inquilino
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Mateo Messi"
@@ -231,9 +232,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="facturador_name" className="font-bold">
+          <label htmlFor="facturador_name" className="font-bold">
             Facturador
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Angel Di Maria"
@@ -246,9 +247,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="cobrador_name" className="font-bold">
+          <label htmlFor="cobrador_name" className="font-bold">
             Cobrador
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Angel Di Maria"
@@ -261,9 +262,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="descripcion" className="font-bold">
+          <label htmlFor="descripcion" className="font-bold">
             Descripción
-          </Label>
+          </label>
           <Textarea
             className="mt-2 text-md p-2"
             rows={4}
@@ -277,9 +278,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="vencimiento_usufructo" className="font-bold">
+          <label htmlFor="vencimiento_usufructo" className="font-bold">
             Vencimiento del Usufructo
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             type="date"
@@ -295,9 +296,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="vencimiento_contrato" className="font-bold">
+          <label htmlFor="vencimiento_contrato" className="font-bold">
             Vencimiento del contrato
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             type="date"
@@ -313,9 +314,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="metodo_cobro" className="font-bold">
+          <label htmlFor="metodo_cobro" className="font-bold">
             Metodo de cobro
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder="Ej: Efectivo"
@@ -328,14 +329,14 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="monto_cobro_inicio" className="font-bold">
-            Precio al inicio
-          </Label>
+          <label htmlFor="monto_cobro_inicio" className="font-bold flex justify-between items-center pr-1">
+            <p>Precio al inicio</p> <span className='text-gray-400 text-xs'>Solo numeros, como el ej.</span>
+          </label>
           <div className="relative">
             <span className="absolute top-[6px] left-[7px] font-bold"> $ </span>
             <Input
               className="mt-2 text-md p-2 pl-6"
-              placeholder="160.000,00"
+              placeholder="Ej: 160000"
               type="number"
               name="monto_cobro_inicio"
               value={newDepto.monto_cobro_inicio}
@@ -347,14 +348,14 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="monto_cobro" className="font-bold">
-            Precio Actual
-          </Label>
+          <label htmlFor="monto_cobro" className="font-bold flex justify-between items-center pr-1">
+            <p>Precio actual</p> <span className='text-gray-400 text-xs'>Solo numeros, como el ej.</span>
+          </label>
           <div className="relative">
             <span className="absolute top-[6px] left-[7px] font-bold"> $ </span>
             <Input
               className="mt-2 text-md p-2 pl-6"
-              placeholder="360.000,00"
+              placeholder="Ej: 360000"
               type="number"
               name="monto_cobro"
               value={newDepto.monto_cobro}
@@ -366,9 +367,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="fecha_actualizacion_cobro" className="font-bold">
+          <label htmlFor="fecha_actualizacion_cobro" className="font-bold">
             Ultima actualización del precio
-          </Label>
+          </label>
           <Input
             className="mt-2 text-md p-2"
             placeholder=""
@@ -385,9 +386,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-          <Label htmlFor="inscripto_reli" className="font-bold text-lg">
+          <label htmlFor="inscripto_reli" className="font-bold text-lg">
             Inscripto en RELI
-          </Label>
+          </label>
           <Checkbox
             className="h-6 w-6"
             name="inscripto_reli"
@@ -402,9 +403,9 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-          <Label htmlFor="ocupado" className="font-bold text-lg">
+          <label htmlFor="ocupado" className="font-bold text-lg">
             Propiedad ocupada
-          </Label>
+          </label>
           <Checkbox
             className="h-6 w-6"
             name="ocupado"
@@ -420,9 +421,9 @@ export default function CreateDepto() {
 
         {/* documentos */}
         <div className="min-w-56">
-          <Label htmlFor="documentosVarios" className="font-bold">
-            Documentos
-          </Label>
+          <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">
+            <p>Documentos</p> <span className='text-gray-400 text-xs'>Peso max. 50 mb cada uno</span>
+          </label>
           <div className="file-upload">
             <Label
               htmlFor="file-upload"
@@ -453,7 +454,7 @@ export default function CreateDepto() {
               <CollapsibleTrigger onClick={() => setShowFiles(!showFiles)}>
                 <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
                   <ChevronsUpDown size={20} />
-                  <p className="w-3/4 text-xs whitespace-nowrap overflow-hidden text-ellipsis pt-0">
+                  <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
                     Ver documentos seleccionados{" "}
                   </p>
                 </div>
@@ -485,9 +486,9 @@ export default function CreateDepto() {
 
         {/* fotos */}
         <div className="min-w-56">
-          <Label htmlFor="fotos" className="font-bold">
-            Fotos
-          </Label>
+          <label htmlFor="upload" className="font-bold flex justify-between items-center pr-1">
+            <p>Fotos</p> <span className='text-gray-400 text-xs'>Peso max. 50 mb cada una</span>
+          </label>
           <div className="foto-upload">
             <Label
               htmlFor="foto-upload"
@@ -519,7 +520,7 @@ export default function CreateDepto() {
               <CollapsibleTrigger onClick={() => setShowFotos(!showFotos)}>
                 <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
                   <ChevronsUpDown size={20} />
-                  <p className="w-3/4 text-xs whitespace-nowrap overflow-hidden text-ellipsis pt-0">
+                  <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
                     Ver fotos seleccionadas
                   </p>
                 </div>
@@ -550,10 +551,10 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="obs_datos" className="font-bold">
+          <label htmlFor="obs_datos" className="font-bold">
             {" "}
             Observaciónes / datos extras
-          </Label>
+          </label>
           <Textarea
             className="mt-2 text-md p-2"
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
@@ -565,6 +566,7 @@ export default function CreateDepto() {
             }
           />
         </div>
+
       </Form>
 
       <div className="flex justify-center gap-10 my-8">
