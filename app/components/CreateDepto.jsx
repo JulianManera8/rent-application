@@ -3,11 +3,11 @@
 import Spinner from '../components/loaderIcon'
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Label } from "../components/ui/Label";
+import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 import { useEffect, useState } from "react";
-import { createPrueba, createDepto } from '../database/crudDatabase'
+import { createDepto } from '../database/crudDatabase'
 import useFetch from '../hooks/use-fetch'
 import Error from '../components/Error'
 import { Form } from "@remix-run/react";
@@ -92,7 +92,7 @@ export default function CreateDepto() {
     fotos: fotos
   })
 
-  const { loading, fn: dbCreatePrueba } = useFetch(createPrueba, {newDepto});
+  const { loading, fn: dbCreatePrueba } = useFetch(createDepto, {newDepto});
 
   const handleSubmit = async (e) => {
     e.preventDefault();

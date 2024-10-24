@@ -2,58 +2,67 @@
 import supabase from '../lib/supabase';
 
 //FUNCION PARA CAPTAR LOS DEPTOS DE CADA USUARIO
-export async function getDeptos({user_id}) {
-    const { data, error } = await supabase
-    .from('departamentos')
-    .select('*')
+export async function getDeptos({ user_id }) {
+  const { data, error } = await supabase
+    .from("departamentos")
+    .select("*")
     .eq("user_id", user_id);
 
-    if(error) {
-        console.error(error);
-        throw new Error('Falla al cargar todos los deptos');
-    }
+  if (error) {
+    console.error(error);
+    throw new Error("Falla al cargar todos los deptos");
+  }
 
-    return data;
+  return data;
 }
+
+//FUNCION PARA ELIMINAR UN DEPTO 
+export async function removeDepto({deptoId}) {
+  const { error } = await supabase
+  .from("departamentos")
+  .delete()
+  .eq("id", deptoId);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Unable to load URLs");
+  }
+
+  //BORRAR DOCUMENTOS 
+  const { filesNames } = await getDocsFromBucket(deptoId);
+
+  if (filesNames.length > 0) {
+    const { error: deleteError } = await supabase.storage
+      .from('documentos')
+      .remove(filesNames.map((name) => `documentos/docs${deptoId}/${name}`));
+
+    if (deleteError) {
+      console.error(deleteError.message);
+      throw new Error("Error deleting documents");
+    }
+  }
+  
+  //BORRAR FOTOS
+  const { fotosFilesNames } = await getFotosFromBucket(deptoId);
+
+  if (fotosFilesNames.length > 0) {
+    const { error: deleteError } = await supabase.storage
+      .from('fotos_depto')
+      .remove(fotosFilesNames.map((name) => `fotos_depto/fotos${deptoId}/${name}`));
+
+    if (deleteError) {
+      console.error(deleteError.message);
+      throw new Error("Error deleting fotos");
+    }
+  }
+
+  return ' '
+}
+
+
 
 //FUNCION PARA CREAR DEPTO, INCLUYENDO UPLOAD DOCS Y FOTOS
 export async function createDepto({ newDepto }) {
-    const { data, error } = await supabase
-      .from("departamentos")
-      .insert([
-        {
-          ubicacion: newDepto.ubicacion,
-          descripcion: newDepto.descripcion,
-          ocupado: newDepto.ocupado,
-          propietario_name: newDepto.propietario_name,
-          locador_name: newDepto.locador_name,
-          inquilino_name: newDepto.inquilino_name,
-          cobrador_name: newDepto.cobrador_name,
-          facturador_name: newDepto.facturador_name,
-          usufructuario_name: newDepto.usufructuario_name,
-          metodo_cobro: newDepto.metodo_cobro,
-          vencimiento_contrato: newDepto.vencimiento_contrato,
-          inscripto_reli: newDepto.inscripto_reli,
-          vencimiento_usufructo: newDepto.vencimiento_usufructo,
-          monto_cobro: newDepto.monto_cobro,
-          monto_cobro_inicio: newDepto.monto_cobro_inicio,
-          fecha_actualizacion_cobro: newDepto.fecha_actualizacion_cobro,
-          user_id: newDepto.user_id,
-          obs_datos: newDepto.obs_datos,
-        },
-      ])
-      .select();
-  
-    if (error) {
-        console.error(error.message)
-        throw new Error("Error creating new depto");
-    }
-    console.log('data');
-    return data;
-}
-
-//FUNCION PARA CREAR DEPTO, INCLUYENDO UPLOAD DOCS Y FOTOS
-export async function createPrueba({ newDepto }) {
   const { data, error } = await supabase
     .from("departamentos")
     .insert([
@@ -115,7 +124,7 @@ export async function createPrueba({ newDepto }) {
   }
 
   // LLAMA LA FUNCION PARA CAPTAR LOS URL DE LOS DOCS CREADOS
-  const listaDocs = await getDocsFromBucket(data[0].id);
+  const { urlDocs: listaDocs } = await getDocsFromBucket(data[0].id);
 
   // LLAMA LA FUNCION PARA CARGAR ESOS URL A LA TABLA DE DOCS Y ASIGNARLOS AL ID DE CADA DEPTO
   await insertDocs(data[0].id, listaDocs);
@@ -154,7 +163,7 @@ export async function createPrueba({ newDepto }) {
   }
 
   // LLAMA LA FUNCION PARA CAPTAR LOS URL DE LOS DOCS CREADOS
-  const listaFotos = await getFotosFromBucket(data[0].id);
+  const { urlFotos: listaFotos } = await getFotosFromBucket(data[0].id);
 
   // LLAMA LA FUNCION PARA CARGAR ESOS URL A LA TABLA DE FOTOS Y ASIGNARLOS AL ID DE CADA DEPTO
   await insertFotos(data[0].id, listaFotos);
@@ -164,7 +173,6 @@ export async function createPrueba({ newDepto }) {
 
   return data; // Retorna los datos del departamento creado
 }
-
 
 // FUNCION PARA CAPTAR LAS URL CREADAS PARA LOS DOCUMENTOS DE CADA DEPTO
 async function getDocsFromBucket(idDeptoCreado) {
@@ -182,7 +190,14 @@ async function getDocsFromBucket(idDeptoCreado) {
     return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/documentos/documentos/docs${idDeptoCreado}/${doc.name}`;
   });
 
-  return urlDocs;
+  const filesNames = docsBucket.map((doc) => {
+    return doc.name
+  })
+
+  return {
+    urlDocs,
+    filesNames,
+  };
 }
 
 // FUNCION PARA CAPTAR LAS URL CREADAS PARA LAS FOTOS DE CADA DEPTO
@@ -201,7 +216,14 @@ async function getFotosFromBucket(idDeptoCreado) {
     return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/fotos_depto/fotos_depto/fotos${idDeptoCreado}/${foto.name}`;
   });
 
-  return urlFotos;
+  const fotosFilesNames = fotosBucket.map((foto) => {
+    return foto.name
+  })
+
+  return {
+    urlFotos,
+    fotosFilesNames,
+  };
 }
 
 // FUNCION PARA INSERTAR LAS URL DE LOS DOCS EN LA TABLA
