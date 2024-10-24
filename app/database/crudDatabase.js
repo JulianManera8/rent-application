@@ -53,29 +53,45 @@ export async function createDepto({ newDepto }) {
 }
 
 //FUNCION PARA CREAR DEPTO, INCLUYENDO UPLOAD DOCS Y FOTOS
-export async function createPrueba({ objPrueba }) {
+export async function createPrueba({ newDepto }) {
   const { data, error } = await supabase
     .from("departamentos")
     .insert([
       {
-        ubicacion_completa: objPrueba.ubicacion_completa,
-        user_id: objPrueba.user_id,
+        ubicacion_completa: newDepto.ubicacion_completa, 
+        descripcion: newDepto.descripcion, 
+        ocupado: newDepto.ocupado, 
+        propietario_name: newDepto.propietario_name, 
+        locador_name: newDepto.locador_name, 
+        inquilino_name: newDepto.inquilino_name, 
+        cobrador_name: newDepto.cobrador_name, 
+        facturador_name: newDepto.facturador_name, 
+        usufructuario_name: newDepto.usufructuario_name, 
+        metodo_cobro: newDepto.metodo_cobro, 
+        vencimiento_contrato: newDepto.vencimiento_contrato, 
+        inscripto_reli: newDepto.inscripto_reli, 
+        vencimiento_usufructo: newDepto.vencimiento_usufructo, 
+        monto_cobro: newDepto.monto_cobro, 
+        monto_cobro_inicio: newDepto.monto_cobro_inicio, 
+        fecha_actualizacion_cobro: newDepto.fecha_actualizacion_cobro, 
+        user_id: newDepto.user_id,
+        obs_datos: newDepto.obs_datos, 
       },
     ])
     .select();
 
   if (error) {
     console.error(error.message);
-    throw new Error("Error creating new prueba");
+    throw new Error("Error creating new depto");
   }
 
   //FUNCION PARA CARGAR LOS DOCS AL BUCKET
-  if (data && objPrueba.files.length > 0) {
+  if (data && newDepto.files.length > 0) {
     let idDeptoCreado = data[0].id;
 
-    // Recorre cada archivo en objPrueba.files y espera que todos terminen
+    // Recorre cada archivo en newDepto.files y espera que todos terminen
     await Promise.all(
-      objPrueba.files.map(async (file) => {
+      newDepto.files.map(async (file) => {
         const filePath = `documentos/docs${idDeptoCreado}/${Date.now()}_${file.name}`;
 
         try {
@@ -95,7 +111,7 @@ export async function createPrueba({ objPrueba }) {
     );
 
     // Limpia el arreglo de archivos después de subir todos
-    objPrueba.files = [];
+    newDepto.files = [];
   }
 
   // LLAMA LA FUNCION PARA CAPTAR LOS URL DE LOS DOCS CREADOS
@@ -109,12 +125,12 @@ export async function createPrueba({ objPrueba }) {
 
 
   //FUNCION PARA CARGAR LAS FOTOS AL BUCKETS
-  if (data && objPrueba.fotos.length > 0) {
+  if (data && newDepto.fotos.length > 0) {
     let idDeptoCreado = data[0].id;
 
-    // Recorre cada archivo en objPrueba.files y espera que todos terminen
+    // Recorre cada archivo en newDepto.files y espera que todos terminen
     await Promise.all(
-      objPrueba.fotos.map(async (foto) => {
+      newDepto.fotos.map(async (foto) => {
         const filePath = `fotos_depto/fotos${idDeptoCreado}/${Date.now()}_${foto.name}`;
 
         try {
@@ -128,13 +144,13 @@ export async function createPrueba({ objPrueba }) {
           }
 
         } catch (error) {
-          alert("Error en la subida de la foto, intenta nuevamente o con otra foto", error);
+          alert("Error en la subida de la foto, intenta nuevamente o con otra foto" + error.message);
         }
       })
     );
 
     // Limpia el arreglo de archivos después de subir todos
-    objPrueba.fotos = [];
+    newDepto.fotos = [];
   }
 
   // LLAMA LA FUNCION PARA CAPTAR LOS URL DE LOS DOCS CREADOS
@@ -144,7 +160,7 @@ export async function createPrueba({ objPrueba }) {
   await insertFotos(data[0].id, listaFotos);
 
 
-  
+
 
   return data; // Retorna los datos del departamento creado
 }
@@ -182,7 +198,7 @@ async function getFotosFromBucket(idDeptoCreado) {
 
   // Construir las URLs de los documentos
   const urlFotos = fotosBucket.map((foto) => {
-    return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/documentos/documentos/docs${idDeptoCreado}/${foto.name}`;
+    return `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/fotos_depto/fotos_depto/fotos${idDeptoCreado}/${foto.name}`;
   });
 
   return urlFotos;

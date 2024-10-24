@@ -26,6 +26,7 @@ export default function useFetch(cb, options = {}) {
             if(error) throw error;
         } catch (error) {
             setError(error)
+
         } finally {
             setLoading(false)
         }

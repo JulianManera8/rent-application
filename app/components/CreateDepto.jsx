@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
+import Spinner from '../components/loaderIcon'
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/Label";
@@ -9,8 +10,7 @@ import { useEffect, useState } from "react";
 import { createPrueba, createDepto } from '../database/crudDatabase'
 import useFetch from '../hooks/use-fetch'
 import Error from '../components/Error'
-import { Form, json } from "@remix-run/react";
-import { useActionData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import supabase from "../lib/supabase";
 import {
   Collapsible,
@@ -27,6 +27,47 @@ export default function CreateDepto() {
   const [fotos, setFotos] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
   const [showFotos, setShowFotos] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data && data.user) {
+        setUserLogedId(data.user.id);
+        setNewDepto((prevDepto) => ({
+          ...prevDepto,
+          user_id: data.user.id,
+        }));
+      }
+      if (error) {
+        console.error("Error al obtener el usuario:", error);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    setNewDepto((prevDepto) => ({
+      ...prevDepto,
+      files: files
+    }));
+  }, [files])
+
+  useEffect(() => {
+    setNewDepto((prevDepto) => ({
+      ...prevDepto,
+      fotos: fotos
+    }));
+  }, [fotos])
+
+  const handleFileChange = (e) => {
+    setFiles((f) => [...f, ...e.target.files]);
+  };
+
+  const handleFotoChange = (e) => {
+    setFotos((f) => [...f, ...e.target.files]);
+  };
+
 
   const [newDepto, setNewDepto] = useState({
     ubicacion_completa: '', //text
@@ -51,46 +92,7 @@ export default function CreateDepto() {
     fotos: fotos
   })
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data && data.user) {
-        setUserLogedId(data.user.id);
-        setNewDepto((prevDepto) => ({
-          ...prevDepto,
-          user_id: data.user.id,
-        }));
-      }
-      if (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-
-    getUser();
-  }, []);
-
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-    setShowFiles(true);
-  };
-  
-  const handleFotoChange = (e) => {
-    const selectedFotos = Array.from(e.target.files);
-    setFotos((prevFotos) => [...prevFotos, ...selectedFotos]);
-    setShowFotos(true);
-  };
-
-
-  const objPrueba = {
-    ubicacion_completa: 'Hola',
-    user_id: userLoged_id,
-    files: files,
-    fotos: fotos
-  }
-
-  const { loading, fn: dbCreatePrueba } = useFetch(createPrueba, {objPrueba});
-
+  const { loading, fn: dbCreatePrueba } = useFetch(createPrueba, {newDepto});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,6 +103,31 @@ export default function CreateDepto() {
 
         setFiles([])
         setFotos([])
+
+        setNewDepto({
+          ubicacion_completa: "", //text
+          descripcion: "", // text
+          ocupado: false, //booleano
+          propietario_name: "", //text
+          locador_name: "", //text
+          inquilino_name: "", //text
+          cobrador_name: "", //text
+          facturador_name: "", //text
+          usufructuario_name: "", //text
+          metodo_cobro: "", //text
+          vencimiento_contrato: "", //date year/month/day
+          inscripto_reli: false, // boolean
+          vencimiento_usufructo: "", //date year/month/day
+          monto_cobro: "", //number
+          monto_cobro_inicio: "", //number
+          fecha_actualizacion_cobro: "", //date year/month/day
+          user_id: "",
+          obs_datos: "", //text
+          files: files,
+          fotos: fotos,
+        });
+
+
       } catch (error) {
         console.error('error al cargar el depto o los docs')
       }
@@ -121,18 +148,9 @@ export default function CreateDepto() {
       return setShowFotos(false)
     }
   };
-
-  const handleClickk = (e) => {
-    e.preventDefault();
-    console.log(newDepto)
-  }
-
   
   return (
-    <div className="container mx-auto w-full mr-14 ml-20 px-0 mt-10">
-      {/* <button onClick={(e) => handleSubmit(e)} className="bg-red-400 w-full">
-        awd
-      </button> */}
+    <div className="container mx-auto w-full mr-14 px-0 mt-10">
       <Form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
         <div className="min-w-56">
           <Label htmlFor="ubicacion_completa" className="font-bold">
@@ -151,6 +169,7 @@ export default function CreateDepto() {
             <Error errorMessage={actionData?.errors?.ubicacion_completa} />
           )} */}
         </div>
+        
         <div className="min-w-56">
           <Label htmlFor="propietario_name" className="font-bold">
             Propietario
@@ -165,6 +184,7 @@ export default function CreateDepto() {
             }
           />
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="usufructuario_name" className="font-bold">
             Usufructuario
@@ -179,6 +199,7 @@ export default function CreateDepto() {
             }
           />
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="locador_name" className="font-bold">
             Locador
@@ -193,6 +214,7 @@ export default function CreateDepto() {
             }
           />
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="inquilino_name" className="font-bold">
             Locatario / Inquilino
@@ -207,6 +229,7 @@ export default function CreateDepto() {
             }
           />
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="facturador_name" className="font-bold">
             Facturador
@@ -221,12 +244,29 @@ export default function CreateDepto() {
             }
           />
         </div>
+
+        <div className="min-w-56">
+          <Label htmlFor="cobrador_name" className="font-bold">
+            Cobrador
+          </Label>
+          <Input
+            className="mt-2 text-md p-2"
+            placeholder="Ej: Angel Di Maria"
+            name="cobrador_name"
+            value={newDepto.cobrador_name}
+            onChange={(e) =>
+              setNewDepto({ ...newDepto, cobrador_name: e.target.value })
+            }
+          />
+        </div>
+
         <div className="min-w-56">
           <Label htmlFor="descripcion" className="font-bold">
             Descripción
           </Label>
           <Textarea
             className="mt-2 text-md p-2"
+            rows={4}
             placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta y parrilla en la terraza."
             name="descripcion"
             value={newDepto.descripcion}
@@ -235,6 +275,7 @@ export default function CreateDepto() {
             }
           />
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="vencimiento_usufructo" className="font-bold">
             Vencimiento del Usufructo
@@ -252,6 +293,25 @@ export default function CreateDepto() {
             }
           />
         </div>
+
+        <div className="min-w-56">
+          <Label htmlFor="vencimiento_contrato" className="font-bold">
+            Vencimiento del contrato
+          </Label>
+          <Input
+            className="mt-2 text-md p-2"
+            type="date"
+            name="vencimiento_contrato"
+            value={newDepto.vencimiento_contrato}
+            onChange={(e) =>
+              setNewDepto({
+                ...newDepto,
+                vencimiento_contrato: e.target.value,
+              })
+            }
+          />
+        </div>
+
         <div className="min-w-56">
           <Label htmlFor="metodo_cobro" className="font-bold">
             Metodo de cobro
@@ -266,15 +326,13 @@ export default function CreateDepto() {
             }
           />
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="monto_cobro_inicio" className="font-bold">
             Precio al inicio
           </Label>
           <div className="relative">
-            <span className="absolute top-[12px] left-[8px] font-bold">
-              {" "}
-              ${" "}
-            </span>
+            <span className="absolute top-[6px] left-[7px] font-bold"> $ </span>
             <Input
               className="mt-2 text-md p-2 pl-6"
               placeholder="160.000,00"
@@ -287,15 +345,13 @@ export default function CreateDepto() {
             />
           </div>
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="monto_cobro" className="font-bold">
             Precio Actual
           </Label>
           <div className="relative">
-            <span className="absolute top-[12px] left-[8px] font-bold">
-              {" "}
-              ${" "}
-            </span>
+            <span className="absolute top-[6px] left-[7px] font-bold"> $ </span>
             <Input
               className="mt-2 text-md p-2 pl-6"
               placeholder="360.000,00"
@@ -308,6 +364,7 @@ export default function CreateDepto() {
             />
           </div>
         </div>
+
         <div className="min-w-56">
           <Label htmlFor="fecha_actualizacion_cobro" className="font-bold">
             Ultima actualización del precio
@@ -328,7 +385,7 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-          <Label htmlFor="inscripto_reli" className="font-bold">
+          <Label htmlFor="inscripto_reli" className="font-bold text-lg">
             Inscripto en RELI
           </Label>
           <Checkbox
@@ -338,13 +395,14 @@ export default function CreateDepto() {
             onCheckedChange={(checked) =>
               setNewDepto((prevState) => ({
                 ...prevState,
-                inscripto_reli: checked, 
+                inscripto_reli: checked,
               }))
             }
           />
         </div>
+
         <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-          <Label htmlFor="ocupado" className="font-bold">
+          <Label htmlFor="ocupado" className="font-bold text-lg">
             Propiedad ocupada
           </Label>
           <Checkbox
@@ -354,9 +412,10 @@ export default function CreateDepto() {
             onCheckedChange={(checked) =>
               setNewDepto((prevState) => ({
                 ...prevState,
-                ocupado: checked, 
+                ocupado: checked,
               }))
-            }          />
+            }
+          />
         </div>
 
         {/* documentos */}
@@ -499,26 +558,27 @@ export default function CreateDepto() {
             className="mt-2 text-md p-2"
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
             name="obs_datos"
+            rows={4}
             value={newDepto.obs_datos}
             onChange={(e) =>
               setNewDepto({ ...newDepto, obs_datos: e.target.value })
             }
           />
         </div>
-
-        <div className="flex justify-center gap-10 my-8">
-          <Button
-            type="submit"
-            onClick={(e) => handleClickk(e)}
-            className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"
-          >
-            GUARDAR
-          </Button>
-          <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
-            CANCELAR
-          </Button>
-        </div>
       </Form>
+
+      <div className="flex justify-center gap-10 my-8">
+        <Button
+          type="submit"
+          onClick={(e) => handleSubmit(e)}
+          className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"
+        >
+        {loading ? "Guardar" : <Spinner/>}
+        </Button>
+        <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
+          CANCELAR
+        </Button>
+      </div>
     </div>
   );
 }
