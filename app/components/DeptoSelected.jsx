@@ -8,7 +8,7 @@ import { Checkbox } from "../components/ui/checkbox";
 import { Lock, LockOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "@remix-run/react";
-import { removeDepto } from "../database/crudDatabase";
+import { removeDepto } from "../database/crudDeptos";
 import  useFetch  from '../hooks/use-fetch'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
 

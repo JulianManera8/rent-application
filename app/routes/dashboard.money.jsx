@@ -54,7 +54,7 @@ export default function MoneyHistorial() {
           DASHBOARD - Balances Monetarios{" "}
         </h1>
         <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"> 
-            <NavLink to="/dashboard/deptos/createDepto"> Agregar Balance </NavLink>
+            <NavLink to="/dashboard/money/addBalance"> Agregar Balance </NavLink>
         </Button>
       </div>
       <div className="flex justify-between items-center mb-6">

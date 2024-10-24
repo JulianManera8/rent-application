@@ -9,7 +9,7 @@ import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from "lucide-react";
 import  useFetch  from '../hooks/use-fetch'
-import { getDeptos } from "../database/crudDatabase";
+import { getDeptos } from "../database/crudDeptos";
 import supabase from "../lib/supabase";
 import SkeletonLoading from '../components/skeletonTable'
 

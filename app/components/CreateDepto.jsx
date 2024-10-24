@@ -7,7 +7,7 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 import { useEffect, useState } from "react";
-import { createDepto } from '../database/crudDatabase'
+import { createDepto } from '../database/crudDeptos'
 import useFetch from '../hooks/use-fetch'
 import Error from '../components/Error'
 import { Form } from "@remix-run/react";
