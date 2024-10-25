@@ -1,10 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { NavLink } from "@remix-run/react";
-
+import AddBalance from '../components/AddBalance'
 import {
   Select,
   SelectContent,
@@ -22,23 +21,29 @@ import {
 } from "../components/ui/table";
 
 export const loader = async () => {
-  // In a real application, you would fetch this data from a database or API
+
   const months = [
-    "AGOSTO",
-    "JULIO",
-    "JUNIO",
-    "MAYO",
-    "ABRIL",
-    "MARZO",
-    "FEBRERO",
-    "ENERO",
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre"
   ];
+
+
   return json({ months });
 };
 
 export default function MoneyHistorial() {
   const { months } = useLoaderData();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
 
@@ -48,14 +53,12 @@ export default function MoneyHistorial() {
 
   return (
     <div className="container mx-auto w-full mr-14 px-0 ">
-      <div className="flex justify-between items-center">  
+      <div className="flex justify-between items-center">
         <h1 className="text-3xl text-gray-300 font-extrabold font-inter mb-10 mt-8">
           {" "}
           DASHBOARD - Balances Monetarios{" "}
         </h1>
-        <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"> 
-            <NavLink to="/dashboard/money/addBalance"> Agregar Balance </NavLink>
-        </Button>
+        <AddBalance />
       </div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-extrabold text-[#194567]">
@@ -107,7 +110,7 @@ export default function MoneyHistorial() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredMonths.map((month) => (
+          {/* {filteredMonths.map((month) => (
             <TableRow key={month}>
               <TableCell>{month}</TableCell>
               <TableCell>
@@ -134,11 +137,9 @@ export default function MoneyHistorial() {
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
+          ))} */}
         </TableBody>
       </Table>
-
-      
     </div>
   );
 }

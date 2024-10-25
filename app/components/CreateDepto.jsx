@@ -12,11 +12,7 @@ import useFetch from '../hooks/use-fetch'
 import Error from '../components/Error'
 import { Form } from "@remix-run/react";
 import supabase from "../lib/supabase";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../components/ui/collapsible"
+import {Collapsible,CollapsibleContent,CollapsibleTrigger } from "../components/ui/collapsible"
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react"
 
 

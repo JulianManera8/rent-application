@@ -2,26 +2,29 @@
 import supabase from '../lib/supabase';
 
 //FUNCION PARA INSERT ARCHIVO EN TABLA DE BALANCES
-export async function insertBalance({balance_info}) {
+export async function insertBalance({balanceInfo}) {
 
     await Promise.all(
-        balance_info.files.map(async (file) => {
-          const filePath = `balance/user${balance_info.userId}/${Date.now()}_${file.name}`;
-  
-          try {
-            const { data: uploadData, error: uploadError } = await supabase.storage
-              .from("balances")
-              .upload(filePath, file);
-  
-            if (uploadError) {
-              console.error(uploadError.message);
-              throw new Error("Error uploading the file");
-            }
-  
-          } catch (error) {
-            alert("Error en la subida del archivo, intenta nuevamente o con otro archivo", error);
+      balanceInfo.files.map(async (file) => {
+        const filePath = `balance/user${balanceInfo.userId}/${Date.now()}_${file.name}`;
+
+        try {
+          const { data: uploadData, error: uploadError } =
+            await supabase.storage.from("balances").upload(filePath, file);
+
+          if (uploadError) {
+            console.error(uploadError.message);
+            throw new Error("Error uploading the file");
           }
-        })
+
+          return uploadData;
+        } catch (error) {
+          alert(
+            "Error en la subida del archivo, intenta nuevamente o con otro archivo",
+            error
+          );
+        }
+      })
     );
 
 
@@ -29,9 +32,9 @@ export async function insertBalance({balance_info}) {
     .from('balances')
     .insert([
         {
-            user_id: balance_info.userId,
-            mes_balance: balance_info.mesBalance,
-            año_balance: balance_info.añoBalance,
+            user_id: balanceInfo.userId,
+            mes_balance: balanceInfo.mesBalance,
+            año_balance: balanceInfo.añoBalance,
             url_excel: '',
         }
     ])
