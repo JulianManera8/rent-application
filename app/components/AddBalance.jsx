@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import supabase from "../lib/supabase";
@@ -10,18 +11,14 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../componen
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../components/ui/sheet";
-import { Form, json, useLoaderData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 
-export const loader = async () => {
-  const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-  return json({ months });
-};
+export default function AddBalance({months}) {
 
-export default function AddBalance() {
-  const { months } = useLoaderData();
   const year = new Date().getFullYear();
   const yearMin = year - 50;
   const yearValues = Array.from({ length: year - yearMin + 1 }, (_, i) => year - i);
+
   
   const [file, setFile] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -58,7 +55,7 @@ export default function AddBalance() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleAddBalance = async (e) => {
     e.preventDefault();
 
     if (userLoged_id !== null) {
@@ -73,6 +70,7 @@ export default function AddBalance() {
           file: null,
         });
         setDisabled(true)
+        console.log("Added balance")
       } catch (error) {
         console.error("Error al cargar el balance:", error);
       }
@@ -100,7 +98,8 @@ export default function AddBalance() {
             Recuerda que solo puedes cargar 1 archivo por mes.
           </SheetDescription>
         </SheetHeader>
-        <Form className=" space-y-10 w-full mt-8" onSubmit={handleSubmit}>
+        <Form className=" space-y-10 w-full mt-8">
+
           <div className="min-w-full space-y-2">
             <Label htmlFor="mesBalance" className="font-bold text-md">Mes del balance</Label>
             <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, mes_balance: value }))} className="w-full">
@@ -117,17 +116,18 @@ export default function AddBalance() {
 
           <div className="w-full space-y-2">
             <Label htmlFor="añoBalance" className="font-bold text-md">Año del balance</Label>
-            <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, año_balance: value }))}>
+            <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, año_balance: value }))} value={String(balanceInfo.año_balance)}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Elegir año" />
+                <SelectValue placeholder="Elegir año"/>
               </SelectTrigger>
               <SelectContent>
-                {yearValues.map((year) => (
-                  <SelectItem key={year} value={year}>{year}</SelectItem>
+                {yearValues.map((year,  index) => (
+                  <SelectItem key={year} value={String(year)}>{year}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+         
 
           <div className="min-w-56">
             <Label htmlFor="file-upload" className="font-bold mb-2 text-md">Documento</Label>
@@ -167,7 +167,12 @@ export default function AddBalance() {
             <SheetClose asChild>
               <div className="flex mt-6 w-full justify-between">
                 <Button type="button" onClick={() => setFile(null)}>Cancelar</Button>
-                <Button type="submit" disabled={disabled} className="bg-green-600 ">Guardar Balance</Button>
+                <Button 
+                    type="submit" 
+                    disabled={disabled} 
+                    className="bg-green-600"
+                    onClick={(e) => handleAddBalance(e)}
+                >Guardar Balance</Button>
               </div>
             </SheetClose>
           </SheetFooter>
