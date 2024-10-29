@@ -7,6 +7,9 @@ import { Button } from "../components/ui/button";
 import useFetch from "../hooks/use-fetch";
 import supabase from "../lib/supabase";
 import { getBalances } from "../database/crudBalances";
+import { FileChartColumnIncreasingIcon, EditIcon, XSquare, Download } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
+
 import {
   Select,
   SelectContent,
@@ -34,6 +37,11 @@ export default function DashboardMoneyAll({ months }) {
   ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
+  const [filterValue, setFilterValue] = useState("sinfiltro");
+
+  useEffect(() => {
+    setFilterValue(filterValue)
+  }, [filterValue, setFilterValue])
 
   const filteredMonths = months.filter((month) =>
     month.toLowerCase().includes(searchTerm.toLowerCase())
@@ -63,10 +71,21 @@ export default function DashboardMoneyAll({ months }) {
   useEffect(() => {
     if (dataBalances) {
       setBalanceInfo(dataBalances);
-      console.log(dataBalances) 
     }
   }, [dataBalances]);
   
+  // if(balanceInfo) {
+  //   balanceInfo.forEach(balance => console.log(balance.mes_balance, balance.año_balance));
+  // }
+
+  const filteredBalances = (balanceInfo || []).filter((balance) => {
+    const matchesSearchTerm =
+      balance.mes_balance.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      balance.año_balance.toLowerCase().includes(searchTerm.toLowerCase())
+  
+    return matchesSearchTerm;
+  });
+
 
   return (
     <div>
@@ -118,38 +137,69 @@ export default function DashboardMoneyAll({ months }) {
             <TableHead>AÑO</TableHead>
             <TableHead>MES</TableHead>
             <TableHead>PLANILLA</TableHead>
+            <TableHead>ACCIONES</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredMonths.map((month) => (
-            <TableRow key={month}>
-              <TableCell>{month}</TableCell>
-              <TableCell>{month}</TableCell>
+          {loading 
+          ? (
+            <>
+              <TableRow>
+                <TableCell>
+                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                </TableCell>
+              </TableRow>
+              <TableRow>
               <TableCell>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                    ></path>
-                  </svg>
-                  cobrosgastos.xls
-                </Button>
+                <Skeleton className="w-1/2 h-5 bg-gray-200" />
               </TableCell>
-            </TableRow>
-          ))}
+              <TableCell>
+                <Skeleton className="w-1/2 h-5 bg-gray-200" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="w-1/2 h-5 bg-gray-200" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="w-1/2 h-5 bg-gray-200" />
+              </TableCell>
+              </TableRow>
+            </>
+          ) 
+          : (
+            filteredBalances.map((balance, i) => (
+              <TableRow key={i}>
+                <TableCell className="w-1/4">{balance.año_balance}</TableCell>
+                <TableCell className="w-1/4">{balance.mes_balance}</TableCell>
+                <TableCell className="w-1/4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    <FileChartColumnIncreasingIcon />
+                    {balance.file} Balance
+                  </Button>
+                </TableCell>          
+                <TableCell className="flex flex-row items-center  gap-7 pt-[18px]"> 
+                  <EditIcon size={28} className="cursor-pointer hover:text-blue-500 transition-all"/>
+                  <XSquare size={28} className="cursor-pointer hover:text-red-500 transition-all"/>
+                  <Download size={28} className="cursor-pointer hover:text-green-500 transition-all"/>
+                </TableCell>
+              </TableRow>
+            ))
+          ) 
+          }
+
+          
         </TableBody>
       </Table>
     </div>

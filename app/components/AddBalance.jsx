@@ -136,7 +136,7 @@ export default function AddBalance({months}) {
                 <span>Cargar documento</span>
                 <Plus size={20} color="green" className="border-[3px] border-green-500 w-5 h-5 rounded-full" />
               </Label>
-              <Input id="file-upload" className="hidden" type="file" onChange={handleFileChange} />
+              <Input id="file-upload" accept=".pdf, .xls, .xlsx, .csv" className="hidden" type="file" onChange={handleFileChange} />
             </div>
 
             <Collapsible className={`bg-gray-100 border rounded-b-2xl w-full ${showFile ? "h-auto" : "h-10"}`}>
