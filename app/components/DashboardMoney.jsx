@@ -53,7 +53,7 @@ export default function DashboardMoney() {
   const last = balanceInfo.length - 1
   const urlBalance = balanceInfo[last].url_excel
 
-  
+
   return (
     <Card className="w-full mx-auto border-none border-b-[1px]">
       <CardHeader className="px-0">
@@ -65,7 +65,7 @@ export default function DashboardMoney() {
         {loading 
         ? (
           <div className="flex gap-6">
-            <Skeleton className="w-1/6 h-5 bg-gray-200" />
+            <Skeleton className="w-[40%] h-5 bg-gray-200" />
             <Skeleton className="w-1/4 h-5 bg-gray-200" />
           </div>
         ) 

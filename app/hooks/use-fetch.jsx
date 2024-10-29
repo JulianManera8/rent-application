@@ -9,29 +9,23 @@ import { useState } from "react";
 
 
 export default function useFetch(cb, options = {}) {
-
-    const [ data, setData ] = useState(null);
-    const [ loading, setLoading ] = useState(true);
-    const [ error, setError ] = useState(null);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fn = async (...args) => {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null); // Reinicia el estado de error al comienzo de la solicitud
 
         try {
-            const response = await cb(options, ...args)
-            setData(response)
-            setError(null)
-
-            if(error) throw error;
-        } catch (error) {
-            setError(error)
-
+            const response = await cb(options, ...args);
+            setData(response);
+        } catch (err) {
+            setError(err); // Captura cualquier error que ocurra en cb
         } finally {
-            setLoading(false)
+            setLoading(false); // Cambia el estado de carga después de la solicitud
         }
+    };
 
-    }
-
-    return { data, loading, error, fn}
+    return { data, loading, error, fn };
 }

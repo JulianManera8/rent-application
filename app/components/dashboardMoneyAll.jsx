@@ -143,34 +143,35 @@ export default function DashboardMoneyAll({ months }) {
         <TableBody>
           {loading 
           ? (
+            //SKELETON
             <>
               <TableRow>
                 <TableCell>
-                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
                 </TableCell>
                 <TableCell>
-                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
                 </TableCell>
                 <TableCell>
-                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
                 </TableCell>
                 <TableCell>
-                  <Skeleton className="w-1/2 h-5 bg-gray-200" />
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
                 </TableCell>
               </TableRow>
               <TableRow>
-              <TableCell>
-                <Skeleton className="w-1/2 h-5 bg-gray-200" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-1/2 h-5 bg-gray-200" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-1/2 h-5 bg-gray-200" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-1/2 h-5 bg-gray-200" />
-              </TableCell>
+                <TableCell>
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
+                </TableCell>
               </TableRow>
             </>
           ) 

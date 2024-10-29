@@ -83,6 +83,8 @@ export default function AddBalance({months}) {
     setDisabled(true)
   };
 
+  console.log(loading)
+
   return (
     <Sheet>
       <SheetTrigger className="bg-green-600 text-white rounded-lg h-10 px-6 font-bold text-md hover:bg-green-800">
