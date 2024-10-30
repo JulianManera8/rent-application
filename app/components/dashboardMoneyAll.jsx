@@ -9,6 +9,7 @@ import supabase from "../lib/supabase";
 import { getBalances } from "../database/crudBalances";
 import { FileChartColumnIncreasingIcon, EditIcon, XSquare, Download } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
+import { NavLink } from '@remix-run/react'
 
 import {
   Select,
@@ -176,28 +177,41 @@ export default function DashboardMoneyAll({ months }) {
             </>
           ) 
           : (
-            filteredBalances.map((balance, i) => (
-              <TableRow key={i}>
-                <TableCell className="w-1/4">{balance.año_balance}</TableCell>
-                <TableCell className="w-1/4">{balance.mes_balance}</TableCell>
-                <TableCell className="w-1/4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center"
-                  >
-                    <FileChartColumnIncreasingIcon />
-                    {balance.file} Balance
-                  </Button>
-                </TableCell>          
-                <TableCell className="flex flex-row items-center  gap-7 pt-[18px]"> 
-                  <EditIcon size={28} className="cursor-pointer hover:text-blue-500 transition-all"/>
-                  <XSquare size={28} className="cursor-pointer hover:text-red-500 transition-all"/>
-                  <Download size={28} className="cursor-pointer hover:text-green-500 transition-all"/>
+            filteredBalances.length < 1 
+            ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={6} className="text-center py-4">
+                  No hay balances todavía.
                 </TableCell>
-              </TableRow>
-            ))
-          ) 
+              </TableRow>)
+            : (
+              filteredBalances.map((balance, i) => (
+                <TableRow key={i} className="h-full">
+                  <TableCell className="w-1/4">{balance.año_balance}</TableCell>
+                  <TableCell className="w-1/4">{balance.mes_balance}</TableCell>
+                  <TableCell className="w-1/4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center"
+                    >
+                      <FileChartColumnIncreasingIcon />
+                      {balance.file} Balance
+                    </Button>
+                  </TableCell>          
+                  <TableCell className="h-full"> 
+                    <div className="h-full flex flex-row items-center  gap-7 ">
+                    <EditIcon size={28} className="cursor-pointer hover:text-blue-500 transition-all"/>
+                    <XSquare size={28} className="cursor-pointer hover:text-red-500 transition-all"/>
+                    <Download size={28} className="cursor-pointer hover:text-green-500 transition-all"/>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+              )
+            ) 
+            
+          
           }
 
           

@@ -50,8 +50,8 @@ export default function DashboardMoney() {
 
 
   //funcion para mostrar el ultimo balance cargado
-  const last = balanceInfo.length - 1
-  const urlBalance = balanceInfo[last].url_excel
+  const last = balanceInfo?.length - 1
+  const urlBalance = balanceInfo[last]?.url_excel
 
 
   return (
@@ -70,25 +70,31 @@ export default function DashboardMoney() {
           </div>
         ) 
         : (
-          <div className="flex items-center justify-start space-x-5">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="h-8 w-8 text-green-500" />
-              <span className="text-xl font-bold">
-                Ultimo balance: {balanceInfo[last].mes_balance},
-                {' '} {balanceInfo[last].año_balance}
-              </span>
-            </div>
-            <Button
-              variant="outline"
-              className="flex items-center space-x-2 text-lg"
-            >
-              <FileChartColumnIncreasingIcon className="h-5 w-5" />
-              <a href={urlBalance} target="_blank" rel="noreferrer">
-                Balance
-              </a>
-            </Button>
-            <span className="text-sm text-gray-300"> Click para abrir </span>
-          </div>
+          (balanceInfo.length < 1  
+            ? (
+              <p className="flex justify-center items-center"> No hay balances cargados todavia. <NavLink to="/dashboard/money"> <Button className="ml-3 bg-green-600 color-white"> Agregar balance </Button></NavLink> </p>
+            )
+            : (<div className="flex items-center justify-start space-x-5">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-8 w-8 text-green-500" />
+                <span className="text-xl font-bold">
+                  Ultimo balance: {balanceInfo[last]?.mes_balance},
+                  {' '} {balanceInfo[last]?.año_balance}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                className="flex items-center space-x-2 text-lg"
+              >
+                <FileChartColumnIncreasingIcon className="h-5 w-5" />
+                <a href={urlBalance} target="_blank" rel="noreferrer">
+                  Balance
+                </a>
+              </Button>
+              <span className="text-sm text-gray-300"> Click para abrir </span>
+            </div>) 
+          )
+          
         )}
 
         <div className="flex justify-center mt-5">

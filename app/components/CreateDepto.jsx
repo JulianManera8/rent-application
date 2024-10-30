@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import Spinner from '../components/loaderIcon'
+import HandleGrupo from './HandleGrupo';
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
@@ -23,6 +24,7 @@ export default function CreateDepto() {
   const [fotos, setFotos] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
   const [showFotos, setShowFotos] = useState(false);
+  const [grupoSelected, setGrupoSelected] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -85,7 +87,8 @@ export default function CreateDepto() {
     user_id: '',
     obs_datos: '', //text
     files: files,
-    fotos: fotos
+    fotos: fotos,
+    grupo_id:''
   })
 
   const { loading, fn: dbCreatePrueba } = useFetch(createDepto, {newDepto});
@@ -121,8 +124,8 @@ export default function CreateDepto() {
           obs_datos: "", //text
           files: files,
           fotos: fotos,
+          grupo_id: "", 
         });
-
 
       } catch (error) {
         console.error('error al cargar el depto o los docs')
@@ -149,6 +152,8 @@ export default function CreateDepto() {
     <div className="container mx-auto w-full mr-14 px-0 mt-10">
       <Form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
         
+        <HandleGrupo />
+
         <div className="min-w-56">
           <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">
             <p>Ubicacion</p> <span className='text-gray-400 text-xs'>Calle numero, piso-departamento</span>
