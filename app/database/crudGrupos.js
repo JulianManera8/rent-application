@@ -18,30 +18,28 @@ export async function getGrupos({ user_id }) {
 
 //FUNCION PARA CREAR GRUPOS POR USUARIO
 export async function insertGrupo({ createGrupoInfo }) {
-  
     try {
-      // Insertar registro en la base de datos
-      const { data, error } = await supabase
-        .from("grupos")
-        .insert([
-          {
-            user_id: createGrupoInfo.user_id,
-            grupo_name: createGrupoInfo.nombreGrupo,
-          },
-        ]);
-  
-      if (error) {
-        alert("Error en la inserción:", error.message);
-        throw new Error(error.message);
-      }
-  
-      console.log("Grupo creado:", data);
-      return data;
-  
+        const { data, error } = await supabase
+            .from("grupos")
+            .insert([
+                {
+                    user_id: createGrupoInfo.userId,
+                    grupo_name: createGrupoInfo.nombreGrupo,
+                },
+            ])
+            .select();
+
+        if (error) {
+            console.error("Error en la inserción:", error.message);
+            throw new Error(error.message);
+        }
+
+        console.log("Grupo creado:", data);
+        return data;  // Asegúrate de que `data` sea retornado correctamente
+
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error en la creacion del grupo, intenta nuevamente.");
-      return null;
+        console.error("Error:", error);
+        return null;
     }
 }
 

@@ -456,7 +456,7 @@ export default function CreateDepto() {
                 <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
                   <ChevronsUpDown size={20} />
                   <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
-                    Ver documentos seleccionados{" "}
+                    Ver documentos seleccionados
                   </p>
                 </div>
               </CollapsibleTrigger>

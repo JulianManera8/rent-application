@@ -101,7 +101,6 @@ export default function AddBalance({months}) {
           </SheetDescription>
         </SheetHeader>
         <Form className=" space-y-10 w-full mt-8">
-
           <div className="min-w-full space-y-2">
             <Label htmlFor="mesBalance" className="font-bold text-md">Mes del balance</Label>
             <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, mes_balance: value }))} className="w-full">
