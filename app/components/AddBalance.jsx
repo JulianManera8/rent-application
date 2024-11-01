@@ -87,7 +87,7 @@ export default function AddBalance({months}) {
 
   return (
     <Sheet>
-      <SheetTrigger className="bg-green-600 text-white rounded-lg h-10 px-6 font-bold text-md hover:bg-green-800">
+      <SheetTrigger className="bg-green-600 w-fit flex items-center text-white rounded-lg h-12 px-6 font-bold text-md hover:bg-green-800 transition-all">
         Agregar Balance
       </SheetTrigger>
       <SheetContent>
