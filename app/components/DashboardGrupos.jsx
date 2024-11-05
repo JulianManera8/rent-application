@@ -6,18 +6,21 @@ import { Link, NavLink, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { EditIcon, FileChartColumnIcon } from "lucide-react";
+import { EditIcon, FileChartColumnIcon, Dot, XSquare } from "lucide-react";
 import useFetch from "../hooks/use-fetch";
 import { getGrupos, insertGrupo } from "../database/crudGrupos";
 import supabase from "../lib/supabase";
 import SkeletonLoading from "../components/skeletonTable";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../components/ui/dialog"
 import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle } from "../components/ui/card"
 import { Skeleton } from "./ui/skeleton";
 import { getDeptos } from "../database/crudDeptos";
 import { getBalances } from "../database/crudBalances";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
 
 export default function DashboardGrupos() {
+  const [isOpen, setIsOpen] = useState(false)
+
   const [userLoged_id, setUserLoged_id] = useState(null);
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
@@ -27,6 +30,23 @@ export default function DashboardGrupos() {
   const navigate = useNavigate();
   const [validated, setValidated] = useState(true)
   const [cerrar, setCerrar] = useState(false)
+
+  const [inputBorrar, setInputBorrar ] = useState('')
+  const [disabledContinue, setDisabledContinue ] = useState(true)
+
+  useEffect(() => {
+    
+    if(inputBorrar === 'CONFIRMO BORRAR TODO') {
+      return setDisabledContinue(false)
+    } else {
+      return setDisabledContinue(true)
+    }
+
+  }, [inputBorrar])
+
+  const handleDeleteDepto = (e) => {
+    console.log('borrar')
+  }
 
   useEffect(() => {
     async function getUser() {
@@ -113,6 +133,10 @@ const handleCreateGrupo = async (e) => {
     }
 };
 
+setTimeout(() => {
+  setIsOpen(true)
+}, 300);
+
   return (
     <div className={`w-full py-10 px-0`}>
       <div className="flex justify-between items-center mb-10">
@@ -120,6 +144,7 @@ const handleCreateGrupo = async (e) => {
           Todos los Grupos
         </h1>
         <div>
+          {/* CREAR GRUPO NUEVO */}
           <Dialog>
             <DialogTrigger className="w-full">
               <p className="bg-green-600 w-fit flex items-center text-white rounded-lg h-12 px-6 font-bold text-md hover:bg-green-800 transition-all">
@@ -186,6 +211,8 @@ const handleCreateGrupo = async (e) => {
       ) : getGrupoInfo?.length > 0 ? (
         <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-20 gap-y-6">
           {getGrupoInfo?.map((grupo) => (
+
+            //  open={isOpen} onOpenChange={setIsOpen}
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
                 <Card className="bg-gray-50 shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
@@ -210,9 +237,16 @@ const handleCreateGrupo = async (e) => {
                           )
                           .map((depto, i) => (
                             <ul key={i}>
-                              <li className="ml-4 font-extrabold ">
-                                {i < 2 ? (<li className="list-disc"> {depto?.ubicacion_completa} </li>) : ""}
-                                {i === 2 ? "..." : ""}
+                              <li className="ml-2 font-extrabold ">
+                                {i < 2 ? (
+                                  <div className="flex items-center">
+                                    {" "}
+                                    <Dot /> {depto?.ubicacion_completa}{" "}
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                                <p className="ml-6">{i === 2 ? "..." : ""}</p>
                               </li>
                             </ul>
                           ))
@@ -233,19 +267,20 @@ const handleCreateGrupo = async (e) => {
                           )
                           .map((balance, i) => (
                             <ul key={i}>
-                              <li className="flex items-center mb-3 ml-4 list-disc">
+                              <li className="flex items-center mb-3">
                                 {i < 2 ? (
-                                  <li>
+                                  <div className="flex items-center">
+                                    <Dot />
                                     {balance?.mes_balance},{" "}
                                     {balance?.año_balance}
                                     <Button className="ml-3 bg-gray-300 h-7 text-sm text-black hover:bg-gray-300">
                                       <FileChartColumnIcon /> Balance
                                     </Button>
-                                  </li>
+                                  </div>
                                 ) : (
                                   ""
                                 )}
-                                {i === 2 ? "..." : ""}
+                                <p className="ml-6">{i === 2 ? "..." : ""}</p>
                               </li>
                             </ul>
                           ))
@@ -261,7 +296,105 @@ const handleCreateGrupo = async (e) => {
                 </Card>
               </DialogTrigger>
               <DialogContent>
-                SEGUIR ACA COMPA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                <DialogHeader>
+                  <DialogTitle className="text-2xl flex items-center gap-x-8" >
+                    Grupo: {grupo.grupo_name} 
+                    <EditIcon size={22} className="cursor-pointer text-gray-400 hover:text-blue-500 transition-all" />
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-400 text-md">
+                    Creado en fecha: {grupo.grupo_createdAt}
+                  </DialogDescription>
+                </DialogHeader>
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold mb-2 underline-offset-custom">Propiedades:</h3>
+                    <ul>
+                      {deptos?.filter((depto) => depto?.grupo_id === grupo.grupo_id).map((depto) => (
+                          <li key={depto.id}>
+                            <div className="flex items-center border-b border-t py-3 justify-between">
+                              <div className="h-full flex flex-row items-center ">
+                                <Dot /> {depto?.ubicacion_completa} 
+                              </div>
+                              <div className="h-full flex flex-row items-center  gap-x-2">
+                                <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/>
+                                <XSquare size={23} className="cursor-pointer hover:text-red-500 transition-all"/>
+                              </div>
+                            </div>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold mb-2 underline-offset-custom">Balances:</h3>
+                    <ul>
+                      {balances?.filter(
+                          (balance) => balance?.grupo_id === grupo.grupo_id
+                        ).map((balance) => (
+                           <li key={balance.id}className="flex mb-2">
+                            <div className="flex items-center border-b border-t py-3 justify-between w-full">
+                              <div className="h-full flex flex-row items-center ">
+                                <Dot /> {balance.mes_balance}, {balance.año_balance} 
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="ml-3"
+                                >
+                                  <FileChartColumnIcon className="mr-1 h-4 w-4" />
+                                  Ver Balance
+                                </Button>
+                              </div>
+                              <div className="h-full flex flex-row items-center  gap-x-2">
+                                <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" />
+                                {/* <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/> */}
+                                <XSquare size={23} className="cursor-pointer hover:text-red-500 transition-all"/>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+
+                  <DialogFooter className="sm:justify-center gap-y-5 gap-x-6 mt-4">
+                    <DialogClose asChild>
+                      <Button> Cerrar </Button>
+                    </DialogClose>
+
+                    {/* BOTON PARA BORRAR PROPIEDAD */}
+                    <AlertDialog>
+                        <AlertDialogTrigger className="bg-red-600 hover:bg-red-700 text-white p-2 px-4 rounded-md">
+                          Borrar Propiedad
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="flex flex-col items-center">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-center text-2xl">
+                              Estas a punto de borrar un grupo
+                            </AlertDialogTitle>
+
+                            <AlertDialogDescription className="text-center text-lg text-red-500 font-bold">
+                              ¡Borrarás también todas sus propiedades y balances!
+                            </AlertDialogDescription>
+
+                            <AlertDialogDescription className="text-center text-lg text-red-500">
+                              ¡Esta accion no se puede revertir!
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter className="flex justify-center gap-6 mt-3 md:justify-center">
+                            <AlertDialogCancel onClick={() => setInputBorrar('')}>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={(e) => handleDeleteDepto(e)}  disabled={disabledContinue}>Continuar</AlertDialogAction>
+                          </AlertDialogFooter>
+                            <div>
+                              <Label> Escribe <strong className="px-2"> CONFIRMO BORRAR TODO </strong> para confirmar esta accion</Label>
+                              <Input 
+                                className="mt-4" 
+                                type="text" 
+                                value={inputBorrar} 
+                                onChange={(e) => setInputBorrar(e.target.value.trimStart().toUpperCase())}
+                              />
+                            </div>
+                          </AlertDialogContent>
+                    </AlertDialog>
+                  </DialogFooter>
               </DialogContent>
             </Dialog>
           ))}
