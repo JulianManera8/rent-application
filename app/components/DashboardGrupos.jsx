@@ -17,8 +17,6 @@ import { Skeleton } from "./ui/skeleton";
 import { getDeptos } from "../database/crudDeptos";
 import { getBalances } from "../database/crudBalances";
 
-
-
 export default function DashboardGrupos() {
   const [userLoged_id, setUserLoged_id] = useState(null);
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
@@ -29,9 +27,6 @@ export default function DashboardGrupos() {
   const navigate = useNavigate();
   const [validated, setValidated] = useState(true)
   const [cerrar, setCerrar] = useState(false)
-  const [expandir, setExpandir] = useState(false)
-
-
 
   useEffect(() => {
     async function getUser() {
@@ -189,64 +184,86 @@ const handleCreateGrupo = async (e) => {
           </CardFooter>
         </Card>
       ) : getGrupoInfo?.length > 0 ? (
-        <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-12">
+        <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-20 gap-y-6">
           {getGrupoInfo?.map((grupo) => (
-            <Card
-              key={grupo.grupo_id}
-              className="bg-gray-50 shadow-lg mx-3 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[410px] max-h-[410px]"
-            >
-              <CardHeader className="h-1/4">
-                <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
-                <CardDescription>
-                  Creado en fecha: {grupo.grupo_createdAt}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative h-3/4">
-                <div className="mb-5">
-                  <p className="mb-2 text-lg font-extrabold">Propiedades dentro del grupo:</p>
-                  {deptos?.filter((depto) => depto?.grupo_id === grupo?.grupo_id).length > 0 
-                  ? (
-                    deptos?.filter((depto) => depto?.grupo_id === grupo?.grupo_id).map((depto, i) => (
-                        <ul key={i}>
-                          <li className="ml-4">
-                            { i < 2 ? (depto?.ubicacion_completa) : '' }
-                            { i === 2 ? '...' : '' }
-                          </li>
-                        </ul>
-                      ))
-                  ) : (
-                    <p>No hay departamentos asignados a este grupo.</p>
-                  )}
-                </div>
-                <div>
-                  <p className="mb-3 text-lg font-extrabold">Balances dentro del grupo:</p>
-                  {balances?.filter((balance) => balance?.grupo_id === grupo?.grupo_id).length > 0 
-                  ? (
-                    balances?.filter((balance) => balance?.grupo_id === grupo?.grupo_id).map((balance, i) => (
-                        <ul key={i}>
-                          <li className="flex items-center mb-3 ml-4">
-                                { i < 2 ? (
-                                    <>
-                                        {balance?.mes_balance}, {' '} {balance?.año_balance}
-                                        <Button className="ml-3 bg-gray-300 h-7 text-sm text-black hover:bg-gray-300">
-                                            <FileChartColumnIcon /> Balance 
-                                        </Button>
-                                    </>
-                                ) : '' }
-                                { i === 2 ? '...' : '' }
-                            </li>
-                        </ul>
-                      ))
-                  ) : (
-                    <p>No hay balances asignados a este grupo.</p>
-                  )}
-                </div>
-                <div className="absolute flex right-5 bottom-2 gap-1">
-                  <EditIcon />
-                  <p>Ver mas </p>
-                </div>
-              </CardContent>
-            </Card>
+            <Dialog key={grupo.grupo_id}>
+              <DialogTrigger asChild>
+                <Card className="bg-gray-50 shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
+                  <CardHeader className="h-1/4">
+                    <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
+                    <CardDescription className="pt-1">
+                      Creado en fecha: {grupo.grupo_createdAt}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="relative h-3/4">
+                    <div className="h-[43%]">
+                      <p className="mb-2 text-lg font-extrabold text-gray-400 underline-offset-custom">
+                        Propiedades dentro del grupo:
+                      </p>
+                      {/* Si hay deptos, solo mostrame los 2 primeros y si hay mas, pone puntos suspensivos */}
+                      {deptos?.filter(
+                        (depto) => depto?.grupo_id === grupo?.grupo_id
+                      ).length > 0 ? (
+                        deptos
+                          ?.filter(
+                            (depto) => depto?.grupo_id === grupo?.grupo_id
+                          )
+                          .map((depto, i) => (
+                            <ul key={i}>
+                              <li className="ml-4 font-extrabold ">
+                                {i < 2 ? (<li className="list-disc"> {depto?.ubicacion_completa} </li>) : ""}
+                                {i === 2 ? "..." : ""}
+                              </li>
+                            </ul>
+                          ))
+                      ) : (
+                        <p>No hay departamentos asignados a este grupo.</p>
+                      )}
+                    </div>
+                    <div className="h-1/2">
+                      <p className="mb-3 text-lg font-extrabold text-gray-400 underline-offset-custom">
+                        Balances dentro del grupo:
+                      </p>
+                      {balances?.filter(
+                        (balance) => balance?.grupo_id === grupo?.grupo_id
+                      ).length > 0 ? (
+                        balances
+                          ?.filter(
+                            (balance) => balance?.grupo_id === grupo?.grupo_id
+                          )
+                          .map((balance, i) => (
+                            <ul key={i}>
+                              <li className="flex items-center mb-3 ml-4 list-disc">
+                                {i < 2 ? (
+                                  <li>
+                                    {balance?.mes_balance},{" "}
+                                    {balance?.año_balance}
+                                    <Button className="ml-3 bg-gray-300 h-7 text-sm text-black hover:bg-gray-300">
+                                      <FileChartColumnIcon /> Balance
+                                    </Button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                                {i === 2 ? "..." : ""}
+                              </li>
+                            </ul>
+                          ))
+                      ) : (
+                        <p>No hay balances asignados a este grupo.</p>
+                      )}
+                    </div>
+                    <div className="absolute flex right-5 bottom-2 gap-1">
+                      <EditIcon />
+                      <p>Ver mas </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent>
+                SEGUIR ACA COMPA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+              </DialogContent>
+            </Dialog>
           ))}
         </section>
       ) : (

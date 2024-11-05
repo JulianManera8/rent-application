@@ -12,6 +12,8 @@ import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../components/ui/sheet";
 import { Form } from "@remix-run/react";
+import HandleGrupo from './HandleGrupo';
+
 
 export default function AddBalance({months}) {
 
@@ -27,6 +29,7 @@ export default function AddBalance({months}) {
   
   const [balanceInfo, setBalanceInfo] = useState({
     user_id: "",
+    grupo_id: "",
     mes_balance: "",
     año_balance: "",
     file: null, 
@@ -83,7 +86,9 @@ export default function AddBalance({months}) {
     setDisabled(true)
   };
 
-  console.log(loading)
+  const handleSelectChange = (value) => {
+    setBalanceInfo({...balanceInfo, grupo_id: value});
+  }
 
   return (
     <Sheet>
@@ -101,6 +106,11 @@ export default function AddBalance({months}) {
           </SheetDescription>
         </SheetHeader>
         <Form className=" space-y-10 w-full mt-8">
+
+          <div>
+            <HandleGrupo onSelectChange={handleSelectChange}/>
+          </div>
+
           <div className="min-w-full space-y-2">
             <Label htmlFor="mesBalance" className="font-bold text-md">Mes del balance</Label>
             <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, mes_balance: value }))} className="w-full">

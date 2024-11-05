@@ -55,6 +55,11 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%
   }
+
+  .underline-offset-custom {
+    text-decoration: underline;
+    text-underline-offset: 4px; /* Ajusta el valor según la separación que quieras */
+  }
 }
 @layer base {
   * {

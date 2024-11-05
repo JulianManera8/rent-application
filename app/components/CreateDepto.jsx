@@ -24,7 +24,6 @@ export default function CreateDepto() {
   const [fotos, setFotos] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
   const [showFotos, setShowFotos] = useState(false);
-  const [grupoSelected, setGrupoSelected] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -91,6 +90,12 @@ export default function CreateDepto() {
     grupo_id:''
   })
 
+  const handleSelectChange = (value) => {
+    setNewDepto({...newDepto, grupo_id: value})
+  };
+
+  console.log(newDepto)
+
   const { loading, fn: dbCreatePrueba } = useFetch(createDepto, {newDepto});
 
   const handleSubmit = async (e) => {
@@ -147,12 +152,14 @@ export default function CreateDepto() {
       return setShowFotos(false)
     }
   };
+
+
   
   return (
     <div className="container mx-auto w-full mr-14 px-0 mt-10">
       <Form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
         
-        <HandleGrupo />
+        <HandleGrupo onSelectChange={handleSelectChange}/>
 
         <div className="min-w-56">
           <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
@@ -9,19 +10,18 @@ import { useEffect, useState } from "react";
 import useFetch from '../hooks/use-fetch'
 import { getGrupos, insertGrupo } from '../database/crudGrupos'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
-import { X } from "lucide-react";
 
 import { Skeleton } from '../components/ui/skeleton';
   
 
-export default function HandleGrupo() {
+export default function HandleGrupo({onSelectChange}) {
     const [userLoged_id, setUserLoged_id] = useState(null)
     const [createGrupoInfo, setCreateGrupoInfo] = useState({
         userId: userLoged_id,
         nombreGrupo: ''
     })
     const [getGrupoInfo, setGetGrupoInfo] = useState([])
-    const [grupoSelected, setGrupoSelected] = useState(null)
+    const [grupoSelectedId, setGrupoSelectedId] = useState(null)
     const [cerrar, setCerrar] = useState(false)
     const [validated, setValidated] = useState(true)
 
@@ -99,14 +99,27 @@ export default function HandleGrupo() {
         }
     };
 
-    
+    useEffect(() => {
+      if (grupoSelectedId != null) {
+
+          const idGrupo = getGrupoInfo.filter( grupo => {
+            if(grupo.grupo_name === grupoSelectedId) {
+              return grupo.grupo_id
+            }
+          });
+          
+          onSelectChange(idGrupo[0].grupo_id);
+      }
+    }, [grupoSelectedId]);
+
+
     return (
       <div className="min-w-full space-y-2 mt-1">
         <Label htmlFor="mesBalance" className="font-bold text-md">
           Asignar grupo
         </Label>
         <Select
-          onValueChange={(value) => setGrupoSelected(value)}
+          onValueChange={(value) => setGrupoSelectedId(value)}
           className="w-full"
         >
           <SelectTrigger className="w-full">

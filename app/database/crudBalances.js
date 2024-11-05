@@ -25,6 +25,7 @@ export async function insertBalance({ balanceInfo }) {
       .insert([
         {
           user_id: balanceInfo.user_id,
+          grupo_id: balanceInfo.grupo_id,
           mes_balance: balanceInfo.mes_balance,
           año_balance: balanceInfo.año_balance,
           url_excel: url,

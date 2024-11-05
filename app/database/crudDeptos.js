@@ -85,6 +85,7 @@ export async function createDepto({ newDepto }) {
         fecha_actualizacion_cobro: newDepto.fecha_actualizacion_cobro, 
         user_id: newDepto.user_id,
         obs_datos: newDepto.obs_datos, 
+        grupo_id: newDepto.grupo_id,
       },
     ])
     .select();
