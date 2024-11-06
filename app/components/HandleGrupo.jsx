@@ -24,6 +24,7 @@ export default function HandleGrupo({onSelectChange}) {
     const [grupoSelectedId, setGrupoSelectedId] = useState(null)
     const [cerrar, setCerrar] = useState(false)
     const [validated, setValidated] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         async function getUser() {
@@ -75,12 +76,13 @@ export default function HandleGrupo({onSelectChange}) {
     
         try {
             if (userLoged_id) {
-                const result = await insertGrupo({ createGrupoInfo });  // Llamada directa a insertGrupo
+                const result = await insertGrupo({ createGrupoInfo }); 
                 setCerrar(true)
 
                 setTimeout(() => {
                     setCerrar(false)
-                }, 5000);
+                    setIsOpen(false)
+                }, 2000);
                 if (result && result.length > 0) {
                     setGetGrupoInfo((prev) => [
                         ...prev,
@@ -144,8 +146,8 @@ export default function HandleGrupo({onSelectChange}) {
                 </SelectItem>
               ))
             )}
-            <Dialog>
-              <DialogTrigger className="w-full">
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger className="w-full" onClick={() => setIsOpen(true)}>
                 <p className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
                   Crear nuevo grupo
                 </p>
@@ -176,9 +178,9 @@ export default function HandleGrupo({onSelectChange}) {
                       {cerrar ? 'Creado' : 'Agregar'}
                     </Button>
                     {cerrar ? (
-                      <Label className="text-center w-full font-bold text-red-700">
+                      <Label className="text-center w-full font-bold text-green-700">
                         {" "}
-                        Ya puedes cerrar esto{" "}
+                        Grupo creado correctamente{" "}
                       </Label>
                     ) : (
                       ""

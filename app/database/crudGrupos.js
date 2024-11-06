@@ -55,3 +55,27 @@ export async function removeDepto({ grupoId }) {
       throw new Error("Unable to delete grupo");
     }
 }
+
+
+//FUNCION PARA UPDATE GRUPO NAME
+export async function editGroupName({ id_NewName }) {
+  try {
+    const { data, error } = await supabase
+      .from('grupos')
+      .update({ grupo_name: id_NewName.newGroupName })
+      .eq('id', id_NewName?.idGrupo)
+      .select()
+
+    if (error) {
+        console.error("Error en la inserción:", error.message);
+        throw new Error(error.message);
+    }
+
+    console.log("Grupo creado:", data);
+    return data;  // Asegúrate de que `data` sea retornado correctamente
+
+} catch (error) {
+    console.error("Error:", error);
+    return null;
+}
+}

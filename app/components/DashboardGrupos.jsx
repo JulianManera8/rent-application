@@ -1,3 +1,4 @@
+
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -8,7 +9,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { EditIcon, FileChartColumnIcon, Dot, XSquare } from "lucide-react";
 import useFetch from "../hooks/use-fetch";
-import { getGrupos, insertGrupo } from "../database/crudGrupos";
+import { getGrupos, insertGrupo, editGroupName } from "../database/crudGrupos";
 import supabase from "../lib/supabase";
 import SkeletonLoading from "../components/skeletonTable";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../components/ui/dialog"
@@ -17,6 +18,7 @@ import { Skeleton } from "./ui/skeleton";
 import { getDeptos } from "../database/crudDeptos";
 import { getBalances } from "../database/crudBalances";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
+import SkeCard from "./skeletonCardsGroups";
 
 export default function DashboardGrupos() {
   const [isOpen, setIsOpen] = useState(false)
@@ -34,6 +36,12 @@ export default function DashboardGrupos() {
   const [inputBorrar, setInputBorrar ] = useState('')
   const [disabledContinue, setDisabledContinue ] = useState(true)
 
+  const [editName, setEditName ] = useState(false)
+  const [id_NewName, setNewName] = useState({
+    idGrupo: '',
+    newGroupName: '',
+  })
+
   useEffect(() => {
     
     if(inputBorrar === 'CONFIRMO BORRAR TODO') {
@@ -44,7 +52,43 @@ export default function DashboardGrupos() {
 
   }, [inputBorrar])
 
-  const handleDeleteDepto = (e) => {
+  const handleChangeName = (e) => {
+    setNewName({...id_NewName, newGroupName: e.target.value})
+  }
+
+  const { loading: loadingUpdateBalance, error: errorUpdateName, data: hola, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
+
+  useEffect(() => {
+    if (id_NewName.idGrupo && id_NewName.newGroupName) {
+      console.log(id_NewName)
+      fnUpdateNameGroup({id_NewName}) 
+
+      if(errorUpdateName) return console.error(errorUpdateName)
+      
+      setGetGrupoInfo(prevInfo =>
+        prevInfo.map(grupo =>
+          grupo.grupo_id === id_NewName.idGrupo
+            ? { ...grupo, grupo_name: id_NewName.newGroupName }              
+            : grupo
+        )
+      );
+
+      setNewName({
+        idGrupo: '',
+        newGroupName: '',
+      })
+      setEditName(false)
+      console.log(hola)
+      
+    } 
+  }, [id_NewName.idGrupo, id_NewName.newGroupName])
+
+  const submitNewName = (grupoId) => {
+    setNewName({ ...id_NewName, idGrupo: grupoId })
+  }
+
+
+  const handleDeleteGrupo = (e) => {
     console.log('borrar')
   }
 
@@ -82,7 +126,7 @@ useEffect(() => {
 useEffect(() => {
     if(grupos && grupos.length > 0) {
         // Mapea los grupos y actualiza el estado con todos los grupos
-        const mappedGrupos = grupos.map(grupo => ({
+        const mappedGrupos = grupos.reverse().map(grupo => ({
             grupo_id: grupo.id,
             grupo_name: grupo.grupo_name, 
             user_id: grupo.user_id,
@@ -194,25 +238,11 @@ setTimeout(() => {
       </div>
 
       {loadingGetGrupos ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <Skeleton className="h-6 w-12 bg-gray-400" />
-            </CardTitle>
-            <CardDescription>Card Description</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Card Content</p>
-          </CardContent>
-          <CardFooter>
-            <p>Card Footer</p>
-          </CardFooter>
-        </Card>
+        <SkeCard />
       ) : getGrupoInfo?.length > 0 ? (
         <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-20 gap-y-6">
           {getGrupoInfo?.map((grupo) => (
-
-            //  open={isOpen} onOpenChange={setIsOpen}
+            // open={isOpen} onOpenChange={setIsOpen}
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
                 <Card className="bg-gray-50 shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
@@ -295,106 +325,226 @@ setTimeout(() => {
                   </CardContent>
                 </Card>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="md:max-h-[800px] sm:max-h-dvh overflow-scroll">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl flex items-center gap-x-8" >
-                    Grupo: {grupo.grupo_name} 
-                    <EditIcon size={22} className="cursor-pointer text-gray-400 hover:text-blue-500 transition-all" />
-                  </DialogTitle>
+                  {editName ? (
+                    <div className="space-y-2">
+                      <Label className="text-lg">
+                        {" "}
+                        Escribe el nuevo nombre{" "}
+                      </Label>
+                      <Input
+                        type="text"
+                        value={id_NewName.newGroupName}
+                        onChange={(e) => handleChangeName(e)}
+                      />
+                      <div className="flex justify-center gap-x-5 pb-4 pt-3">
+                        <Button
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                          onClick={() => {
+                            setEditName(!editName), setNewName("");
+                          }}
+                        >
+                          {" "}
+                          Cancelar{" "}
+                        </Button>
+                        <Button
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          onClick={() => submitNewName(grupo.grupo_id)}
+                        >
+                          {" "}
+                          Confirmar{" "}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <DialogTitle className="text-2xl flex items-center gap-x-8">
+                      Grupo: {grupo.grupo_name}
+                      <div
+                        className="text-2xl flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
+                        onClick={() => setEditName(!editName)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "p") {
+                            ("");
+                          }
+                        }}
+                      >
+                        <EditIcon size={22} className="cursor-pointer" />
+                        <p className="text-xs cursor-pointer">Editar nombre</p>
+                      </div>
+                    </DialogTitle>
+                  )}
+
                   <DialogDescription className="text-gray-400 text-md">
                     Creado en fecha: {grupo.grupo_createdAt}
                   </DialogDescription>
                 </DialogHeader>
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold mb-2 underline-offset-custom">Propiedades:</h3>
-                    <ul>
-                      {deptos?.filter((depto) => depto?.grupo_id === grupo.grupo_id).map((depto) => (
+
+                {/* Render de los DEPTOS */}
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2 underline-offset-custom">
+                    Propiedades:
+                  </h3>
+                  <ul>
+                    {deptos?.filter(
+                      (depto) => depto?.grupo_id === grupo?.grupo_id
+                    ).length > 0 ? (
+                      deptos
+                        ?.filter((depto) => depto?.grupo_id === grupo?.grupo_id)
+                        .map((depto) => (
+                          <li key={depto.id}>
+                            <div className="flex items-center border-b border-t py-3 justify-between">
+                              <div className="h-full flex flex-row items-center ">
+                                <Dot /> {depto?.ubicacion_completa}
+                              </div>
+                              <div className="h-full flex flex-row items-center transition-all gap-x-2 cursor-pointer hover:text-blue-500">
+                                <EditIcon
+                                  size={23}
+                                  onClick={() =>
+                                    navigate(`/dashboard/deptos/${depto.id}`, {
+                                      state: { infoDepto: depto },
+                                    })
+                                  }
+                                />
+                                Editar
+                              </div>
+                            </div>
+                          </li>
+                        ))
+                    ) : (
+                      <p>No hay departamentos asignados a este grupo.</p>
+                    )}
+                    {/* {deptos?.filter((depto) => depto?.grupo_id === grupo.grupo_id).map((depto) => (
                           <li key={depto.id}>
                             <div className="flex items-center border-b border-t py-3 justify-between">
                               <div className="h-full flex flex-row items-center ">
                                 <Dot /> {depto?.ubicacion_completa} 
                               </div>
-                              <div className="h-full flex flex-row items-center  gap-x-2">
-                                <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/>
-                                <XSquare size={23} className="cursor-pointer hover:text-red-500 transition-all"/>
+                              <div className="h-full flex flex-row items-center transition-all gap-x-2 cursor-pointer hover:text-blue-500">
+                                <EditIcon size={23}  onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/> 
+                                Editar
                               </div>
                             </div>
                           </li>
                         ))
-                      }
-                    </ul>
-                  </div>
+                      } */}
+                  </ul>
+                </div>
 
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold mb-2 underline-offset-custom">Balances:</h3>
-                    <ul>
-                      {balances?.filter(
-                          (balance) => balance?.grupo_id === grupo.grupo_id
-                        ).map((balance) => (
-                           <li key={balance.id}className="flex mb-2">
+                {/* Render de los BALANCES */}
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2 underline-offset-custom">
+                    Balances:
+                  </h3>
+                  <ul>
+                    {balances?.filter(
+                      (balance) => balance?.grupo_id === grupo?.grupo_id
+                    ).length > 0 ? (
+                      balances
+                        ?.filter(
+                          (balance) => balance?.grupo_id === grupo?.grupo_id
+                        )
+                        .map((balance, i) => (
+                          <li key={balance.id} className="flex mb-2">
                             <div className="flex items-center border-b border-t py-3 justify-between w-full">
                               <div className="h-full flex flex-row items-center ">
-                                <Dot /> {balance.mes_balance}, {balance.año_balance} 
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="ml-3"
+                                <Dot /> {balance.mes_balance},{" "}
+                                {balance.año_balance}
+                                <a
+                                  href={`${balance.url_excel}`} // URL directa del archivo
+                                  download={`balance_${balance.mes_balance}${balance.año_balance}.pdf`} // Nombre del archivo al descargar
                                 >
-                                  <FileChartColumnIcon className="mr-1 h-4 w-4" />
-                                  Ver Balance
-                                </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="ml-3 border-gray-400"
+                                  >
+                                    <FileChartColumnIcon className="mr-1 h-4 w-4" />
+                                    Ver Balance
+                                  </Button>
+                                </a>
                               </div>
                               <div className="h-full flex flex-row items-center  gap-x-2">
-                                <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" />
+                                <EditIcon
+                                  size={23}
+                                  className="cursor-pointer hover:text-blue-500 transition-all"
+                                />
                                 {/* <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/> */}
-                                <XSquare size={23} className="cursor-pointer hover:text-red-500 transition-all"/>
+                                <XSquare
+                                  size={23}
+                                  className="cursor-pointer hover:text-red-500 transition-all"
+                                />
                               </div>
                             </div>
                           </li>
-                        ))}
-                    </ul>
-                  </div>
+                        ))
+                    ) : (
+                      <p>No hay balances asignados a este grupo.</p>
+                    )}
+                  </ul>
+                </div>
 
-                  <DialogFooter className="sm:justify-center gap-y-5 gap-x-6 mt-4">
-                    <DialogClose asChild>
-                      <Button> Cerrar </Button>
-                    </DialogClose>
+                <DialogFooter className="sm:justify-center gap-y-5 gap-x-6 mt-4">
+                  <DialogClose asChild>
+                    <Button> Cerrar </Button>
+                  </DialogClose>
 
-                    {/* BOTON PARA BORRAR PROPIEDAD */}
-                    <AlertDialog>
-                        <AlertDialogTrigger className="bg-red-600 hover:bg-red-700 text-white p-2 px-4 rounded-md">
-                          Borrar Propiedad
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="flex flex-col items-center">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle className="text-center text-2xl">
-                              Estas a punto de borrar un grupo
-                            </AlertDialogTitle>
+                  {/* BOTON PARA BORRAR PROPIEDAD */}
+                  <AlertDialog>
+                    <AlertDialogTrigger className="bg-red-600 hover:bg-red-700 text-white p-2 px-4 rounded-md">
+                      Borrar Propiedad
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="flex flex-col items-center">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-center text-2xl">
+                          Estas a punto de borrar un grupo
+                        </AlertDialogTitle>
 
-                            <AlertDialogDescription className="text-center text-lg text-red-500 font-bold">
-                              ¡Borrarás también todas sus propiedades y balances!
-                            </AlertDialogDescription>
+                        <AlertDialogDescription className="text-center text-lg text-red-500 font-bold">
+                          ¡Borrarás también todas sus propiedades y balances!
+                        </AlertDialogDescription>
 
-                            <AlertDialogDescription className="text-center text-lg text-red-500">
-                              ¡Esta accion no se puede revertir!
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter className="flex justify-center gap-6 mt-3 md:justify-center">
-                            <AlertDialogCancel onClick={() => setInputBorrar('')}>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={(e) => handleDeleteDepto(e)}  disabled={disabledContinue}>Continuar</AlertDialogAction>
-                          </AlertDialogFooter>
-                            <div>
-                              <Label> Escribe <strong className="px-2"> CONFIRMO BORRAR TODO </strong> para confirmar esta accion</Label>
-                              <Input 
-                                className="mt-4" 
-                                type="text" 
-                                value={inputBorrar} 
-                                onChange={(e) => setInputBorrar(e.target.value.trimStart().toUpperCase())}
-                              />
-                            </div>
-                          </AlertDialogContent>
-                    </AlertDialog>
-                  </DialogFooter>
+                        <AlertDialogDescription className="text-center text-lg text-red-500">
+                          ¡Esta accion no se puede revertir!
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className="flex justify-center gap-6 mt-3 md:justify-center">
+                        <AlertDialogCancel onClick={() => setInputBorrar("")}>
+                          Cancelar
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={(e) => handleDeleteGrupo(e)}
+                          disabled={disabledContinue}
+                        >
+                          Continuar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                      <div>
+                        <Label>
+                          {" "}
+                          Escribe{" "}
+                          <strong className="px-2">
+                            {" "}
+                            CONFIRMO BORRAR TODO{" "}
+                          </strong>{" "}
+                          para confirmar esta accion
+                        </Label>
+                        <Input
+                          className="mt-4"
+                          type="text"
+                          value={inputBorrar}
+                          onChange={(e) =>
+                            setInputBorrar(
+                              e.target.value.trimStart().toUpperCase()
+                            )
+                          }
+                        />
+                      </div>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
           ))}
