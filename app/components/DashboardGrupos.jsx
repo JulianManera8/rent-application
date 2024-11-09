@@ -3,18 +3,16 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button } from "./ui/button";
-import { Link, NavLink, useNavigate } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { EditIcon, FileChartColumnIcon, Dot, XSquare } from "lucide-react";
 import useFetch from "../hooks/use-fetch";
-import { getGrupos, insertGrupo, editGroupName } from "../database/crudGrupos";
+import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../database/crudGrupos";
 import supabase from "../lib/supabase";
-import SkeletonLoading from "../components/skeletonTable";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../components/ui/dialog"
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle } from "../components/ui/card"
-import { Skeleton } from "./ui/skeleton";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { getDeptos } from "../database/crudDeptos";
 import { getBalances } from "../database/crudBalances";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
@@ -22,6 +20,7 @@ import SkeCard from "./skeletonCardsGroups";
 
 export default function DashboardGrupos() {
   const [isOpen, setIsOpen] = useState(false)
+  const [loadingDelete, setLoadingDelete] = useState(false)
 
   const [userLoged_id, setUserLoged_id] = useState(null);
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
@@ -52,11 +51,7 @@ export default function DashboardGrupos() {
 
   }, [inputBorrar])
 
-  const handleChangeName = (e) => {
-    setNewName({...id_NewName, newGroupName: e.target.value})
-  }
-
-  const { loading: loadingUpdateBalance, error: errorUpdateName, data: hola, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
+  const { loading: loadingUpdateBalance, error: errorUpdateName, data: updatedNameGroup, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
 
   useEffect(() => {
     if (id_NewName.idGrupo && id_NewName.newGroupName) {
@@ -78,18 +73,27 @@ export default function DashboardGrupos() {
         newGroupName: '',
       })
       setEditName(false)
-      console.log(hola)
       
     } 
   }, [id_NewName.idGrupo, id_NewName.newGroupName])
 
-  const submitNewName = (grupoId) => {
-    setNewName({ ...id_NewName, idGrupo: grupoId })
-  }
 
+  const handleDeleteGrupo = async (grupoId) => {
 
-  const handleDeleteGrupo = (e) => {
-    console.log('borrar')
+   try {
+    await removeGrupo(grupoId)
+    setLoadingDelete(true)
+    setTimeout(() => {
+      const filtrar = getGrupoInfo.filter( grupo => grupo.grupo_id !== grupoId)
+      setGetGrupoInfo(filtrar)
+      setLoadingDelete(false)
+    }, 2500);
+
+   } catch (error) {
+      setLoadingDelete(false)
+      console.error("Error al crear el grupo:", error.message || error);
+    }
+
   }
 
   useEffect(() => {
@@ -103,16 +107,16 @@ export default function DashboardGrupos() {
         }
     }   
     getUser()
-}, [])
+  }, [])
 
-const { loading: loadingGetBalances, error: errorGetBalances, data: balances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
+  const { loading: loadingGetBalances, error: errorGetBalances, data: balances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
 
-const { loading: loadingGetDeptos, data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
+  const { loading: loadingGetDeptos, data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
 
-//FUNCION PARA CAPTAR LOS GRUPOS SI ES Q HAY
-const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
+  //FUNCION PARA CAPTAR LOS GRUPOS SI ES Q HAY
+  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
 
-useEffect(() => {
+  useEffect(() => {
     if(userLoged_id) {
         fnGetGrupos(userLoged_id)
         if(errorGetGrupos) return console.error(errorGetGrupos)
@@ -121,9 +125,9 @@ useEffect(() => {
         fnGetBalances(userLoged_id)
         if(errorGetBalances) return console.error(errorGetBalances)
     }
-}, [userLoged_id])
+  }, [userLoged_id])
 
-useEffect(() => {
+  useEffect(() => {
     if(grupos && grupos.length > 0) {
         // Mapea los grupos y actualiza el estado con todos los grupos
         const mappedGrupos = grupos.reverse().map(grupo => ({
@@ -135,19 +139,19 @@ useEffect(() => {
 
         setGetGrupoInfo(mappedGrupos);
     }
-}, [grupos, userLoged_id ]);
+  }, [grupos, userLoged_id ]);
 
 
-useEffect(() => {
+  useEffect(() => {
     if(createGrupoInfo.nombreGrupo !== '') {
         return setValidated(false)
     }
 
     return setValidated(true)
-}, [createGrupoInfo.nombreGrupo])
+  }, [createGrupoInfo.nombreGrupo])
 
 
-const handleCreateGrupo = async (e) => {
+  const handleCreateGrupo = async (e) => {
     e.preventDefault();
 
     try {
@@ -175,14 +179,16 @@ const handleCreateGrupo = async (e) => {
     } catch (error) {
         console.error("Error al crear el grupo:", error.message || error);
     }
-};
+  };
 
-setTimeout(() => {
+  setTimeout(() => {
   setIsOpen(true)
-}, 300);
+  }, 300);
 
   return (
     <div className={`w-full py-10 px-0`}>
+
+      {/* Add new group */}
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl font-extrabold text-[#194567] flex justify-between">
           Todos los Grupos
@@ -237,6 +243,7 @@ setTimeout(() => {
         </div>
       </div>
 
+      
       {loadingGetGrupos ? (
         <SkeCard />
       ) : getGrupoInfo?.length > 0 ? (
@@ -336,7 +343,7 @@ setTimeout(() => {
                       <Input
                         type="text"
                         value={id_NewName.newGroupName}
-                        onChange={(e) => handleChangeName(e)}
+                        onChange={(e) => setNewName({...id_NewName, newGroupName: e.target.value})}
                       />
                       <div className="flex justify-center gap-x-5 pb-4 pt-3">
                         <Button
@@ -350,7 +357,7 @@ setTimeout(() => {
                         </Button>
                         <Button
                           className="bg-green-600 hover:bg-green-700 text-white"
-                          onClick={() => submitNewName(grupo.grupo_id)}
+                          onClick={() => setNewName({ ...id_NewName, idGrupo: grupo.grupo_id })}
                         >
                           {" "}
                           Confirmar{" "}
@@ -491,10 +498,10 @@ setTimeout(() => {
                     <Button> Cerrar </Button>
                   </DialogClose>
 
-                  {/* BOTON PARA BORRAR PROPIEDAD */}
+                  {/* BOTON PARA BORRAR GRUPO */}
                   <AlertDialog>
-                    <AlertDialogTrigger className="bg-red-600 hover:bg-red-700 text-white p-2 px-4 rounded-md">
-                      Borrar Propiedad
+                    <AlertDialogTrigger className={`bg-red-600 hover:bg-red-700 ${loadingDelete ? 'opacity-50' : 'opacity-100'} text-white p-2 px-4 rounded-md`} disabled={loadingDelete}>
+                      {loadingDelete ? 'Borrando grupo...' : 'Borrar Grupo'}
                     </AlertDialogTrigger>
                     <AlertDialogContent className="flex flex-col items-center">
                       <AlertDialogHeader>
@@ -515,7 +522,7 @@ setTimeout(() => {
                           Cancelar
                         </AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={(e) => handleDeleteGrupo(e)}
+                          onClick={ () => handleDeleteGrupo(grupo.grupo_id)}
                           disabled={disabledContinue}
                         >
                           Continuar

@@ -44,7 +44,7 @@ export async function insertGrupo({ createGrupoInfo }) {
 }
 
 //FUNCION PARA BORRAR GRUPO DE CADA USUARIO
-export async function removeDepto({ grupoId }) {
+export async function removeGrupo( grupoId ) {
     const { error } = await supabase
     .from("grupos")
     .delete()
@@ -52,8 +52,9 @@ export async function removeDepto({ grupoId }) {
   
     if (error) {
       console.error(error);
-      throw new Error("Unable to delete grupo");
+      return error
     }
+
 }
 
 
@@ -67,11 +68,11 @@ export async function editGroupName({ id_NewName }) {
       .select()
 
     if (error) {
-        console.error("Error en la inserción:", error.message);
+        console.error("Error en la update:", error.message);
         throw new Error(error.message);
     }
 
-    console.log("Grupo creado:", data);
+    console.log("Grupo Actualizado:", data);
     return data;  // Asegúrate de que `data` sea retornado correctamente
 
 } catch (error) {
