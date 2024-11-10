@@ -14,7 +14,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(null)
   const [loadingUser, setLoadingUser] = useState(true)
-  const [isMobileHidden, setIsMobileHidden] = useState(true)
+  const [isMobileHidden, setIsMobileHidden] = useState(false)
   
   useEffect(() => {
     setLoadingUser(true) 
@@ -57,15 +57,16 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
   ]
 
   const toggleMobileSidebar = () => {
-    setIsMobileHidden(!isMobileHidden);
-    onMobileHiddenChange(!isMobileHidden);
+    const newState = !isMobileHidden;
+    setIsMobileHidden(newState);
+    onMobileHiddenChange(newState);
   }
 
   return (
     <>
       <Button
-        className={` ${ !responsive ? 'hidden' : 'fixed'} fixed top-4 transition-all duration-300 ease-in-out 
-        ${isMobileHidden ? 'left-4' : 'left-20'} z-50 px-2 py-2 md:hidden bg-[#00315637] hover:bg-[#004a8769] text-white`
+        className={` ${!responsive ? 'hidden' : 'fixed'} fixed top-4 transition-all duration-300 ease-in-out 
+        ${ isMobileHidden ? 'left-4' : 'left-20'} z-50 px-2 py-2 md:hidden bg-[#0031566d] hover:bg-[#004a8769] text-white`
         }
         onClick={toggleMobileSidebar}
       >
@@ -79,7 +80,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
       <div className={`
         fixed inset-y-0 left-4 z-40 flex flex-col h-dvh min-h-dvh
         ${isMobileHidden ? '-translate-x-full bg-[#227dc2]' : '-translate-x-4 bg-[#003156]'}
-        ${responsive ? 'w-20' : 'w-60'}
+        ${responsive ? 'w-20' : 'w-60 bg-[#003156]'}
         min-w-[5rem]  text-white p-4
         transition-all duration-300 ease-in-out
         md:translate-x-0

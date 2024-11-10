@@ -15,12 +15,12 @@ async function getSession() {
 export default function DashboardIndexPage() {
   const [responsive, setResponsive] = useState(false)
   const [userLoged, setUserLoged] = useState(false);
-  const [isMobileHidden, setIsMobileHidden] = useState(true);
-  const [isMobileView, setIsMobileView] = useState(true);
+  const [isMobileHidden, setIsMobileHidden] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
 
   useEffect(() => {
     // Create a media query list
-    const mediaQuery = window.matchMedia('(max-width: 600px)');
+    const mediaQuery = window.matchMedia('(max-width: 601px)');
     
     // Handler function
     const handleViewportChange = (e) => {
@@ -64,7 +64,7 @@ export default function DashboardIndexPage() {
     <div className="flex font-inter">
       {userLoged ? (
         <>
-          <div className={`fixed ${ isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-4'} transition-transform duration-300`}>
+          <div className={`fixed ${isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-4'} transition-transform duration-300`}>
             <Sidebar 
               responsive={responsive} 
               setResponsive={setResponsive}
