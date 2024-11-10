@@ -57,34 +57,35 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
   ]
 
   const toggleMobileSidebar = () => {
-    const newState = !isMobileHidden;
-    setIsMobileHidden(newState);
-    onMobileHiddenChange(newState);
+    setIsMobileHidden(!isMobileHidden);
+    onMobileHiddenChange(!isMobileHidden);
   }
 
   return (
     <>
       <Button
         className={` ${!responsive ? 'hidden' : 'fixed'} fixed top-4 transition-all duration-300 ease-in-out 
-        ${ isMobileHidden ? 'left-4' : 'left-20'} z-50 px-2 py-2 md:hidden bg-[#0031566d] hover:bg-[#004a8769] text-white`
+        ${ isMobileHidden ? 'left-4' : 'left-20'} z-50 pl-1 pr-0 py-2 md:hidden bg-[#0031566d] hover:bg-[#004a8769] text-white`
         }
         onClick={toggleMobileSidebar}
       >
         <div className="border-l-2">
-          {isMobileHidden ? <ChevronsRight className="min-w-8 min-h-8" />
-            : <ChevronsLeft className="min-w-8 min-h-8" />
+          {isMobileHidden ? <ChevronsRight className="min-w-6 min-h-8" />
+            : <ChevronsLeft className="min-w-6 min-h-8" />
           }
         </div>
       </Button>
 
       <div className={`
-        fixed inset-y-0 left-4 z-40 flex flex-col h-dvh min-h-dvh
-        ${isMobileHidden ? '-translate-x-full bg-[#227dc2]' : '-translate-x-4 bg-[#003156]'}
-        ${responsive ? 'w-20' : 'w-60 bg-[#003156]'}
+        fixed inset-y-0 left-0 z-40 flex flex-col h-dvh min-h-dvh
+        bg-[#003156]
+        ${isMobileHidden ? '-translate-x-[80%] bg-[#227dc2]' : 'translate-x-0 bg-[#003156]'}
+        ${responsive ? 'w-20 bg-[#003156]' : 'w-60 bg-[#003156]'}
         min-w-[5rem]  text-white p-4
         transition-all duration-300 ease-in-out
         md:translate-x-0
       `}>
+
         <div className={`flex flex-col items-center ${responsive ? 'mt-0' : 'mt-4'} space-y-2 transition-all duration-300 ease-in-out`}>
           {loadingUser ? (
             <>
@@ -116,7 +117,6 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
                       ${isActive ? "bg-[#005291]" : "bg-[#003156]"}
                       ${responsive ? 'justify-center' : ''}
                     `}
-                    onClick={() => setIsMobileHidden(true)}
                   >
                     <item.icon className={`h-6 w-6 transition-all duration-200 ease-in-out ${responsive ? 'scale-125' : ''}`} />
                     {!responsive && <span className="text-sm md:text-base transition-all duration-200 ease-in-out">{item.label}</span>}

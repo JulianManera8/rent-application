@@ -47,7 +47,7 @@ export default function DashboardIndexPage() {
     checkSession();
   }, []);
 
-  const sidebarWidth = responsive ? 80 : 240;
+  const sidebarWidth = responsive ? (isMobileHidden ? 2 : 80 ) : 240;
 
   const handleMobileHiddenChange = (hidden) => {
     setIsMobileHidden(hidden);
@@ -55,16 +55,16 @@ export default function DashboardIndexPage() {
 
   const getMarginLeft = () => {
     if (isMobileView) {
-      return isMobileHidden ? '30px' : `${sidebarWidth + 20}px`;
+      return isMobileHidden ? '30px' : `${sidebarWidth + 30}px`;
     }
-    return `${sidebarWidth + 20}px`;
+    return `${sidebarWidth + 30}px`;
   };
 
   return (
     <div className="flex font-inter">
       {userLoged ? (
         <>
-          <div className={`fixed ${isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-4'} transition-transform duration-300`}>
+          <div className={`fixed ${isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-0'} transition-transform duration-300`}>
             <Sidebar 
               responsive={responsive} 
               setResponsive={setResponsive}
