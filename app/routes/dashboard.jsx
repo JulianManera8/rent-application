@@ -15,16 +15,28 @@ async function getSession() {
 export default function DashboardIndexPage() {
   const [responsive, setResponsive] = useState(false)
   const [userLoged, setUserLoged] = useState(false);
+  const [isMobileHidden, setIsMobileHidden] = useState(true);
+  const [isMobileView, setIsMobileView] = useState(true);
 
   useEffect(() => {
-    const handleResize = () => {
-      setResponsive(window.innerWidth <= 900)
-    }
+    // Create a media query list
+    const mediaQuery = window.matchMedia('(max-width: 600px)');
+    
+    // Handler function
+    const handleViewportChange = (e) => {
+      setResponsive(e.matches);
+      setIsMobileView(e.matches);
+    };
 
-    handleResize() // Call it initially
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    // Initial check
+    handleViewportChange(mediaQuery);
+    
+    // Add listener for changes
+    mediaQuery.addEventListener('change', handleViewportChange);
+
+    // Cleanup
+    return () => mediaQuery.removeEventListener('change', handleViewportChange);
+  }, []);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -35,18 +47,33 @@ export default function DashboardIndexPage() {
     checkSession();
   }, []);
 
-  const sidebarWidth = responsive ? 80 : 256; // Width in pixels
+  const sidebarWidth = responsive ? 80 : 240;
+
+  const handleMobileHiddenChange = (hidden) => {
+    setIsMobileHidden(hidden);
+  };
+
+  const getMarginLeft = () => {
+    if (isMobileView) {
+      return isMobileHidden ? '30px' : `${sidebarWidth + 20}px`;
+    }
+    return `${sidebarWidth + 20}px`;
+  };
 
   return (
     <div className="flex font-inter">
       {userLoged ? (
         <>
-          <div className="fixed">
-            <Sidebar responsive={responsive} setResponsive={setResponsive}/>
+          <div className={`fixed ${ isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-4'} transition-transform duration-300`}>
+            <Sidebar 
+              responsive={responsive} 
+              setResponsive={setResponsive}
+              onMobileHiddenChange={handleMobileHiddenChange}
+            />
           </div>
           <div 
-            className="flex-1 overflow-hidden overflow-x-auto mr-[30px] transition-[margin-left] duration-300 ease-in-out"
-            style={{ marginLeft: `${sidebarWidth + 30 }px` }}
+            className="flex-1 overflow-hidden mr-[30px] transition-all duration-300 ease-in-out"
+            style={{ marginLeft: getMarginLeft() }}
           >
             <Outlet />
           </div>
