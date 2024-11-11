@@ -425,7 +425,7 @@ export default function DashboardGrupos() {
                                     size={28}
                                     className="cursor-pointer hover:text-blue-500 transition-all"
                                   /> 
-                                  Ver Depto
+                                  Ver Propiedad
                                 </div>
                             </div>
                           </li>
@@ -465,7 +465,7 @@ export default function DashboardGrupos() {
                                     className="ml-3 border-gray-400"
                                   >
                                     <FileChartColumnIcon className="mr-1 h-4 w-4" />
-                                    Ver Balance
+                                    {balance.name}
                                   </Button>
                                 </a>
                               </div>
@@ -485,7 +485,7 @@ export default function DashboardGrupos() {
                                     size={28}
                                     className="cursor-pointer hover:text-blue-500 transition-all"
                                   /> 
-                                  ir a balances
+                                  Ver Balance
                                 </div>
                               </div>
                             </div>
