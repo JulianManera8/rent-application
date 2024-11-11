@@ -6,28 +6,19 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import useFetch from "../hooks/use-fetch";
 import supabase from "../lib/supabase";
-import { getBalances } from "../database/crudBalances";
+import Spinner from '../components/loaderIcon'
+import { getBalances, removeBalance } from "../database/crudBalances";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog"
 import { FileChartColumnIncreasingIcon, EditIcon, XSquare, Download } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
-import { NavLink } from '@remix-run/react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { useNavigation } from "@remix-run/react";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/ui/table";
 
-export default function DashboardMoneyAll({ months }) {
+export default function DashboardMoneyAll({ months, balanceCreated }) {
+
+
   const [userLoged_id, setUserLogedId] = useState(null);
   const [balanceInfo, setBalanceInfo] = useState([
     {
@@ -39,6 +30,8 @@ export default function DashboardMoneyAll({ months }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
   const [filterValue, setFilterValue] = useState("sinfiltro");
+
+  const navigation = useNavigation()
 
   useEffect(() => {
     setFilterValue(filterValue)
@@ -65,7 +58,8 @@ export default function DashboardMoneyAll({ months }) {
 
   useEffect(() => {
     if (userLoged_id) {
-      fnGetBalances({ userId: userLoged_id }); // Correctly pass userId as an object
+      fnGetBalances({ userId: userLoged_id }); 
+      if(error) console.error(error)
     }
   }, [userLoged_id]);
 
@@ -74,10 +68,6 @@ export default function DashboardMoneyAll({ months }) {
       setBalanceInfo(dataBalances);
     }
   }, [dataBalances]);
-  
-  // if(balanceInfo) {
-  //   balanceInfo.forEach(balance => console.log(balance.mes_balance, balance.año_balance));
-  // }
 
   const filteredBalances = (balanceInfo || []).filter((balance) => {
     const matchesSearchTerm =
@@ -87,6 +77,33 @@ export default function DashboardMoneyAll({ months }) {
     return matchesSearchTerm;
   });
 
+  const handleDeleteBalance = async (balanceSelected) => {
+
+    const getPath = balanceSelected.url_excel.substring(75)
+
+    const infoBalance = {
+      id: balanceSelected.id,
+      path: getPath
+    }
+
+    try {
+      await removeBalance(infoBalance);
+      
+      setBalanceInfo((prevBalances) =>
+        prevBalances.filter(balance => balance.id !== infoBalance.id)
+      );
+      
+    } catch (error) {
+      console.error("Error al eliminar el balance:", error.message);
+    }
+  }
+
+  useEffect(() => {
+    if(userLoged_id && balanceCreated) {
+      fnGetBalances({ userId: userLoged_id });
+    }
+  }, [balanceCreated])
+  console.log(filteredBalances)
 
   return (
     <div>
@@ -201,9 +218,36 @@ export default function DashboardMoneyAll({ months }) {
                   </TableCell>          
                   <TableCell className="h-full"> 
                     <div className="h-full flex flex-row items-center  gap-7 ">
-                    <EditIcon size={28} className="cursor-pointer hover:text-blue-500 transition-all"/>
-                    <XSquare size={28} className="cursor-pointer hover:text-red-500 transition-all"/>
-                    <Download size={28} className="cursor-pointer hover:text-green-500 transition-all"/>
+                    <EditIcon size={28} className="cursor-pointer hover:text-blue-500 transition-all" />
+
+                    {/* Borrar balance */}
+                    <AlertDialog>
+                      <AlertDialogTrigger>
+                        <XSquare size={28} className="cursor-pointer hover:text-red-500 transition-all"/>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className=''>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-center">Estas a punto de borrar un balance</AlertDialogTitle>
+                          <AlertDialogDescription className="text-center"> ¡Esta accion no se puede revertir!</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                          <AlertDialogCancel className='h-10 mt-0'>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction 
+                            className={`h-10 ${ loading ? 'opacity-50' : ''}`}
+                            disabled={loading}
+                            onClick={() => handleDeleteBalance(balance)}
+                          >
+                            {loading ? <Spinner /> : 'Continue'}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    <Download
+                      size={28}
+                      className="cursor-pointer hover:text-green-500 transition-all"
+                      onClick={() => window.open(`${balance.url_excel}`, '_blank')}
+                    />                    
                     </div>
                   </TableCell>
                 </TableRow>

@@ -75,8 +75,8 @@ export async function editGroupName({ id_NewName }) {
     console.log("Grupo Actualizado:", data);
     return data;  // Asegúrate de que `data` sea retornado correctamente
 
-} catch (error) {
+  } catch (error) {
     console.error("Error:", error);
     return null;
-}
+  }
 }

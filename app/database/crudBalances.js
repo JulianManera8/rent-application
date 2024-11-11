@@ -7,18 +7,7 @@ export async function insertBalance({ balanceInfo }) {
   const url = `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/balances/${filePath}`;
 
   try {
-    // Cargar el archivo en el bucket
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("balances")
-      .upload(filePath, balanceInfo.file);
-
-    if (uploadError) {
-      alert("Error al subir archivo:", uploadError.message);
-      throw new Error("Error uploading the file");
-    }
-
-    console.log("Archivo subido:", uploadData);
-
+    
     // Insertar registro en la base de datos
     const { data, error } = await supabase
       .from("balances")
@@ -30,11 +19,27 @@ export async function insertBalance({ balanceInfo }) {
           año_balance: balanceInfo.año_balance,
           url_excel: url,
         },
-      ]);
+      ])
+      .select('*')
 
     if (error) {
       alert("Error en la inserción:", error.message);
       throw new Error(error.message);
+    }
+
+    
+    if(data) {
+      // Cargar el archivo en el bucket
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("balances")
+        .upload(filePath, balanceInfo.file);
+  
+      if (uploadError) {
+        alert("Error al subir archivo:", uploadError.message);
+        throw new Error("Error uploading the file");
+      }
+  
+      console.log("Archivo subido:", uploadData);
     }
 
     console.log("Registro insertado:", data);
@@ -47,6 +52,7 @@ export async function insertBalance({ balanceInfo }) {
   }
 }
 
+
 //FUNCION PARA CAPTAR LOS BALANCES QUE TENGA EL USUARIO
 export async function getBalances({userId}) {
 
@@ -58,12 +64,47 @@ export async function getBalances({userId}) {
 
     
     if (error) throw new Error(error)
-
+    console.log(data)
     return data
   } catch (error) {
     alert(error.message);
   }
 }
+
+//FUNCION PARA BORRAR UN BALANCE
+export async function removeBalance( infoBalance ) {
+
+  try {
+    const { error } = await supabase
+      .from("balances")
+      .delete()
+      .eq("id", infoBalance.id);
+
+    if (error) {
+      console.error(error);
+      return error
+    }
+
+    // 2. Eliminar el archivo del bucket de Supabase
+    const { error: storageError } = await supabase.storage
+      .from("balances")
+      .remove([infoBalance.path]); 
+
+    if (storageError) {
+      console.error("Error al eliminar el archivo del bucket:", storageError.message);
+      throw new Error("Error deleting the file from storage");
+    }
+
+    console.log("Balance y archivo eliminados exitosamente.");
+    return true;
+
+  } catch (error) {
+    console.error(error.message);
+  }
+  
+
+}
+
 
 
 

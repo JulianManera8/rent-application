@@ -7,7 +7,7 @@ import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { EditIcon, FileChartColumnIcon, Dot, XSquare } from "lucide-react";
+import { EditIcon, FileChartColumnIcon, Dot, XSquare, ChevronsRight } from "lucide-react";
 import useFetch from "../hooks/use-fetch";
 import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../database/crudGrupos";
 import supabase from "../lib/supabase";
@@ -405,38 +405,34 @@ export default function DashboardGrupos() {
                             <div className="flex items-center border-b border-t py-3 justify-between">
                               <div className="h-full flex flex-row items-center ">
                                 <Dot /> {depto?.ubicacion_completa}
-                              </div>
-                              <div className="h-full flex flex-row items-center transition-all gap-x-2 cursor-pointer hover:text-blue-500">
-                                <EditIcon
-                                  size={23}
+                              </div> 
+                              <div  
+                                  className="text-md flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
+                                  role="button"
+                                  tabIndex={0}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "g") {
+                                      ("");
+                                    }}             
+                                  }
                                   onClick={() =>
                                     navigate(`/dashboard/deptos/${depto.id}`, {
                                       state: { infoDepto: depto },
                                     })
                                   }
-                                />
-                                Editar
-                              </div>
+                                >
+                                  <ChevronsRight 
+                                    size={28}
+                                    className="cursor-pointer hover:text-blue-500 transition-all"
+                                  /> 
+                                  Ver Depto
+                                </div>
                             </div>
                           </li>
                         ))
                     ) : (
                       <p>No hay departamentos asignados a este grupo.</p>
                     )}
-                    {/* {deptos?.filter((depto) => depto?.grupo_id === grupo.grupo_id).map((depto) => (
-                          <li key={depto.id}>
-                            <div className="flex items-center border-b border-t py-3 justify-between">
-                              <div className="h-full flex flex-row items-center ">
-                                <Dot /> {depto?.ubicacion_completa} 
-                              </div>
-                              <div className="h-full flex flex-row items-center transition-all gap-x-2 cursor-pointer hover:text-blue-500">
-                                <EditIcon size={23}  onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/> 
-                                Editar
-                              </div>
-                            </div>
-                          </li>
-                        ))
-                      } */}
                   </ul>
                 </div>
 
@@ -474,15 +470,23 @@ export default function DashboardGrupos() {
                                 </a>
                               </div>
                               <div className="h-full flex flex-row items-center  gap-x-2">
-                                <EditIcon
-                                  size={23}
-                                  className="cursor-pointer hover:text-blue-500 transition-all"
-                                />
-                                {/* <EditIcon size={23} className="cursor-pointer hover:text-blue-500 transition-all" onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { infoDepto: depto }})}/> */}
-                                <XSquare
-                                  size={23}
-                                  className="cursor-pointer hover:text-red-500 transition-all"
-                                />
+                                <div  
+                                  className="text-md flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
+                                  role="button"
+                                  tabIndex={0}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "g") {
+                                      ("");
+                                    }}             
+                                  }
+                                  onClick={() => navigate(`/dashboard/money`)}
+                                >
+                                  <ChevronsRight 
+                                    size={28}
+                                    className="cursor-pointer hover:text-blue-500 transition-all"
+                                  /> 
+                                  ir a balances
+                                </div>
                               </div>
                             </div>
                           </li>

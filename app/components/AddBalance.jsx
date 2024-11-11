@@ -13,15 +13,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../components/ui/sheet";
 import { Form } from "@remix-run/react";
 import HandleGrupo from './HandleGrupo';
+import Spinner from "./loaderIcon";
 
 
-export default function AddBalance({months}) {
+export default function AddBalance({months, setBalanceCreated}) {
 
   const year = new Date().getFullYear();
   const yearMin = year - 50;
   const yearValues = Array.from({ length: year - yearMin + 1 }, (_, i) => year - i);
 
-  
+  const [ loading, setLoading ] = useState(false)
+  const [ isOpen, setIsOpen ] = useState(false)
   const [file, setFile] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const [showFile, setShowFile] = useState(false);
@@ -35,7 +37,7 @@ export default function AddBalance({months}) {
     file: null, 
   });
 
-  const { loading, fn: dbInsertBalance } = useFetch(insertBalance, { balanceInfo });
+  const { fn: dbInsertBalance } = useFetch(insertBalance, { balanceInfo });
 
   useEffect(() => {
     const getUser = async () => {
@@ -58,14 +60,18 @@ export default function AddBalance({months}) {
     }
   };
 
+
   const handleAddBalance = async (e) => {
     e.preventDefault();
 
     if (userLoged_id !== null) {
       try {
+        setLoading(true)
         await dbInsertBalance(balanceInfo);
 
         setFile(null);
+        setBalanceCreated(balanceInfo)
+        setIsOpen(false)
         setBalanceInfo({
           user_id: userLoged_id, 
           mes_balance: "",
@@ -73,7 +79,8 @@ export default function AddBalance({months}) {
           file: null,
         });
         setDisabled(true)
-        console.log("Added balance")
+        setLoading(false)
+
       } catch (error) {
         console.error("Error al cargar el balance:", error);
       }
@@ -91,8 +98,10 @@ export default function AddBalance({months}) {
   }
 
   return (
-    <Sheet>
-      <SheetTrigger className="bg-green-600 w-fit flex items-center text-white rounded-lg h-12 px-6 font-bold text-md hover:bg-green-800 transition-all">
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger className="bg-green-600 w-fit flex items-center text-white rounded-lg h-12 px-6 font-bold text-md hover:bg-green-800 transition-all"
+        onClick={() => {setIsOpen(true)}}
+      >
         Agregar Balance
       </SheetTrigger>
       <SheetContent>
@@ -100,9 +109,6 @@ export default function AddBalance({months}) {
           <SheetTitle>CARGAR NUEVO BALANCE</SheetTitle>
           <SheetDescription>
             Completa estos campos con el mes y el año correspondientes al balance, y luego carga el balance propiamente dicho.
-            <br />
-            <br />
-            Recuerda que solo puedes cargar 1 archivo por mes.
           </SheetDescription>
         </SheetHeader>
         <Form className=" space-y-10 w-full mt-8">
@@ -180,10 +186,12 @@ export default function AddBalance({months}) {
                 <Button type="button" onClick={() => setFile(null)}>Cancelar</Button>
                 <Button 
                     type="submit" 
-                    disabled={disabled} 
+                    disabled={disabled || loading} 
                     className="bg-green-600"
                     onClick={(e) => handleAddBalance(e)}
-                >Guardar Balance</Button>
+                >
+                  {loading ? <Spinner /> : 'Guardar Balance'}
+                </Button>
               </div>
             </SheetClose>
           </SheetFooter>

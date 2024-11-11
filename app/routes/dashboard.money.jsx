@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import AddBalance from '../components/AddBalance'
 import DashboardMoneyAll from "../components/dashboardMoneyAll";
 
 export default function MoneyHistorial() {
+  const [ balanceCreated, setBalanceCreated ] = useState()
 
   const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
 
   return (
     <div className="container mx-auto w-full mr-14 px-0 ">
@@ -14,9 +15,9 @@ export default function MoneyHistorial() {
           {" "}
           DASHBOARD - Balances Monetarios{" "}
         </h1>
-        <AddBalance months={months}/>
+        <AddBalance months={months} setBalanceCreated={setBalanceCreated}/>
       </div>
-      <DashboardMoneyAll months={months}/>
+      <DashboardMoneyAll months={months} balanceCreated={balanceCreated}/>
     </div>
   );
 }
