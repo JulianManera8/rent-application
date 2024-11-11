@@ -407,7 +407,7 @@ export default function DashboardGrupos() {
                                 <Dot /> {depto?.ubicacion_completa}
                               </div> 
                               <div  
-                                  className="text-md flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
+                                  className="text-sm flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
                                   role="button"
                                   tabIndex={0}
                                   onKeyDown={(e) => {
@@ -471,7 +471,7 @@ export default function DashboardGrupos() {
                               </div>
                               <div className="h-full flex flex-row items-center  gap-x-2">
                                 <div  
-                                  className="text-md flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
+                                  className="text-sm flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
                                   role="button"
                                   tabIndex={0}
                                   onKeyDown={(e) => {
