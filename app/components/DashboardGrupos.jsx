@@ -462,10 +462,10 @@ export default function DashboardGrupos() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="ml-3 border-gray-400"
+                                    className="ml-3 border-gray-400 text-gray-500"
                                   >
                                     <FileChartColumnIcon className="mr-1 h-4 w-4" />
-                                    {balance.name}
+                                    Balance
                                   </Button>
                                 </a>
                               </div>
