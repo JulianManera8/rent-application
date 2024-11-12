@@ -3,7 +3,7 @@ import supabase from "../lib/supabase";
 
 //FUNCION PARA INSERT ARCHIVO EN TABLA DE BALANCES
 export async function insertBalance({ balanceInfo }) {
-  const filePath = `balances/user${balanceInfo.user_id}/${Date.now()}_${balanceInfo.file.name}`;
+  const filePath = `balances/user${balanceInfo.user_id}/${Date.now()}`;
   const url = `https://fxvodakyxhuvnopvgvde.supabase.co/storage/v1/object/public/balances/${filePath}`;
 
   try {
@@ -64,7 +64,7 @@ export async function getBalances({userId}) {
 
     
     if (error) throw new Error(error)
-    console.log(data)
+
     return data
   } catch (error) {
     alert(error.message);

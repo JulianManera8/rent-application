@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Form } from "@remix-run/react";
 import HandleGrupo from '../grupos/handleGrupo';
 import Spinner from "../helpers/loaderIcon";
+import Error from "../helpers/error";
 
 
 export default function AddBalance({months, setBalanceCreated}) {
@@ -23,6 +24,7 @@ export default function AddBalance({months, setBalanceCreated}) {
   const yearValues = Array.from({ length: year - yearMin + 1 }, (_, i) => year - i);
 
   const [ loading, setLoading ] = useState(false)
+  const [ errors, setErrors ] = useState([])
   const [ isOpen, setIsOpen ] = useState(false)
   const [file, setFile] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -60,10 +62,28 @@ export default function AddBalance({months, setBalanceCreated}) {
     }
   };
 
+  const validate = (dataBalance) => {
+    if(dataBalance.mes_balance === '' || dataBalance.año_balance === '' || dataBalance.grupo_id === '') {
+      return false
+    }
+    return true
+  }
+
   const handleAddBalance = async (e) => {
     e.preventDefault();
+    setErrors([]);
+  
+    if(!validate(balanceInfo)) {
+      setDisabled(true)
+      
+      setTimeout(() => {
+        setDisabled(false)
+      }, 2000);
+      return setErrors({error:'Debes completar todos los campos'})
+    }
 
     if (userLoged_id !== null) {
+
       try {
         setLoading(true)
         await dbInsertBalance(balanceInfo);
@@ -103,7 +123,7 @@ export default function AddBalance({months, setBalanceCreated}) {
       >
         Agregar Balance
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>CARGAR NUEVO BALANCE</SheetTitle>
           <SheetDescription>
@@ -182,20 +202,21 @@ export default function AddBalance({months, setBalanceCreated}) {
             </Collapsible>
           </div>
 
-          <SheetFooter>
-            <SheetClose asChild>
-              <div className="flex mt-6 w-full justify-between">
-                <Button type="button" onClick={() => setFile(null)}>Cancelar</Button>
-                <Button 
-                    type="submit" 
-                    disabled={disabled || loading} 
-                    className="bg-green-600"
-                    onClick={(e) => handleAddBalance(e)}
-                >
-                  {loading ? <Spinner /> : 'Guardar Balance'}
-                </Button>
-              </div>
-            </SheetClose>
+          <SheetFooter className=" flex flex-col sm:flex-col sm:justify-end sm:space-x-2">
+            <div className="flex mt-2 w-full justify-between mb-5">
+              <Button type="button" onClick={() => {setFile(null), setIsOpen(false)}}>Cancelar</Button>
+              <Button 
+                type="submit"
+                disabled={disabled || loading} 
+                className="bg-green-600"
+                onClick={(e) => handleAddBalance(e)}
+              >
+              {loading ? <Spinner /> : 'Guardar Balance'}
+              </Button>
+            </div>
+
+            {errors?.error ? <Error errorMessage={errors?.error}/> : ''} 
+
           </SheetFooter>
         </Form>
       </SheetContent>
