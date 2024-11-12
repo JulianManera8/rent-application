@@ -1,17 +1,17 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Label } from "../components/ui/label";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import supabase from "../lib/supabase";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import supabase from "../../lib/supabase";
 import { useEffect, useState } from "react";
-import useFetch from '../hooks/use-fetch'
-import { getGrupos, insertGrupo } from '../database/crudGrupos'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
+import useFetch from '../../hooks/use-fetch'
+import { getGrupos, insertGrupo } from '../../database/crudGrupos'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 
-import { Skeleton } from '../components/ui/skeleton';
+import { Skeleton } from '../ui/skeleton';
   
 
 export default function HandleGrupo({onSelectChange}) {

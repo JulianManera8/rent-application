@@ -1,5 +1,5 @@
 // import { NavLink } from "@remix-run/react";
-import DashboardGrupos from "../components/DashboardGrupos";
+import DashboardGrupos from "../components/grupos/DashboardGrupos";
 // import { Button } from "../components/ui/button";
 
 export default function DashboardGruposPage() {

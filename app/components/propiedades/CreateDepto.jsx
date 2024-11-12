@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import Spinner from '../components/loaderIcon'
-import HandleGrupo from './HandleGrupo';
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
-import { Checkbox } from "../components/ui/checkbox";
+import Spinner from '../helpers/loaderIcon'
+import HandleGrupo from '../grupos/HandleGrupo';
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Checkbox } from "../ui/checkbox";
 import { useEffect, useState } from "react";
-import { createDepto } from '../database/crudDeptos'
-import useFetch from '../hooks/use-fetch'
-import Error from '../components/Error'
+import { createDepto } from '../../database/crudDeptos'
+import useFetch from '../../hooks/use-fetch'
+import Error from '../helpers/Error'
 import { Form } from "@remix-run/react";
-import supabase from "../lib/supabase";
-import {Collapsible,CollapsibleContent,CollapsibleTrigger } from "../components/ui/collapsible"
+import supabase from "../../lib/supabase";
+import {Collapsible,CollapsibleContent,CollapsibleTrigger } from "../ui/collapsible"
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react"
 
 

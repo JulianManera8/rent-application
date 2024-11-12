@@ -2,21 +2,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { EditIcon, FileChartColumnIcon, Dot, XSquare, ChevronsRight } from "lucide-react";
-import useFetch from "../hooks/use-fetch";
-import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../database/crudGrupos";
-import supabase from "../lib/supabase";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../components/ui/dialog"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
-import { getDeptos } from "../database/crudDeptos";
-import { getBalances } from "../database/crudBalances";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog"
-import SkeCard from "./skeletonCardsGroups";
+import useFetch from "../../hooks/use-fetch";
+import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../../database/crudGrupos";
+import supabase from "../../lib/supabase";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
+import { getDeptos } from "../../database/crudDeptos";
+import { getBalances } from "../../database/crudBalances";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
+import SkeCard from "../grupos/skeletonCardsGroups";
 
 export default function DashboardGrupos() {
   const [isOpen, setIsOpen] = useState(false)

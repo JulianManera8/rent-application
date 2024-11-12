@@ -1,5 +1,5 @@
 import { NavLink } from "@remix-run/react";
-import DashboardDeptos from "../components/DashboardDeptos";
+import DashboardDeptos from "../components/propiedades/DashboardDeptos";
 import { Button } from "../components/ui/button";
 
 export default function DashboardDeptoPage() {

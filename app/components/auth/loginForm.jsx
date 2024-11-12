@@ -5,15 +5,15 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-} from "./ui/card";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+} from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import supabase from "../lib/supabase";
+import supabase from "../../lib/supabase";
 import { useState } from "react";
 import { useNavigate } from "@remix-run/react";
-import Spinner from '../components/loaderIcon'
-import Error from '../components/Error'
+import Spinner from '../helpers/loaderIcon'
+import Error from '../helpers/Error'
 
 export default function LoginForm() {
   const navigate = useNavigate();

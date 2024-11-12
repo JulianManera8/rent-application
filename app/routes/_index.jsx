@@ -4,8 +4,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import SignupForm from "../components/signupForm";
-import LoginForm from "../components/loginForm";
+import SignupForm from "../components/auth/signupForm";
+import LoginForm from "../components/auth/loginForm";
 
 export const meta = () => {
   return [{ title: "RentApp" }];

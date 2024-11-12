@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { NavLink, useNavigate } from "@remix-run/react"
 import { Building, DollarSign, Home, Boxes, ArrowLeftFromLine, ArrowRightFromLine, ChevronsRight, ChevronsLeft } from "lucide-react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import { useEffect, useState } from "react"
-import { Skeleton } from "./ui/skeleton"
-import supabase from "../lib/supabase"
-import Spinner from '../components/loaderIcon'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip"
+import { Skeleton } from "../ui/skeleton"
+import supabase from "../../lib/supabase"
+import Spinner from '../helpers/loaderIcon'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 
 export default function Sidebar({ responsive, setResponsive, onMobileHiddenChange }) {
   const navigate = useNavigate()

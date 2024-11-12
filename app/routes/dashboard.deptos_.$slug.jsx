@@ -1,5 +1,5 @@
 import { useLoaderData } from '@remix-run/react';
-import DeptoSelected from '../components/DeptoSelected'
+import DeptoSelected from '../components/propiedades/DeptoSelected'
 
 export async function loader({ params }) {
     const slug = params.slug;

@@ -2,17 +2,17 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import useFetch from "../hooks/use-fetch";
-import supabase from "../lib/supabase";
-import Spinner from '../components/loaderIcon'
-import { getBalances, removeBalance } from "../database/crudBalances";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog"
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import useFetch from "../../hooks/use-fetch";
+import supabase from "../../lib/supabase";
+import Spinner from '../helpers/loaderIcon'
+import { getBalances, removeBalance } from "../../database/crudBalances";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import { FileChartColumnIncreasingIcon, EditIcon, XSquare, Download } from "lucide-react";
-import { Skeleton } from "./ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Skeleton } from "../ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useNavigation } from "@remix-run/react";
 
 
@@ -218,12 +218,12 @@ export default function DashboardMoneyAll({ months, balanceCreated }) {
                   </TableCell>          
                   <TableCell className="h-full"> 
                     <div className="h-full flex flex-row items-center  gap-7 ">
-                    <EditIcon size={28} className="cursor-pointer hover:text-blue-500 transition-all" />
+                    <EditIcon size={26} className="cursor-pointer hover:text-blue-500 transition-all" />
 
                     {/* Borrar balance */}
                     <AlertDialog>
                       <AlertDialogTrigger>
-                        <XSquare size={28} className="cursor-pointer hover:text-red-500 transition-all"/>
+                        <XSquare size={26} className="cursor-pointer hover:text-red-500 transition-all"/>
                       </AlertDialogTrigger>
                       <AlertDialogContent className=''>
                         <AlertDialogHeader>
@@ -244,7 +244,7 @@ export default function DashboardMoneyAll({ months, balanceCreated }) {
                     </AlertDialog>
 
                     <Download
-                      size={28}
+                      size={26}
                       className="cursor-pointer hover:text-green-500 transition-all"
                       onClick={() => window.open(`${balance.url_excel}`, '_blank')}
                     />                    

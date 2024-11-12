@@ -1,4 +1,4 @@
-import CreateDepto from "../components/CreateDepto"
+import CreateDepto from "../components/propiedades/CreateDepto"
 
 
 export default function CreateDeptoPage() {

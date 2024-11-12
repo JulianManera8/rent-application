@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "./ui/card";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import Spinner from '../components/loaderIcon'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import Spinner from '../helpers/loaderIcon'
 import { Eye, EyeOff } from "lucide-react";
-import Error from '../components/Error'
-import supabase from "../lib/supabase";
+import Error from '../helpers/Error'
+import supabase from "../../lib/supabase";
 import { useState } from "react";
 import { useNavigate } from "@remix-run/react";
 

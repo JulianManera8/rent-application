@@ -1,10 +1,10 @@
 'use client'
 
 import { Outlet } from "@remix-run/react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/layout/Sidebar";
 import { useEffect, useState } from "react";
 import supabase from "../lib/supabase";
-import NoAuth from '../components/noAuth'
+import NoAuth from '../components/auth/noAuth'
 
 async function getSession() {
   const {data, error} = await supabase.auth.getSession();

@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Link, NavLink, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Input } from "./ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from "lucide-react";
-import  useFetch  from '../hooks/use-fetch'
-import { getDeptos } from "../database/crudDeptos";
-import supabase from "../lib/supabase";
-import SkeletonLoading from '../components/skeletonTable'
+import  useFetch  from '../../hooks/use-fetch'
+import { getDeptos } from "../../database/crudDeptos";
+import supabase from "../../lib/supabase";
+import SkeletonLoading from '../helpers/skeletonTable'
 
 
 

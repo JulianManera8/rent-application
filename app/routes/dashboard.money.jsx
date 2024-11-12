@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
-import AddBalance from '../components/AddBalance'
-import DashboardMoneyAll from "../components/dashboardMoneyAll";
+import AddBalance from '../components/balances/AddBalance'
+import DashboardMoneyAll from "../components/balances/dashboardMoneyAll";
 
 export default function MoneyHistorial() {
   const [ balanceCreated, setBalanceCreated ] = useState()

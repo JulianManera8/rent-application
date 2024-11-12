@@ -1,19 +1,19 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import supabase from "../lib/supabase";
-import useFetch from "../hooks/use-fetch";
-import { insertBalance } from "../database/crudBalances";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { Label } from "../components/ui/label";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../components/ui/collapsible";
+import supabase from "../../lib/supabase";
+import useFetch from "../../hooks/use-fetch";
+import { insertBalance } from "../../database/crudBalances";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../components/ui/sheet";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../ui/sheet";
 import { Form } from "@remix-run/react";
-import HandleGrupo from './HandleGrupo';
-import Spinner from "./loaderIcon";
+import HandleGrupo from '../grupos/HandleGrupo';
+import Spinner from "../helpers/loaderIcon";
 
 
 export default function AddBalance({months, setBalanceCreated}) {

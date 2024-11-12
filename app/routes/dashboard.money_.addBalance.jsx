@@ -1,4 +1,4 @@
-import AddBalance from "../components/AddBalance"
+import AddBalance from "../components/balances/AddBalance"
 
 
 export default function CreateDeptoPage() {

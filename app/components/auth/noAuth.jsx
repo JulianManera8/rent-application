@@ -1,5 +1,5 @@
 import { NavLink } from "@remix-run/react"
-import { Button } from "../components/ui/button"
+import { Button } from "../ui/button"
 import { ShieldAlert } from 'lucide-react'
 
 export default function Component() {

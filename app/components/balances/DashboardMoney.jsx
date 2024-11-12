@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { NavLink, Link } from "@remix-run/react";
-import { Button } from "./ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Button } from "../ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { CheckCircle, FileChartColumnIncreasingIcon } from "lucide-react"
 import { useEffect, useState } from "react";
-import useFetch from "../hooks/use-fetch";
-import supabase from "../lib/supabase";
-import { getBalances } from "../database/crudBalances";
-import { Skeleton } from "./ui/skeleton";
+import useFetch from "../../hooks/use-fetch";
+import supabase from "../../lib/supabase";
+import { getBalances } from "../../database/crudBalances";
+import { Skeleton } from "../ui/skeleton";
 
 
 export default function DashboardMoney() {
