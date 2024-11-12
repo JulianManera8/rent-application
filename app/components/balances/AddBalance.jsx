@@ -12,7 +12,7 @@ import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../ui/sheet";
 import { Form } from "@remix-run/react";
-import HandleGrupo from '../grupos/HandleGrupo';
+import HandleGrupo from '../grupos/handleGrupo';
 import Spinner from "../helpers/loaderIcon";
 
 
@@ -60,7 +60,6 @@ export default function AddBalance({months, setBalanceCreated}) {
     }
   };
 
-
   const handleAddBalance = async (e) => {
     e.preventDefault();
 
@@ -99,7 +98,7 @@ export default function AddBalance({months, setBalanceCreated}) {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger className="bg-green-600 w-fit flex items-center text-white rounded-lg h-12 px-6 font-bold text-md hover:bg-green-800 transition-all"
+      <SheetTrigger className="bg-green-600 rounded-lg text-white h-10 px-6 font-bold text-md hover:bg-green-800"
         onClick={() => {setIsOpen(true)}}
       >
         Agregar Balance
@@ -113,14 +112,16 @@ export default function AddBalance({months, setBalanceCreated}) {
         </SheetHeader>
         <Form className=" space-y-10 w-full mt-8">
 
+          {/* GRUPO */}
           <div>
             <HandleGrupo onSelectChange={handleSelectChange}/>
           </div>
 
+          {/* MES */} 
           <div className="min-w-full space-y-2">
             <Label htmlFor="mesBalance" className="font-bold text-md">Mes del balance</Label>
             <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, mes_balance: value }))} className="w-full">
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" >
                 <SelectValue placeholder="Elegir mes" />
               </SelectTrigger>
               <SelectContent>
@@ -131,6 +132,7 @@ export default function AddBalance({months, setBalanceCreated}) {
             </Select>
           </div>
 
+          {/* AÑO */}
           <div className="w-full space-y-2">
             <Label htmlFor="añoBalance" className="font-bold text-md">Año del balance</Label>
             <Select onValueChange={(value) => setBalanceInfo((prev) => ({ ...prev, año_balance: value }))} value={String(balanceInfo.año_balance)}>
@@ -138,14 +140,14 @@ export default function AddBalance({months, setBalanceCreated}) {
                 <SelectValue placeholder="Elegir año"/>
               </SelectTrigger>
               <SelectContent>
-                {yearValues.map((year,  index) => (
+                {yearValues.map((year) => (
                   <SelectItem key={year} value={String(year)}>{year}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
          
-
+          {/* DOCUMENTO */}
           <div className="min-w-56">
             <Label htmlFor="file-upload" className="font-bold mb-2 text-md">Documento</Label>
             <div className="file-upload">

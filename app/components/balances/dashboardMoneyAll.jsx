@@ -12,12 +12,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { FileChartColumnIncreasingIcon, EditIcon, XSquare, Download } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { useNavigation } from "@remix-run/react";
-
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 
 export default function DashboardMoneyAll({ months, balanceCreated }) {
-
 
   const [userLoged_id, setUserLogedId] = useState(null);
   const [balanceInfo, setBalanceInfo] = useState([
@@ -30,8 +27,6 @@ export default function DashboardMoneyAll({ months, balanceCreated }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("Newest");
   const [filterValue, setFilterValue] = useState("sinfiltro");
-
-  const navigation = useNavigation()
 
   useEffect(() => {
     setFilterValue(filterValue)
@@ -103,7 +98,7 @@ export default function DashboardMoneyAll({ months, balanceCreated }) {
       fnGetBalances({ userId: userLoged_id });
     }
   }, [balanceCreated])
-  console.log(filteredBalances)
+
 
   return (
     <div>
@@ -218,7 +213,6 @@ export default function DashboardMoneyAll({ months, balanceCreated }) {
                   </TableCell>          
                   <TableCell className="h-full"> 
                     <div className="h-full flex flex-row items-center  gap-7 ">
-                    <EditIcon size={26} className="cursor-pointer hover:text-blue-500 transition-all" />
 
                     {/* Borrar balance */}
                     <AlertDialog>

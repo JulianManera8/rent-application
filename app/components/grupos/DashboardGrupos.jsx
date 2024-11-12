@@ -196,10 +196,8 @@ export default function DashboardGrupos() {
         <div>
           {/* CREAR GRUPO NUEVO */}
           <Dialog>
-            <DialogTrigger className="w-full">
-              <p className="bg-green-600 w-fit flex items-center text-white rounded-lg h-12 px-6 font-bold text-md hover:bg-green-800 transition-all">
+            <DialogTrigger className="bg-green-600 rounded-lg text-white h-10 px-6 font-bold text-md hover:bg-green-800 w-full">
                 Crear nuevo grupo
-              </p>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -457,7 +455,9 @@ export default function DashboardGrupos() {
                                 {balance.año_balance}
                                 <a
                                   href={`${balance.url_excel}`} // URL directa del archivo
-                                  download={`balance_${balance.mes_balance}${balance.año_balance}.pdf`} // Nombre del archivo al descargar
+                                  download={`balance_${balance.mes_balance}${balance.año_balance}.pdf`}
+                                  target="_blank" 
+                                  rel="noreferrer"
                                 >
                                   <Button
                                     variant="outline"

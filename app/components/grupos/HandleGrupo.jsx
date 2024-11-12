@@ -83,6 +83,7 @@ export default function HandleGrupo({onSelectChange}) {
                     setCerrar(false)
                     setIsOpen(false)
                 }, 2000);
+                
                 if (result && result.length > 0) {
                     setGetGrupoInfo((prev) => [
                         ...prev,
@@ -127,6 +128,8 @@ export default function HandleGrupo({onSelectChange}) {
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Elegir grupo" />
           </SelectTrigger>
+
+          {/* SELECT DE LOS GRUPOS */}
           <SelectContent>
             {loadingGetGrupos ? (
               <>
@@ -146,6 +149,8 @@ export default function HandleGrupo({onSelectChange}) {
                 </SelectItem>
               ))
             )}
+
+            {/* BOTON CREAR NUEVO GRUPO */}
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger className="w-full" onClick={() => setIsOpen(true)}>
                 <p className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
