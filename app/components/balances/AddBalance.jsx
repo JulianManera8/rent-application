@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Form } from "@remix-run/react";
 import HandleGrupo from '../grupos/HandleGrupo';
 import Spinner from "../helpers/loaderIcon";
-import Error from "../helpers/error";
+import Error from "../helpers/Error";
 
 
 export default function AddBalance({months, setBalanceCreated}) {
