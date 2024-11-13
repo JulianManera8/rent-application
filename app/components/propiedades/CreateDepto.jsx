@@ -1,5 +1,5 @@
 import Spinner from '../helpers/loaderIcon'
-import HandleGrupo from '../grupos/handleGrupo';
+import HandleGrupo from '../grupos/HandleGrupo';
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";

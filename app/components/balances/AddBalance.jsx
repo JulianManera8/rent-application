@@ -12,7 +12,7 @@ import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "../ui/sheet";
 import { Form } from "@remix-run/react";
-import HandleGrupo from '../grupos/handleGrupo';
+import HandleGrupo from '../grupos/HandleGrupo';
 import Spinner from "../helpers/loaderIcon";
 import Error from "../helpers/error";
 
