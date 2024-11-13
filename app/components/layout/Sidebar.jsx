@@ -7,7 +7,6 @@ import { useEffect, useState } from "react"
 import { Skeleton } from "../ui/skeleton"
 import supabase from "../../lib/supabase"
 import Spinner from '../helpers/loaderIcon'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 
 export default function Sidebar({ responsive, setResponsive, onMobileHiddenChange }) {
   const navigate = useNavigate()
