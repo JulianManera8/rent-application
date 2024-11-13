@@ -23,8 +23,8 @@ export async function insertGrupo({ createGrupoInfo }) {
             .from("grupos")
             .insert([
                 {
-                    user_id: createGrupoInfo.userId,
-                    grupo_name: createGrupoInfo.nombreGrupo,
+                  user_id: createGrupoInfo.userId,
+                  grupo_name: createGrupoInfo.nombreGrupo,
                 },
             ])
             .select();

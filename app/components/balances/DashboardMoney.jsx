@@ -59,7 +59,7 @@ export default function DashboardMoney() {
         : (
           (balanceInfo.length < 1  
             ? (
-              <p className="flex justify-center items-center"> No hay balances cargados todavia. <NavLink to="/dashboard/money"> <Button className="ml-3 bg-green-600 color-white"> Agregar balance </Button></NavLink> </p>
+              <p className="flex justify-center items-center"> No hay balances cargados todavia. <NavLink to="/dashboard/money"> <Button className="ml-3 bg-green-600 hover:bg-green-700 color-white"> Agregar balance </Button></NavLink> </p>
             )
             : (<div className="flex items-center justify-start space-x-5">
               <div className="flex items-center space-x-2">

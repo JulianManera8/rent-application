@@ -58,8 +58,15 @@
 
   .underline-offset-custom {
     text-decoration: underline;
-    text-underline-offset: 4px; /* Ajusta el valor según la separación que quieras */
+    text-underline-offset: 4px; 
   }
+  .underline-offset-balances {
+    text-decoration: underline;
+    text-decoration-color: rgba(6, 126, 182, 0.405);
+    text-underline-offset: 8px; 
+  }
+
+  
 }
 @layer base {
   * {

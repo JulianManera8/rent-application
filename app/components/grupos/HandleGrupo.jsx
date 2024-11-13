@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { NavLink } from "@remix-run/react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -15,6 +16,8 @@ import { useUser } from "../../hooks/use-user";
 import { useEffect, useState } from "react";
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, insertGrupo } from "../../database/crudGrupos";
+import { Dot} from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
@@ -27,6 +30,7 @@ import {
 import { Skeleton } from "../ui/skeleton";
 
 export default function HandleGrupo({ onSelectChange }) {
+  
   const userLoged_id = useUser();
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
@@ -45,16 +49,11 @@ export default function HandleGrupo({ onSelectChange }) {
   }, [userLoged_id]);
 
   //FUNCION PARA CAPTAR LOS GRUPOS SI ES Q HAY
-  const {
-    loading: loadingGetGrupos,
-    data: grupos,
-    error: errorGetGrupos,
-    fn: fnGetGrupos,
-  } = useFetch(getGrupos, { user_id: userLoged_id });
+  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
 
   useEffect(() => {
     if (userLoged_id) {
-      fnGetGrupos(userLoged_id);
+      fnGetGrupos({user_id: userLoged_id});
       if (errorGetGrupos) return console.error(errorGetGrupos);
     }
   }, [userLoged_id]);
@@ -79,6 +78,7 @@ export default function HandleGrupo({ onSelectChange }) {
 
     return setValidated(true);
   }, [createGrupoInfo.nombreGrupo]);
+
 
   const handleCreateGrupo = async (e) => {
     e.preventDefault();
@@ -144,21 +144,27 @@ export default function HandleGrupo({ onSelectChange }) {
               <Skeleton className="w-2/4 h-5 ml-4 mb-2 bg-gray-200" />
             </>
           ) : (
+            getGrupoInfo.length !== 0 ? (
             getGrupoInfo.map((grupo) => (
               <SelectItem
                 key={grupo.grupo_id}
                 value={grupo.grupo_name}
-                className="flex items-center justify-between w-full"
+                className="flex items-center w-full"
               >
-                <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                <p className="overflow-hidden text-ellipsis whitespace-nowrap  text-md ">
                   {grupo.grupo_name}
                 </p>
               </SelectItem>
-            ))
+            ))) : (
+            <p className="my-2 ml-2"> No tienes grupos,  
+              <NavLink to="/dashboard/grupos" className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
+                {' '}Ir a crearlo
+              </NavLink>
+            </p>)
           )}
 
           {/* BOTON CREAR NUEVO GRUPO */}
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          {/* <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger className="w-full" onClick={() => setIsOpen(true)}>
               <p className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
                 Crear nuevo grupo
@@ -202,7 +208,7 @@ export default function HandleGrupo({ onSelectChange }) {
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
         </SelectContent>
       </Select>
     </div>

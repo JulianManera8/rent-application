@@ -24,6 +24,8 @@ export default function DashboardGrupos() {
   const [loadingDelete, setLoadingDelete] = useState(false)
 
   const userLoged_id = useUser()
+
+
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
     nombreGrupo: "",
@@ -33,6 +35,7 @@ export default function DashboardGrupos() {
   const navigate = useNavigate();
   const [validated, setValidated] = useState(true)
   const [cerrar, setCerrar] = useState(false)
+
 
   const [inputBorrar, setInputBorrar ] = useState('')
   const [disabledContinue, setDisabledContinue ] = useState(true)
@@ -99,20 +102,18 @@ export default function DashboardGrupos() {
   }
 
   useEffect(() => {
-
-        if(userLoged_id) {
-
-            setCreateGrupoInfo({...createGrupoInfo, userId: userLoged_id})
-        }
-    
-
-  }, [])
+    if (userLoged_id) {
+      setCreateGrupoInfo((prevInfo) => ({
+        ...prevInfo,
+        userId: userLoged_id,
+      }));
+    }
+  }, [userLoged_id]);
 
   const { loading: loadingGetBalances, error: errorGetBalances, data: balances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
 
   const { loading: loadingGetDeptos, data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
 
-  //FUNCION PARA CAPTAR LOS GRUPOS SI ES Q HAY
   const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
 
   useEffect(() => {
@@ -152,16 +153,14 @@ export default function DashboardGrupos() {
 
   const handleCreateGrupo = async (e) => {
     e.preventDefault();
-
+    setCerrar(true)
     try {
         if (userLoged_id) {
             const result = await insertGrupo({ createGrupoInfo });  // Llamada directa a insertGrupo
-            setCerrar(true)
 
             setTimeout(() => {
-                setCerrar(false)
-            }, 5000);
-            if (result && result.length > 0) {
+              setIsOpen(false)
+                if (result && result.length > 0) {
                 setGetGrupoInfo((prev) => [
                     ...prev,
                     {
@@ -173,16 +172,14 @@ export default function DashboardGrupos() {
                 ]);
 
                 setCreateGrupoInfo({ ...createGrupoInfo, nombreGrupo: '' });
-            }
+              }
+            }, 2000);
+            
         }
     } catch (error) {
         console.error("Error al crear el grupo:", error.message || error);
     }
   };
-
-  setTimeout(() => {
-    setIsOpen(true)
-  }, 300);
 
   return (
     <div className={`w-full py-10 px-0`}>
@@ -194,7 +191,7 @@ export default function DashboardGrupos() {
         </h1>
         <div>
           {/* CREAR GRUPO NUEVO */}
-          <Dialog>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger className="bg-green-600 rounded-lg text-white h-10 px-6 font-bold text-md hover:bg-green-800 w-full">
                 Crear nuevo grupo
             </DialogTrigger>
@@ -225,14 +222,6 @@ export default function DashboardGrupos() {
                   >
                     {cerrar ? "Creado" : "Agregar"}
                   </Button>
-                  {cerrar ? (
-                    <Label className="text-center w-full font-bold text-red-700">
-                      {" "}
-                      Ya puedes cerrar esto{" "}
-                    </Label>
-                  ) : (
-                    ""
-                  )}
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
@@ -560,54 +549,17 @@ export default function DashboardGrupos() {
           ))}
         </section>
       ) : (
-        <div>
-          <p> No hay grupos tdv</p>
-          <Dialog>
-            <DialogTrigger className="w-full">
-              <p className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
-                Crear nuevo grupo
-              </p>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  Crea un nuevo grupo para tus propiedades
-                </DialogTitle>
-                <DialogDescription className="flex flex-col gap-4 mt-3 mb-3">
-                  <Label className="mt-8"> Nombre del grupo </Label>
-                  <Input
-                    type="text"
-                    placeholder="Ej: Familia Perez"
-                    value={createGrupoInfo.nombreGrupo}
-                    onChange={(e) =>
-                      setCreateGrupoInfo({
-                        ...createGrupoInfo,
-                        nombreGrupo: e.target.value,
-                      })
-                    }
-                  />
-                  <Button
-                    className={`flex justify-center w-full mt-3 ${
-                      cerrar ? "bg-green-600 hover:bg-gree-600" : "bg-black"
-                    }`}
-                    disabled={validated}
-                    onClick={(e) => handleCreateGrupo(e)}
-                  >
-                    {cerrar ? "Creado" : "Agregar"}
-                  </Button>
-                  {cerrar ? (
-                    <Label className="text-center w-full font-bold text-red-700">
-                      {" "}
-                      Ya puedes cerrar esto{" "}
-                    </Label>
-                  ) : (
-                    ""
-                  )}
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        </div>
+
+        <div className="w-full flex justify-center h-56">
+          <Card className="w-96 h-32 mt-3 flex flex-col justify-center text-center shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg"> 
+                No hay grupos creados por el momento
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          
+          </div>
       )}
     </div>
   );

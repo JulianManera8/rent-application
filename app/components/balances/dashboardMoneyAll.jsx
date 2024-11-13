@@ -1,247 +1,293 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { useEffect, useState } from "react";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import useFetch from "../../hooks/use-fetch";
-import { useUser } from '../../hooks/use-user'
-import Spinner from '../helpers/loaderIcon'
+import { useUser } from "../../hooks/use-user";
+import Spinner from "../helpers/loaderIcon";
 import { getBalances, removeBalance } from "../../database/crudBalances";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
+import { getGrupos } from "../../database/crudGrupos";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { FileChartColumnIncreasingIcon, XSquare, Download } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
+import { NavLink } from "@remix-run/react";
 
-export default function DashboardMoneyAll({ months, balanceCreated }) {
-
-  const userLoged_id = useUser()
+export default function DashboardMoneyAll({ balanceCreated }) {
+  const userLoged_id = useUser();
   const [balanceInfo, setBalanceInfo] = useState([
     {
-    mes_balance: '',
-    año_balance: '',
-    url_balance: '',
-    }
+      mes_balance: "",
+      año_balance: "",
+      url_balance: "",
+    },
   ]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState("Newest");
-  const [filterValue, setFilterValue] = useState("sinfiltro");
-
-  useEffect(() => {
-    setFilterValue(filterValue)
-  }, [filterValue, setFilterValue])
-
-  const filteredMonths = months.filter((month) =>
-    month.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const { loading, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
+  const [grupoInfo, setGrupoInfo] = useState([
+    {
+      nombre_grupo: "",
+      id_grupo: "",
+    },
+  ])
+  const [sortOrder, setSortOrder] = useState("Mas reciente");
 
   useEffect(() => {
     if (userLoged_id) {
-      fnGetBalances({ userId: userLoged_id }); 
-      if(error) console.error(error)
+      fnGetBalances({ userId: userLoged_id });
+      fnGetGrupos({ user_id: userLoged_id})
+      if (error) console.error(error);
+      if (errorGrupo) console.error(errorGrupo);
     }
   }, [userLoged_id]);
 
+  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
+
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
+
+  
   useEffect(() => {
     if (dataBalances) {
-      setBalanceInfo(dataBalances);
-    }
-  }, [dataBalances]);
-
-  const filteredBalances = (balanceInfo || []).filter((balance) => {
-    const matchesSearchTerm =
-      balance.mes_balance.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      balance.año_balance.toLowerCase().includes(searchTerm.toLowerCase())
+      // Mapa de meses a índices (0 = Enero, 1 = Febrero, ...)
+      const monthMap = {
+        "Enero": 0,
+        "Febrero": 1,
+        "Marzo": 2,
+        "Abril": 3,
+        "Mayo": 4,
+        "Junio": 5,
+        "Julio": 6,
+        "Agosto": 7,
+        "Septiembre": 8,
+        "Octubre": 9,
+        "Noviembre": 10,
+        "Diciembre": 11
+      };
   
-    return matchesSearchTerm;
-  });
+      const sortedBalances = [...dataBalances].sort((a, b) => {
+        // Convertir año a entero
+        const yearA = parseInt(a.año_balance, 10);
+        const yearB = parseInt(b.año_balance, 10);
+        
+        // Convertir mes a número (restando 1 para ajustar a 0-indexed)
+        const monthA = monthMap[a.mes_balance];
+        const monthB = monthMap[b.mes_balance];
+  
+        // Verificar si los valores de mes son válidos
+        if (isNaN(monthA) || isNaN(monthB)) {
+          console.error("Mes inválido:", a.mes_balance, b.mes_balance);
+          return 0;
+        }
+  
+        // Crear las fechas (usamos mesA y mesB como índices numéricos)
+        const dateA = new Date(yearA, monthA);
+        const dateB = new Date(yearB, monthB);
+  
+        // Comparar las fechas
+        return sortOrder === "Mas reciente" ? dateB - dateA : dateA - dateB;
+      });
+  
+      console.log(sortedBalances);
+      setBalanceInfo(sortedBalances);
+    }
+  
+    if (dataGrupos) {
+      setGrupoInfo(dataGrupos);
+    }
+  }, [dataBalances, dataGrupos, sortOrder]);
+
 
   const handleDeleteBalance = async (balanceSelected) => {
-
-    const getPath = balanceSelected.url_excel.substring(75)
+    const getPath = balanceSelected.url_excel.substring(75);
 
     const infoBalance = {
       id: balanceSelected.id,
-      path: getPath
-    }
+      path: getPath,
+    };
 
     try {
       await removeBalance(infoBalance);
-      
+
       setBalanceInfo((prevBalances) =>
-        prevBalances.filter(balance => balance.id !== infoBalance.id)
+        prevBalances.filter((balance) => balance.id !== infoBalance.id)
       );
-      
     } catch (error) {
       console.error("Error al eliminar el balance:", error.message);
     }
-  }
+  };
 
   useEffect(() => {
-    if(userLoged_id && balanceCreated) {
+    if (userLoged_id && balanceCreated) {
       fnGetBalances({ userId: userLoged_id });
     }
-  }, [balanceCreated])
-
+  }, [balanceCreated]);
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-extrabold text-[#194567]">
-          Todos los Balances Monetarios
-        </h1>
+      {loadingGrupos 
+      ? (
+          // Skeleton loading for groups
+          Array.from({ length: 2 }).map((_, index) => (
+            <div key={`skeleton-${index}`} className="flex w-full justify-between items-center relative mb-12">
 
-        <div className="relative w-64">
-          <Input
-            type="text"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-          <svg
-            className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
-          </svg>
+              <div className="flex justify-between w-full items-center mb-1">
+                <Skeleton className="h-10 w-1/2 bg-gray-100" />
+              </div>
+ 
+              <div className="flex items-center absolute top-5 right-0">
+                <Skeleton className="h-6 w-32 mr-2" />
+              </div>
+            </div>
+          ))
+      )
+      : (
+        grupoInfo.length > 0 
+
+        ?  
+        grupoInfo.map((grupo, index) => (
+          <div className="flex w-[95%] mx-auto justify-between items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-12 transition-all" key={index}>
+
+            <Accordion type="multiple" className="w-full">
+              <AccordionItem value={`item${index}`}>
+                <AccordionTrigger className="flex justify-between bg-[#0c8beb0c] w-full px-3 rounded-t-xl">
+                  <div className="flex justify-between items-center mb-1">
+                    <h1 className="text-3xl font-extrabold text-[#194567]">
+                      Grupo: {grupo.grupo_name}
+                    </h1>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Table className="border-b-2 border-t-2">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>AÑO</TableHead>
+                        <TableHead>MES</TableHead>
+                        <TableHead>PLANILLA</TableHead>
+                        <TableHead>ACCIONES</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {loadingBalance 
+                      ? (
+                        // SKELETON
+                        Array.from({ length: 2 }).map((_, i) => (
+                          <TableRow key={i}>
+                            <TableCell><Skeleton className="w-2/4 h-5 bg-gray-200" /></TableCell>
+                            <TableCell><Skeleton className="w-2/4 h-5 bg-gray-200" /></TableCell>
+                            <TableCell><Skeleton className="w-2/4 h-5 bg-gray-200" /></TableCell>
+                            <TableCell><Skeleton className="w-2/4 h-5 bg-gray-200" /></TableCell>
+                          </TableRow>
+                        ))
+                      ) 
+                      : balanceInfo.filter(balance => balance.grupo_id === grupo.id).length === 0 ? (
+                        <TableRow className="hover:bg-transparent">
+                          <TableCell colSpan={6} className="text-left font-semibold py-4">
+                            No hay balances todavía.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        balanceInfo
+                          .filter(balance => balance.grupo_id === grupo.id)
+                          .map((balance, i) => (
+                            <TableRow key={i} className="h-full text-lg">
+                              <TableCell className="w-1/4"> {balance.año_balance} </TableCell>
+                              <TableCell className="w-1/4"> {balance.mes_balance} </TableCell>
+                              <TableCell className="w-1/4">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="flex items-center"
+                                >
+                                  <FileChartColumnIncreasingIcon />
+                                  {balance.file} Balance
+                                </Button>
+                              </TableCell>
+                              <TableCell className="h-full">
+                                <div className="h-full flex flex-row items-center gap-7">
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <XSquare
+                                        size={26}
+                                        className="cursor-pointer hover:text-red-500 transition-all"
+                                      />
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-center">
+                                          Estás a punto de borrar un balance
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="text-center">
+                                          ¡Esta acción no se puede revertir!
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                                        <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          className={`h-10 ${loadingBalance ? "opacity-50" : ""}`}
+                                          disabled={loadingBalance}
+                                          onClick={() => handleDeleteBalance(balance)}
+                                        >
+                                          {loadingBalance ? <Spinner /> : "Continuar"}
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+
+                                  <Download
+                                    size={26}
+                                    className="cursor-pointer hover:text-green-500 transition-all"
+                                    onClick={() => window.open(`${balance.url_excel}`, "_blank")}
+                                  />
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+        
+            {/* SORT BY */}
+            <div className="flex items-center absolute top-7 right-5 ">
+              <span className="mr-2">Sort by :</span>
+              <Select value={sortOrder} onValueChange={setSortOrder}>
+                <SelectTrigger className="w-fit pr-2">
+                  <SelectValue placeholder="Sort order" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Mas reciente">Mas reciente</SelectItem>
+                  <SelectItem value="Mas antiguo">Mas antiguo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
         </div>
-        <div className="flex items-center">
-          <span className="mr-2">Sort by :</span>
-          <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort order" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Newest">Newest</SelectItem>
-              <SelectItem value="Oldest">Oldest</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+        ))
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>AÑO</TableHead>
-            <TableHead>MES</TableHead>
-            <TableHead>PLANILLA</TableHead>
-            <TableHead>ACCIONES</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {loading 
-          ? (
-            //SKELETON
-            <>
-              <TableRow>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="w-2/4 h-5 bg-gray-200" />
-                </TableCell>
-              </TableRow>
-            </>
-          ) 
-          : (
-            filteredBalances.length < 1 
-            ? (
-              <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={6} className="text-center py-4">
-                  No hay balances todavía.
-                </TableCell>
-              </TableRow>)
-            : (
-              filteredBalances.map((balance, i) => (
-                <TableRow key={i} className="h-full">
-                  <TableCell className="w-1/4">{balance.año_balance}</TableCell>
-                  <TableCell className="w-1/4">{balance.mes_balance}</TableCell>
-                  <TableCell className="w-1/4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center"
-                    >
-                      <FileChartColumnIncreasingIcon />
-                      {balance.file} Balance
-                    </Button>
-                  </TableCell>          
-                  <TableCell className="h-full"> 
-                    <div className="h-full flex flex-row items-center  gap-7 ">
+        : (
+          <div className="w-full flex justify-center h-56">
 
-                    {/* Borrar balance */}
-                    <AlertDialog>
-                      <AlertDialogTrigger>
-                        <XSquare size={26} className="cursor-pointer hover:text-red-500 transition-all"/>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className=''>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-center">Estas a punto de borrar un balance</AlertDialogTitle>
-                          <AlertDialogDescription className="text-center"> ¡Esta accion no se puede revertir!</AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
-                          <AlertDialogCancel className='h-10 mt-0'>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction 
-                            className={`h-10 ${ loading ? 'opacity-50' : ''}`}
-                            disabled={loading}
-                            onClick={() => handleDeleteBalance(balance)}
-                          >
-                            {loading ? <Spinner /> : 'Continue'}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-
-                    <Download
-                      size={26}
-                      className="cursor-pointer hover:text-green-500 transition-all"
-                      onClick={() => window.open(`${balance.url_excel}`, '_blank')}
-                    />                    
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-              )
-            ) 
-            
-          
-          }
-
-          
-        </TableBody>
-      </Table>
+          <Card className="w-96 h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg"> 
+                No hay grupos creados por el momento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <NavLink to='/dashboard/grupos'>
+                <p className="w-fit items-center flex bg-green-600 rounded-lg text-white h-10 px-6 font-bold text-md hover:bg-green-800">
+                  Ir a Grupos
+                </p>
+              </NavLink>
+            </CardContent>
+          </Card>
+          </div>
+        )
+      )}
+      
     </div>
   );
 }

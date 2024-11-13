@@ -164,7 +164,7 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
                   )): (
                     <TableRow className="hover:bg-transparent">
                       <TableCell colSpan={6} className="text-center py-4">
-                        No hay propiedades todavia. <NavLink to="/dashboard/deptos/createDepto"> <Button className="ml-3 bg-green-600 color-white hover:bg-green-400"> Agregar una </Button></NavLink>
+                        No hay propiedades todavia. <NavLink to="/dashboard/deptos/createDepto"> <Button className="ml-3 bg-green-600 hover:bg-green-700 color-white"> Agregar una </Button></NavLink>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -13,7 +13,7 @@ export default function MoneyHistorial() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl text-gray-300 font-extrabold font-inter mb-10 mt-8">
           {" "}
-          DASHBOARD - Balances Monetarios{" "}
+          DASHBOARD - <span className='text-[#0c426bd3]'>Balances Monetarios </span>{" "}
         </h1>
         <AddBalance months={months} setBalanceCreated={setBalanceCreated}/>
       </div>
