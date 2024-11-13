@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import Spinner from '../helpers/loaderIcon'
-import HandleGrupo from '../grupos/HandleGrupo';
+import HandleGrupo from '../grupos/handleGrupo';
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -10,38 +8,28 @@ import { Checkbox } from "../ui/checkbox";
 import { useEffect, useState } from "react";
 import { createDepto } from '../../database/crudDeptos'
 import useFetch from '../../hooks/use-fetch'
-import Error from '../helpers/Error'
+import { useUser } from '../../hooks/use-user'
 import { Form } from "@remix-run/react";
-import supabase from "../../lib/supabase";
 import {Collapsible,CollapsibleContent,CollapsibleTrigger } from "../ui/collapsible"
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react"
 
 
 export default function CreateDepto() {
 
-  const [userLoged_id, setUserLogedId] = useState(null)
+  const userLoged_id = useUser()
   const [files, setFiles] = useState([]);
   const [fotos, setFotos] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
   const [showFotos, setShowFotos] = useState(false);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data && data.user) {
-        setUserLogedId(data.user.id);
-        setNewDepto((prevDepto) => ({
-          ...prevDepto,
-          user_id: data.user.id,
-        }));
-      }
-      if (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-
-    getUser();
-  }, []);
+    if (userLoged_id) {
+      setNewDepto((prevDepto) => ({
+        ...prevDepto,
+        user_id: userLoged_id,
+      }));
+    }
+  }, [userLoged_id]);
 
   useEffect(() => {
     setNewDepto((prevDepto) => ({

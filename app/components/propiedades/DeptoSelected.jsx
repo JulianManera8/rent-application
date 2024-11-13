@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -12,9 +10,6 @@ import { removeDepto } from "../../database/crudDeptos";
 import  useFetch  from '../../hooks/use-fetch'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 
-import supabase from "../../lib/supabase";
-
-
 export default function DeptoSelected() {
 
   const [edit, setEdit] = useState(false)
@@ -25,7 +20,7 @@ export default function DeptoSelected() {
 
   const navigate = useNavigate()
 
-  const { loading, error, data, fn: fnDeleteDepto } = useFetch(removeDepto, {deptoId: infoDepto.id})
+  const { fn: fnDeleteDepto } = useFetch(removeDepto, {deptoId: infoDepto.id})
 
   useEffect(() => {
     

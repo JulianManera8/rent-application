@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
+
 import { useEffect, useState } from "react";
-import supabase from "../../lib/supabase";
+import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch";
 import { insertBalance } from "../../database/crudBalances";
 import { Input } from "../ui/input";
@@ -10,7 +10,7 @@ import { Label } from "../ui/label";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "../ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "../ui/sheet";
 import { Form } from "@remix-run/react";
 import HandleGrupo from '../grupos/handleGrupo';
 import Spinner from "../helpers/loaderIcon";
@@ -23,13 +23,13 @@ export default function AddBalance({months, setBalanceCreated}) {
   const yearMin = year - 50;
   const yearValues = Array.from({ length: year - yearMin + 1 }, (_, i) => year - i);
 
+  const userLoged_id = useUser()
   const [ loading, setLoading ] = useState(false)
   const [ errors, setErrors ] = useState([])
   const [ isOpen, setIsOpen ] = useState(false)
   const [file, setFile] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const [showFile, setShowFile] = useState(false);
-  const [userLoged_id, setUserLogedId] = useState(null);
   
   const [balanceInfo, setBalanceInfo] = useState({
     user_id: "",
@@ -42,16 +42,10 @@ export default function AddBalance({months, setBalanceCreated}) {
   const { fn: dbInsertBalance } = useFetch(insertBalance, { balanceInfo });
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data && data.user) {
-        setUserLogedId(data.user.id);
-        setBalanceInfo((prev) => ({ ...prev, user_id: data.user.id }));
+      if (userLoged_id) {
+        setBalanceInfo((prev) => ({ ...prev, user_id: userLoged_id }));
       }
-      if (error) console.error("Error al obtener el usuario:", error);
-    };
-    getUser();
-  }, []);
+  }, [userLoged_id]);
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0]; 

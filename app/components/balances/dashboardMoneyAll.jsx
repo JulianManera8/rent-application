@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
+
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import useFetch from "../../hooks/use-fetch";
-import supabase from "../../lib/supabase";
+import { useUser } from '../../hooks/use-user'
 import Spinner from '../helpers/loaderIcon'
 import { getBalances, removeBalance } from "../../database/crudBalances";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
-import { FileChartColumnIncreasingIcon, EditIcon, XSquare, Download } from "lucide-react";
+import { FileChartColumnIncreasingIcon, XSquare, Download } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 
 export default function DashboardMoneyAll({ months, balanceCreated }) {
 
-  const [userLoged_id, setUserLogedId] = useState(null);
+  const userLoged_id = useUser()
   const [balanceInfo, setBalanceInfo] = useState([
     {
     mes_balance: '',
@@ -37,19 +37,6 @@ export default function DashboardMoneyAll({ months, balanceCreated }) {
   );
 
   const { loading, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data && data.user) {
-        setUserLogedId(data.user.id);
-      }
-      if (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-    getUser();
-  }, []);
 
   useEffect(() => {
     if (userLoged_id) {

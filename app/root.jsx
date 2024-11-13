@@ -10,6 +10,8 @@ import "./tailwind.css";
 import "@fontsource/roboto";  // Importa el archivo CSS de la fuente en todo el proyecto
 
 
+
+
 export const meta = () => {
   return [
     { title: "RentApp" }
@@ -27,9 +29,11 @@ export function Layout({ children }) {
         <Links />
       </head>
       <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+
       </body>
     </html>
   );

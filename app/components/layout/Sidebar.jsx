@@ -105,28 +105,20 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
         </div>
         
         <nav className={`space-y-4 flex-grow mt-8 transition-all duration-300 ease-in-out`}>
-          {navItems.map((item) => (
-            <TooltipProvider key={item.path}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => `
-                      flex items-center space-x-2 px-4 py-3 rounded-lg
-                      hover:bg-[#1c4570] transition-all duration-200 ease-in-out
-                      ${isActive ? "bg-[#005291]" : "bg-[#003156]"}
-                      ${responsive ? 'justify-center' : ''}
-                    `}
-                  >
-                    <item.icon className={`h-6 w-6 transition-all duration-200 ease-in-out ${responsive ? 'scale-125' : ''}`} />
-                    {!responsive && <span className="text-sm md:text-base transition-all duration-200 ease-in-out">{item.label}</span>}
-                  </NavLink>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={10} className={responsive ? 'block' : 'hidden'}>
-                  {item.label}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          {navItems.map((item, i) => (
+            <NavLink
+              key={i}
+              to={item.path}
+              className={({ isActive }) => `
+                flex items-center space-x-2 px-4 py-3 rounded-lg
+                hover:bg-[#1c4570] transition-all duration-200 ease-in-out
+                ${isActive ? "bg-[#005291]" : "bg-[#003156]"}
+                ${responsive ? 'justify-center' : ''}
+              `}
+            >
+              <item.icon className={`h-6 w-6 transition-all duration-200 ease-in-out ${responsive ? 'scale-125' : ''}`} />
+              {!responsive && <span className="text-sm md:text-base transition-all duration-200 ease-in-out">{item.label}</span>}
+            </NavLink>
           ))}
         </nav>
         

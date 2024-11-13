@@ -7,10 +7,10 @@ import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { EditIcon, FileChartColumnIcon, Dot, XSquare, ChevronsRight } from "lucide-react";
+import { EditIcon, FileChartColumnIcon, Dot, ChevronsRight } from "lucide-react";
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../../database/crudGrupos";
-import supabase from "../../lib/supabase";
+import { useUser } from '../../hooks/use-user'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { getDeptos } from "../../database/crudDeptos";
@@ -20,14 +20,16 @@ import SkeCard from "../grupos/skeletonCardsGroups";
 
 export default function DashboardGrupos() {
   const [isOpen, setIsOpen] = useState(false)
+
   const [loadingDelete, setLoadingDelete] = useState(false)
 
-  const [userLoged_id, setUserLoged_id] = useState(null);
+  const userLoged_id = useUser()
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
     nombreGrupo: "",
   });
   const [getGrupoInfo, setGetGrupoInfo] = useState([]);
+
   const navigate = useNavigate();
   const [validated, setValidated] = useState(true)
   const [cerrar, setCerrar] = useState(false)
@@ -97,16 +99,13 @@ export default function DashboardGrupos() {
   }
 
   useEffect(() => {
-    async function getUser() {
-        const {data, error} = await supabase.auth.getUser()
 
-        if(error) return console.error(error)
-        if(data) {
-            setUserLoged_id(data.user.id)
-            setCreateGrupoInfo({...createGrupoInfo, userId: data.user.id})
+        if(userLoged_id) {
+
+            setCreateGrupoInfo({...createGrupoInfo, userId: userLoged_id})
         }
-    }   
-    getUser()
+    
+
   }, [])
 
   const { loading: loadingGetBalances, error: errorGetBalances, data: balances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
@@ -182,7 +181,7 @@ export default function DashboardGrupos() {
   };
 
   setTimeout(() => {
-  setIsOpen(true)
+    setIsOpen(true)
   }, 300);
 
   return (
@@ -247,7 +246,7 @@ export default function DashboardGrupos() {
       ) : getGrupoInfo?.length > 0 ? (
         <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-20 gap-y-6">
           {getGrupoInfo?.map((grupo) => (
-            // open={isOpen} onOpenChange={setIsOpen}
+
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
                 <Card className="bg-gray-50 shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">

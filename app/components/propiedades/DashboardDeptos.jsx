@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
+
 /* eslint-disable react/prop-types */
 import { Button } from "../ui/button";
-import { Link, NavLink, useNavigate } from "@remix-run/react";
+import { NavLink, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Input } from "../ui/input";
@@ -10,8 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from "lucide-react";
 import  useFetch  from '../../hooks/use-fetch'
 import { getDeptos } from "../../database/crudDeptos";
-import supabase from "../../lib/supabase";
 import SkeletonLoading from '../helpers/skeletonTable'
+import { useUser } from '../../hooks/use-user'
 
 
 
@@ -19,31 +19,16 @@ export default function DashboardDeptos({rows, border, showBtn, showAll}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("sinfiltro");
   const [currentPage, setCurrentPage] = useState(1);
-  const [userLoged_id, setUserLogedId] = useState(null)
+  const userLoged_id = useUser();
   const itemsPerPage = rows;
   const navigate = useNavigate()
 
-  const { loading, data: deptos, error, fn } = useFetch(getDeptos, {user_id: userLoged_id});
-  
-  // Obtiene el ID del usuario logueado
-  useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data) {
-        setUserLogedId(data.user.id);
-      }
-      if (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-
-    getUser();
-  }, []);
+  const { loading, data: deptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
 
   // Llama a la función para obtener los departamentos cuando se tenga el ID del usuario
   useEffect(() => {
     if (userLoged_id) {
-      fn(userLoged_id);  // Solo llamamos a fn cuando userLoged_id está definido
+      fnGetDeptos(userLoged_id); 
     }
   }, [userLoged_id]);
 

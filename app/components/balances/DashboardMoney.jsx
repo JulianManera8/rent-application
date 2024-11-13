@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-import { NavLink, Link } from "@remix-run/react";
+
+import { NavLink } from "@remix-run/react";
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { CheckCircle, FileChartColumnIncreasingIcon } from "lucide-react"
 import { useEffect, useState } from "react";
 import useFetch from "../../hooks/use-fetch";
-import supabase from "../../lib/supabase";
+import { useUser } from '../../hooks/use-user'
 import { getBalances } from "../../database/crudBalances";
 import { Skeleton } from "../ui/skeleton";
 
 
 export default function DashboardMoney() {
-  const [userLoged_id, setUserLogedId] = useState(null);
+  const userLoged_id = useUser()
   const [balanceInfo, setBalanceInfo] = useState([
     {
     mes_balance: '',
@@ -21,20 +21,7 @@ export default function DashboardMoney() {
     }
   ]);
 
-  const { loading, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data && data.user) {
-        setUserLogedId(data.user.id);
-      }
-      if (error) {
-        console.error("Error al obtener el usuario:", error);
-      }
-    };
-    getUser();
-  }, []);
+  const { loading, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
 
   useEffect(() => {
     if (userLoged_id) {
