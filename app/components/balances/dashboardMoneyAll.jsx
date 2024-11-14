@@ -28,7 +28,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   const [grupoInfo, setGrupoInfo] = useState([
     {
       nombre_grupo: "",
-      id_grupo: "",
+      id: "",
     },
   ])
   const [sortOrder, setSortOrder] = useState("Mas reciente");
@@ -88,7 +88,6 @@ export default function DashboardMoneyAll({ balanceCreated }) {
         return sortOrder === "Mas reciente" ? dateB - dateA : dateA - dateB;
       });
   
-      console.log(sortedBalances);
       setBalanceInfo(sortedBalances);
     }
   
@@ -145,12 +144,12 @@ export default function DashboardMoneyAll({ balanceCreated }) {
         grupoInfo.length > 0 
 
         ?  
-        grupoInfo.map((grupo, index) => (
-          <div className="flex w-[95%] mx-auto justify-between items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-12 transition-all" key={index}>
+        grupoInfo.map((grupo) => (
+          <div className="flex w-[95%] mx-auto justify-between items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-12 transition-all" key={grupo.id}>
 
-            <Accordion type="multiple" className="w-full">
-              <AccordionItem value={`item${index}`}>
-                <AccordionTrigger className="flex justify-between bg-[#0c8beb0c] w-full px-3 rounded-t-xl">
+            <Accordion type="multiple" className="w-full" defaultOpenItems={[`item${grupo.id}`]}>
+              <AccordionItem value={`item${grupo.id}`}>
+                <AccordionTrigger className="flex justify-between bg-[#0c8aeb16] w-full px-3 rounded-t-xl">
                   <div className="flex justify-between items-center mb-1">
                     <h1 className="text-3xl font-extrabold text-[#194567]">
                       Grupo: {grupo.grupo_name}

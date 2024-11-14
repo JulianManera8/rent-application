@@ -38,11 +38,8 @@ export async function insertBalance({ balanceInfo }) {
         alert("Error al subir archivo:", uploadError.message);
         throw new Error("Error uploading the file");
       }
-  
-      console.log("Archivo subido:", uploadData);
     }
 
-    console.log("Registro insertado:", data);
     return data;
 
   } catch (error) {
@@ -95,14 +92,12 @@ export async function removeBalance( infoBalance ) {
       throw new Error("Error deleting the file from storage");
     }
 
-    console.log("Balance y archivo eliminados exitosamente.");
     return true;
 
   } catch (error) {
     console.error(error.message);
   }
   
-
 }
 
 

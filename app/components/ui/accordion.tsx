@@ -4,7 +4,18 @@ import { ChevronDown } from "lucide-react"
 
 import { cn } from "~/lib/utils"
 
-const Accordion = AccordionPrimitive.Root
+const Accordion = ({ defaultOpenItems = [], ...props }) => {
+  const [openItems, setOpenItems] = React.useState(defaultOpenItems)
+
+  return (
+    <AccordionPrimitive.Root
+      type="multiple"
+      value={openItems}
+      onValueChange={(newOpenItems) => setOpenItems(newOpenItems)}
+      {...props}
+    />
+  )
+}
 
 const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
