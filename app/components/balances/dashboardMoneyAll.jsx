@@ -151,7 +151,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
               <AccordionItem value={`item${grupo.id}`}>
                 <AccordionTrigger className="flex justify-between bg-[#0c8aeb16] w-full px-3 rounded-t-xl">
                   <div className="flex justify-between items-center mb-1">
-                    <h1 className="text-3xl font-extrabold text-[#194567]">
+                    <h1 className="text-2xl font-extrabold text-[#194567]">
                       Grupo: {grupo.grupo_name}
                     </h1>
                   </div>
@@ -272,7 +272,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
           <Card className="w-96 h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
             <CardHeader>
               <CardTitle className="text-lg"> 
-                No hay grupos creados por el momento
+              No hay grupos creados por el momento, por lo tanto tampoco hay balances.
               </CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
