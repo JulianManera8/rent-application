@@ -8,7 +8,7 @@ export default function Component() {
       <div className="max-w-md w-full space-y-8 p-8 bg-white shadow-xl rounded-lg">
         <div className="text-center">
           <ShieldAlert className="mx-auto h-16 w-16 text-red-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Unauthorized Access</h2>
+          <h2 className="mt-6 text-3xl font-medium text-gray-900">Unauthorized Access</h2>
           <p className="mt-2 text-sm text-gray-600">
             This page requires authentication.
           </p>

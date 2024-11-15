@@ -66,7 +66,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
             <AccordionItem value={`item${grupo.id}`} >
               <AccordionTrigger className="flex justify-between bg-gradient-to-br from-blue-100 to-white w-full px-3 rounded-t-xl">
                 <div className="flex justify-between items-center mb-1">
-                  <h1 className="text-2xl font-extrabold text-[#194567]">
+                  <h1 className="text-2xl font-medium text-[#194567]">
                     Grupo: {grupo.grupo_name}
                   </h1>
                 </div>

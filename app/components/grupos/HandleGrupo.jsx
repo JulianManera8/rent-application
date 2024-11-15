@@ -157,7 +157,7 @@ export default function HandleGrupo({ onSelectChange }) {
               </SelectItem>
             ))) : (
             <p className="my-2 ml-2"> No tienes grupos,  
-              <NavLink to="/dashboard/grupos" className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
+              <NavLink to="/dashboard/grupos" className="mb-4 bg-transparent text-green-500 font-medium text-center text-sm hover:scale-105 w-full transition-all">
                 {' '}Ir a crearlo
               </NavLink>
             </p>)
@@ -166,7 +166,7 @@ export default function HandleGrupo({ onSelectChange }) {
           {/* BOTON CREAR NUEVO GRUPO */}
           {/* <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger className="w-full" onClick={() => setIsOpen(true)}>
-              <p className="mb-4 bg-transparent text-green-500 font-extrabold text-center text-sm hover:scale-105 w-full transition-all">
+              <p className="mb-4 bg-transparent text-green-500 font-medium text-center text-sm hover:scale-105 w-full transition-all">
                 Crear nuevo grupo
               </p>
             </DialogTrigger>

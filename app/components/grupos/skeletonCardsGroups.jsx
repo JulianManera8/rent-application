@@ -26,7 +26,7 @@ export default function SkeCard() {
           </CardHeader>
           <CardContent className="relative h-3/4">
             <div className="h-[50%] mt-5">
-              <div className="mb-2 text-lg font-extrabold text-gray-400 underline-offset-custom">
+              <div className="mb-2 text-lg font-medium text-gray-400 underline-offset-custom">
                 <Skeleton className="w-1/2 h-4 bg-gray-300" />
               </div>
               <div className="w-2/3 ml-5 h-2 mt-5 bg-gray-300" />
@@ -35,7 +35,7 @@ export default function SkeCard() {
             </div>
 
             <div className="h-[50%] mt-5">
-              <div className="mb-2 text-lg font-extrabold text-gray-400 underline-offset-custom">
+              <div className="mb-2 text-lg font-medium text-gray-400 underline-offset-custom">
                 <Skeleton className="w-1/2 h-4 bg-gray-300" />
               </div>
               <div className="w-2/3 ml-5 h-2 mt-5 bg-gray-300" />

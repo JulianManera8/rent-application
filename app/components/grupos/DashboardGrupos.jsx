@@ -186,7 +186,7 @@ export default function DashboardGrupos() {
 
       {/* Add new group */}
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-extrabold text-[#194567] flex justify-between">
+        <h1 className="text-3xl font-medium text-[#194567] flex justify-between">
           Todos los Grupos
         </h1>
         <div>
@@ -247,7 +247,7 @@ export default function DashboardGrupos() {
                   </CardHeader>
                   <CardContent className="relative h-3/4">
                     <div className="h-[43%]">
-                      <p className="mb-2 text-lg font-extrabold text-gray-400 underline-offset-custom">
+                      <p className="mb-2 text-lg font-medium text-gray-400 underline-offset-custom">
                         Propiedades dentro del grupo:
                       </p>
                       {/* Si hay deptos, solo mostrame los 2 primeros y si hay mas, pone puntos suspensivos */}
@@ -260,7 +260,7 @@ export default function DashboardGrupos() {
                           )
                           .map((depto, i) => (
                             <ul key={i}>
-                              <li className="ml-2 font-extrabold ">
+                              <li className="ml-2 font-medium ">
                                 {i < 2 ? (
                                   <div className="flex items-center">
                                     {" "}
@@ -278,7 +278,7 @@ export default function DashboardGrupos() {
                       )}
                     </div>
                     <div className="h-1/2">
-                      <p className="mb-3 text-lg font-extrabold text-gray-400 underline-offset-custom">
+                      <p className="mb-3 text-lg font-medium text-gray-400 underline-offset-custom">
                         Balances dentro del grupo:
                       </p>
                       {balances?.filter(
