@@ -233,13 +233,13 @@ export default function DashboardGrupos() {
       {loadingGetGrupos ? (
         <SkeCard />
       ) : getGrupoInfo?.length > 0 ? (
-        <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-20 gap-y-6">
+        <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-14 gap-y-6">
           {getGrupoInfo?.map((grupo) => (
 
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
-                <Card className="bg-gray-50 shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
-                  <CardHeader className="h-1/4">
+              <Card className="bg-gradient-to-br from-blue-50 to-white shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
+              <CardHeader className="h-1/4">
                     <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
                     <CardDescription className="pt-1">
                       Creado en fecha: {grupo.grupo_createdAt}

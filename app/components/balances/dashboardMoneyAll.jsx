@@ -149,7 +149,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
 
             <Accordion type="multiple" className="w-full" defaultOpenItems={[`item${grupo.id}`]}>
               <AccordionItem value={`item${grupo.id}`}>
-                <AccordionTrigger className="flex justify-between bg-[#0c8aeb16] w-full px-3 rounded-t-xl">
+                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-blue-100 to-white w-full px-3 rounded-t-xl">
                   <div className="flex justify-between items-center mb-1">
                     <h1 className="text-2xl font-extrabold text-[#194567]">
                       Grupo: {grupo.grupo_name}
