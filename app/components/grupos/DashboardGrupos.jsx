@@ -92,6 +92,7 @@ export default function DashboardGrupos() {
       const filtrar = getGrupoInfo.filter( grupo => grupo.grupo_id !== grupoId)
       setGetGrupoInfo(filtrar)
       setLoadingDelete(false)
+      setInputBorrar('')
     }, 2500);
 
    } catch (error) {
@@ -110,7 +111,7 @@ export default function DashboardGrupos() {
     }
   }, [userLoged_id]);
 
-  const { loading: loadingGetBalances, error: errorGetBalances, data: balances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
+  const { loading: loadingGetBalances, data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
 
   const { loading: loadingGetDeptos, data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
 
@@ -134,7 +135,7 @@ export default function DashboardGrupos() {
             grupo_id: grupo.id,
             grupo_name: grupo.grupo_name, 
             user_id: grupo.user_id,
-            grupo_createdAt: new Date(grupo.created_at).toLocaleDateString()
+            grupo_createdAt: grupo.created_at
         }));
 
         setGetGrupoInfo(mappedGrupos);
@@ -160,6 +161,7 @@ export default function DashboardGrupos() {
 
             setTimeout(() => {
               setIsOpen(false)
+              setCerrar(false)
                 if (result && result.length > 0) {
                 setGetGrupoInfo((prev) => [
                     ...prev,
@@ -177,7 +179,7 @@ export default function DashboardGrupos() {
             
         }
     } catch (error) {
-        console.error("Error al crear el grupo:", error.message || error);
+      console.error("Error al crear el grupo:", error.message || error);
     }
   };
 
@@ -201,7 +203,10 @@ export default function DashboardGrupos() {
                   Crea un nuevo grupo para tus propiedades
                 </DialogTitle>
                 <DialogDescription className="flex flex-col gap-4 mt-3 mb-3">
-                  <Label className="mt-8"> Nombre del grupo </Label>
+                  <Label className="mt-8 font-bold spaceGrotesk text-lg "> Nombre del grupo </Label>
+                  <p className="font-semibold text-orange-400 -mt-3">
+                    Asegurate de que no se repitan los nombres entre grupos.
+                  </p>
                   <Input
                     type="text"
                     placeholder="Ej: Familia Perez"
@@ -238,11 +243,11 @@ export default function DashboardGrupos() {
 
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
-              <Card className="bg-gradient-to-br from-blue-50 to-white shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
+              <Card className="bg-gradient-to-br from-white to-[#37a5ea29] shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
               <CardHeader className="h-1/4">
                     <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
                     <CardDescription className="pt-1">
-                      Creado en fecha: {grupo.grupo_createdAt}
+                      Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="relative h-3/4">
@@ -371,7 +376,7 @@ export default function DashboardGrupos() {
                   )}
 
                   <DialogDescription className="text-gray-400 text-md">
-                    Creado en fecha: {grupo.grupo_createdAt}
+                    Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
                   </DialogDescription>
                 </DialogHeader>
 
@@ -553,7 +558,7 @@ export default function DashboardGrupos() {
         <div className="w-full flex justify-center h-56">
           <Card className="w-96 h-32 mt-3 flex flex-col justify-center text-center shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg"> 
+              <CardTitle className="text-lg font-medium"> 
                 No hay grupos creados por el momento
               </CardTitle>
             </CardHeader>

@@ -13,7 +13,7 @@ export default function SectionPropiedades() {
 
                 <div className=" space-y-4 flex flex-col justify-between">
 
-                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-64 min-h-[100px] h-full flex flex-col justify-between">
+                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px]  w-[265px] min-h-[100px] h-full flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-2">
                             <CardTitle className="text-lg font-medium text-left w-full">Propiedades Cargadas </CardTitle>
                             <Home className="h-6 w-6 text-muted-foreground" />

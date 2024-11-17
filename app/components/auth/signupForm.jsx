@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Spinner from '../helpers/loaderIcon'
@@ -28,6 +28,7 @@ export default function SignupForm() {
     name: "",
     lastname: "",
     email: "",
+    dni: '',
     password: "",
     confirmPassword: "",
   });
@@ -36,7 +37,7 @@ export default function SignupForm() {
     e.preventDefault();
     setLoading(true)
 
-    setErrors({ name: '', lastname: '', email: "", password: "", confirmPassword: '', auth: "" });
+    setErrors({ name: '', lastname: '', email: "", password: "", confirmPassword: '', dni: '', auth: "" });
 
 
     if(userInfo.name === "") {
@@ -52,6 +53,11 @@ export default function SignupForm() {
     if(userInfo.email === "") {
       setLoading(false) 
       return setErrors((prevErrors)=> ({...prevErrors, email: 'Debes completar correctamente el email'} ))
+    }
+
+    if(userInfo.dni === "" || userInfo.dni.length !== 8) {
+      setLoading(false) 
+      return setErrors((prevErrors)=> ({...prevErrors, dni: 'Debes completar correctamente tu DNI'} ))
     }
 
     if(userInfo.password === "") {
@@ -74,9 +80,11 @@ export default function SignupForm() {
       password: userInfo.password,
       options: {
         data: {
-          name: userInfo.name,
-          lastname: userInfo.lastname,
-        },
+        name: userInfo.name,
+        lastname: userInfo.lastname,
+        email: userInfo.email,
+        dni: userInfo.dni.toString(),
+        }
       },
     });
 
@@ -100,11 +108,10 @@ export default function SignupForm() {
         <CardContent className="space-y-5">
           <div>
             <Input
-              //   onChange={handleInputChange}
               type="text"
               name="name"
               placeholder="Name"
-              autoComplete="name"
+              autoComplete="given-name"
               className="text-lg w-4/5 mx-auto"
               value={userInfo.name}
               onChange={(e) =>
@@ -115,11 +122,10 @@ export default function SignupForm() {
             </div>
           <div>
             <Input
-              //   onChange={handleInputChange}
               type="text"
               name="lastname"
               placeholder="Lastname"
-              autoComplete="lastname"
+              autoComplete='family-name'
               className="text-lg w-4/5 mx-auto"
               value={userInfo.lastname}
               onChange={(e) =>
@@ -127,11 +133,10 @@ export default function SignupForm() {
               }
             />
             {errors.lastname && <Error errorMessage={errors.lastname} />}
-            </div>
+          </div>
 
           <div>
             <Input
-              //   onChange={handleInputChange}
               type="email"
               name="email"
               placeholder="Email"
@@ -143,11 +148,25 @@ export default function SignupForm() {
               }
             />
             {errors.email && <Error errorMessage={errors.email} />}
-            </div>
+          </div>
+
+          <div>
+            <Input
+              type="number"
+              name="dni"
+              placeholder="D.N.I (sin puntos, solo numeros)"
+              autoComplete="off"
+              className="text-lg w-4/5 mx-auto"
+              value={userInfo.dni}
+              onChange={(e) =>
+                setUserInfo({ ...userInfo, dni: e.target.value })
+              }
+            />
+            {errors.dni && <Error errorMessage={errors.dni} />}
+          </div>
 
           <div className="relative">
             <Input
-              //   onChange={handleInputChange}
               type={passEye ? "password" : "text"}
               name="password"
               placeholder="Password"
@@ -160,12 +179,12 @@ export default function SignupForm() {
             />
             {passEye ? (
               <Eye
-                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             ) : (
               <EyeOff
-                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             )}
@@ -188,12 +207,12 @@ export default function SignupForm() {
             />
             {passEye ? (
               <Eye
-                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             ) : (
               <EyeOff
-                className="absolute inset-y-0 my-auto right-1 md:right-3 text-gray-400 cursor-pointer"
+                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
                 onClick={() => setPassEye(!passEye)}
               />
             )}

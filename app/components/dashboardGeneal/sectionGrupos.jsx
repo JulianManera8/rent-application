@@ -12,10 +12,10 @@ export default function SectionGrupos() {
             <div className="flex gap-x-10 ">
 
                 <div className=" space-y-4 flex flex-col justify-between">
-                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-64 min-h-[100px] flex flex-col justify-between">
+                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[265px] min-h-[100px] flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-2">
                             <CardTitle className="text-lg font-medium text-left w-full">Grupos Creados </CardTitle>
-                            <Boxes className="h-5 w-5 text-muted-foreground" />
+                            <Boxes className="h-6 w-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="flex flex-col justify-between">
                             <span className="text-lg text-zinc-600 font-semibold"> 3 </span>
@@ -49,7 +49,7 @@ export default function SectionGrupos() {
                 <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[400px] flex flex-col justify-evenly">
                     <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-1 h-1/3">
                         <CardTitle className="text-lg font-medium text-left w-full">Distribucion de Propiedades por Grupo</CardTitle>
-                        <Building2Icon className="h-5 w-5 text-muted-foreground" />
+                        <Building2Icon className="h-6 w-6 text-muted-foreground" />
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <div className="flex items-center text-sm  gap-x-3 w-full ">

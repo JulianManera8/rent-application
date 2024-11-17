@@ -14,10 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 
 export default function DashboardDeptos({searchTerm, filteredDepartamentos, loadingDeptos}) {
 
-
   const userLoged_id = useUser();
   const navigate = useNavigate()
-
 
   const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
 
@@ -57,7 +55,6 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
     )
     : (
       filteredGrupos.length > 0 
-
       ?  
       filteredGrupos.map((grupo) => (
         <div className="flex w-[95%] mx-auto justify-between items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-12 transition-all" key={grupo.id}>
@@ -140,11 +137,11 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
         <div className="w-full flex justify-center h-56">
             <Card className="w-96 h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg"> 
-                  {searchTerm.length > 0 ? 'No hay propiedades que coincidan con esa busqueda.' : 'No hay grupos, tampoco propiedades.'}
+                <CardTitle className="text-lg font-medium"> 
+                  {searchTerm.length > 0 ? 'No hay propiedades que coincidan con esa busqueda.' : 'No hay propiedades cargadas por el momento.'}
                 </CardTitle>
               </CardHeader>
-              {searchTerm.length > 0 ? '' : (
+              {searchTerm.length > 0 || filteredDepartamentos.length === 0 ? '' : (
               <CardContent className="flex justify-center">
                 <NavLink to='/dashboard/grupos'>
                   <p className="w-fit items-center flex bg-green-600 rounded-lg text-white h-10 px-6 font-bold text-md hover:bg-green-800">

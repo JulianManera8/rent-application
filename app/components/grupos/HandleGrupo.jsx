@@ -162,53 +162,6 @@ export default function HandleGrupo({ onSelectChange }) {
               </NavLink>
             </p>)
           )}
-
-          {/* BOTON CREAR NUEVO GRUPO */}
-          {/* <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger className="w-full" onClick={() => setIsOpen(true)}>
-              <p className="mb-4 bg-transparent text-green-500 font-medium text-center text-sm hover:scale-105 w-full transition-all">
-                Crear nuevo grupo
-              </p>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  Crea un nuevo grupo para tus propiedades
-                </DialogTitle>
-                <DialogDescription className="flex flex-col gap-4 mt-3 mb-3">
-                  <Label className="mt-8"> Nombre del grupo </Label>
-                  <Input
-                    type="text"
-                    placeholder="Ej: Familia Perez"
-                    value={createGrupoInfo.nombreGrupo}
-                    onChange={(e) =>
-                      setCreateGrupoInfo({
-                        ...createGrupoInfo,
-                        nombreGrupo: e.target.value,
-                      })
-                    }
-                  />
-                  <Button
-                    className={`flex justify-center w-full mt-3 ${
-                      cerrar ? "bg-green-600 hover:bg-gree-600" : "bg-black"
-                    }`}
-                    disabled={validated}
-                    onClick={(e) => handleCreateGrupo(e)}
-                  >
-                    {cerrar ? "Creado" : "Agregar"}
-                  </Button>
-                  {cerrar ? (
-                    <Label className="text-center w-full font-bold text-green-700">
-                      {" "}
-                      Grupo creado correctamente{" "}
-                    </Label>
-                  ) : (
-                    ""
-                  )}
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog> */}
         </SelectContent>
       </Select>
     </div>

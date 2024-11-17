@@ -11,7 +11,7 @@ export default function SectionPropiedades() {
 
             <div className="flex gap-x-10 max-h-64">
 
-                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[410px] flex flex-col justify-evenly">
+                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[430px] flex flex-col justify-evenly">
                     <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-3 mb-2 h-1/3">
                         <CardTitle className="text-lg font-medium text-left w-full">Ultimos Balances cargados por grupo </CardTitle>
                         <FileChartColumnIcon className="h-6 w-6 text-muted-foreground" />
@@ -83,7 +83,7 @@ export default function SectionPropiedades() {
 
                     <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-full h-11">
                         <CardHeader className="w-full rounded-lg bg-green-600 hover:bg-green-500 text-white hover:shadow-black/90  transition-all duration-200 flex items-center h-full py-1">
-                            <CardTitle className="text-md text-left w-full h-ful font-normal justify-center  flex items-center">
+                            <CardTitle className=" text-md text-left w-full h-full font-normal justify-center flex items-center">
                                 <NavLink to='/dashboard/deptos/createDepto' className='cursor-pointer w-full h-full flex justify-center px-3 items-center'> Cargar Balance </NavLink>
                             </CardTitle>
                         </CardHeader>
