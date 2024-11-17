@@ -48,15 +48,20 @@ export default function DashboardDeptoPage() {
     return matchesSearchTerm && matchesFilter;
   });
 
-  return (
-    <div className="flex flex-col w-full mr-14 ">
-      <div className="flex items-center mt-8 justify-between ">
-        <h1 className="text-3xl text-gray-300 font-medium font-inter">
-           DASHBOARD - <span className='text-[#0c426bd3]'> Propiedades </span>
-        </h1>
+return (
+  <div className="container mx-auto w-full mr-14 px-0 ">
+    <div className="flex justify-between items-center">
+      <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-10'>
+          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedades </span>{" "}  
+      </h1>
+    </div>
 
-        
-        <div className="flex gap-x-5"> 
+    <div className='flex md:justify-between justify-center gap-y-3 gap-x-6 items-center flex-wrap'>
+      <h1 className="sm:text-3xl text-2xl w-max mx-auto sm:mx-0 font-medium text-[#194567] flex justify-between">
+        Todas las Propiedades
+      </h1>
+
+      <div className="flex gap-5 flex-wrap md:justify-start justify-center"> 
           
           <div className="flex items-center">
             <div className="flex items-center gap-2">
@@ -83,12 +88,17 @@ export default function DashboardDeptoPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          
           <Button className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"> 
               <NavLink to="/dashboard/deptos/createDepto"> Agregar Propiedad </NavLink>
           </Button>
       </div>
-        </div>
-      <DashboardDeptos searchTerm={searchTerm} filteredDepartamentos={filteredDepartamentos} deptos={deptos} loadingDeptos={loadingDeptos}/>
+
     </div>
-  );
+    
+    <DashboardDeptos searchTerm={searchTerm} filteredDepartamentos={filteredDepartamentos} deptos={deptos} loadingDeptos={loadingDeptos}/>
+    </div>
+);
+  
 }
+
