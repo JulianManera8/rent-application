@@ -9,22 +9,21 @@ export default function SectionPropiedades() {
         <div>
             <h1 className="text-3xl font-medium text-[#0c426bd3] mb-3"> Propiedades </h1>
 
-            <div className="flex gap-x-10 max-h-64">
+            <div className="flex gap-10 flex-wrap">
 
-                <div className=" space-y-4 flex flex-col justify-between">
-
-                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px]  w-[265px] min-h-[100px] h-full flex flex-col justify-between">
+                <div className=" space-y-4 flex flex-col md:w-[265px] w-full justify-between">
+                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] min-h-[100px] flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-2">
-                            <CardTitle className="text-lg font-medium text-left w-full">Propiedades Cargadas </CardTitle>
+                            <CardTitle className="md:text-lg text-md font-medium text-left w-full">Propiedades Cargadas </CardTitle>
                             <Home className="h-6 w-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="space-y-0.5 flex flex-col">
-                            <span className="text-lg text-zinc-600 font-semibold"> 20 </span>
+                            <span className="md:text-lg text-md text-zinc-600 font-semibold"> 20 </span>
                             <span className="text-xs font-medium text-zinc-400"> Distribuidas en 3 grupos</span>
                         </CardContent>
                     </Card>
 
-                    <div className="flex flex-row gap-x-3 max-w-64">
+                    <div className="flex flex-row gap-x-3 md:max-w-[265px]">
 
                         <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-full h-11">
                             <CardHeader className="w-full bg-[#08598bfb] hover:bg-[#066baae5]  transition-all duration-200 px-1 rounded-lg text-white flex items-center h-full py-1">
@@ -46,11 +45,11 @@ export default function SectionPropiedades() {
                     
                 </div>
 
-                <div className="flex flex-col gap-y-5 max-w-64 h-full">
+                <div className="flex flex-col gap-y-5 md:max-w-64 w-full h-full">
 
-                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[275px] h-2/5 flex flex-col justify-between">
-                        <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-2">
-                            <CardTitle className="text-lg font-medium text-left w-full">Total ingresos esperados </CardTitle>
+                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[275px] w-full h-2/5 flex flex-col justify-between">
+                        <CardHeader className="flex flex-row items-center justify-start w-full md:mb-auto mb-2 space-y-0 py-2">
+                            <CardTitle className="md:text-lg text-md font-medium text-left w-full">Total ingresos esperados </CardTitle>
                             <DollarSign className="h-6 w-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="flex flex-row items-center gap-x-3">
@@ -59,9 +58,9 @@ export default function SectionPropiedades() {
                         </CardContent>
                     </Card>
 
-                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[275px] h-2/5 flex flex-col justify-between">
-                        <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-2">
-                            <CardTitle className="text-lg font-medium text-left w-full">Porcentaje de ocupación </CardTitle>
+                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[275px] w-full h-2/5 flex flex-col justify-between">
+                        <CardHeader className="flex flex-row items-center justify-start w-full md:mb-auto mb-2 space-y-0 py-2">
+                            <CardTitle className="md:text-lg text-md font-medium text-left w-full">Porcentaje de ocupación </CardTitle>
                             <UserRoundCheckIcon className="h-6 w-6 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="flex flex-row items-center gap-x-3">
@@ -72,9 +71,9 @@ export default function SectionPropiedades() {
 
                 </div>
 
-                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[350px] flex flex-col justify-evenly">
+                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[350px] w-full flex flex-col justify-evenly">
                     <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-1 h-1/3">
-                        <CardTitle className="text-lg font-medium text-left w-full">Distribucion de formas de cobro </CardTitle>
+                        <CardTitle className="md:text-lg text-md font-medium text-left md:mb-auto mb-3 w-full">Distribucion de formas de cobro </CardTitle>
                         <CreditCard className="h-6 w-6 text-muted-foreground" />
                     </CardHeader>
                     <CardContent className="space-y-3">

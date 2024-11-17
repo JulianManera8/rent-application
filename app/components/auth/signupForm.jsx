@@ -112,7 +112,7 @@ export default function SignupForm() {
               name="name"
               placeholder="Name"
               autoComplete="given-name"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-md text-sm w-4/5 mx-auto"
               value={userInfo.name}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, name: e.target.value })
@@ -126,7 +126,7 @@ export default function SignupForm() {
               name="lastname"
               placeholder="Lastname"
               autoComplete='family-name'
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-md  w-4/5 mx-auto"
               value={userInfo.lastname}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, lastname: e.target.value })
@@ -141,7 +141,7 @@ export default function SignupForm() {
               name="email"
               placeholder="Email"
               autoComplete="email"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-md text-sm w-4/5 mx-auto"
               value={userInfo.email}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, email: e.target.value })
@@ -156,7 +156,7 @@ export default function SignupForm() {
               name="dni"
               placeholder="D.N.I (sin puntos, solo numeros)"
               autoComplete="off"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-md text-sm w-4/5 mx-auto"
               value={userInfo.dni}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, dni: e.target.value })
@@ -171,7 +171,7 @@ export default function SignupForm() {
               name="password"
               placeholder="Password"
               autoComplete="current-password"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-md text-sm w-4/5 mx-auto"
               value={userInfo.password}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, password: e.target.value })
@@ -199,7 +199,7 @@ export default function SignupForm() {
               name="password"
               placeholder="Confirm password"
               autoComplete="current-password"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-md text-sm w-4/5 mx-auto"
               value={userInfo.confirmPassword}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, confirmPassword: e.target.value })
@@ -222,7 +222,7 @@ export default function SignupForm() {
         </CardContent>
 
         <CardFooter className="flex justify-center gap-5 flex-col">
-          <Button onClick={handleSignup} className="w-fit px-5 text-lg mt-3">
+          <Button onClick={handleSignup} className="w-fit px-5 md:text-lg text-md text-sm mt-3">
             {loading ? <Spinner/> : "Create"}
           </Button>
 

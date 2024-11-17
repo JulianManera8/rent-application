@@ -70,7 +70,7 @@ export default function LoginForm() {
               name="email"
               placeholder="Email"
               autoComplete="email"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-sm w-4/5 mx-auto"
               value={userInfo.email}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, email: e.target.value })
@@ -85,7 +85,7 @@ export default function LoginForm() {
               name="password"
               placeholder="Password"
               autoComplete="current-password"
-              className="text-lg w-4/5 mx-auto"
+              className="md:text-lg text-sm w-4/5 mx-auto"
               value={userInfo.password}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, password: e.target.value })
@@ -109,7 +109,7 @@ export default function LoginForm() {
         <CardFooter className="flex justify-center gap-5 flex-col">
           <Button
             onClick={(e) => handleLogin(e)}
-            className="w-fit px-5 text-lg mt-3"
+            className="w-fit px-5 md:text-lg text-sm mt-3"
           >
             {loading ? <Spinner/> : "Login"}
           </Button>

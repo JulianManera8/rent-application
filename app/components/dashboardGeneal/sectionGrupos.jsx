@@ -9,10 +9,10 @@ export default function SectionGrupos() {
         <div>
             <h1 className="text-3xl font-medium text-[#0c426bd3] mb-3"> Grupos </h1>
 
-            <div className="flex gap-x-10 ">
+            <div className="flex gap-10 flex-wrap">
 
-                <div className=" space-y-4 flex flex-col justify-between">
-                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[265px] min-h-[100px] flex flex-col justify-between">
+                <div className=" space-y-4 flex flex-col md:w-[265px] w-full justify-between">
+                    <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] min-h-[100px] flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-2">
                             <CardTitle className="text-lg font-medium text-left w-full">Grupos Creados </CardTitle>
                             <Boxes className="h-6 w-6 text-muted-foreground" />
@@ -23,7 +23,7 @@ export default function SectionGrupos() {
                         </CardContent>
                     </Card>
 
-                    <div className="flex flex-row gap-x-3 max-w-64">
+                    <div className="flex flex-row gap-x-3 md:max-w-[265px]">
 
                         <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-full h-11">
                             <CardHeader className="w-full bg-[#08598bfb] hover:bg-[#066baae5]  transition-all duration-200 px-1 rounded-lg text-white flex items-center h-full py-1">
@@ -46,9 +46,9 @@ export default function SectionGrupos() {
                 </div>
                 
 
-                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] w-[400px] flex flex-col justify-evenly">
-                    <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-1 h-1/3">
-                        <CardTitle className="text-lg font-medium text-left w-full">Distribucion de Propiedades por Grupo</CardTitle>
+                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[400px] w-full flex flex-col justify-evenly">
+                    <CardHeader className="flex flex-row items-center md:mb-0 mb-2 justify-start w-full space-y-0 py-1 h-1/3">
+                        <CardTitle className="md:text-lg text-md font-medium text-left w-full">Distribucion de Propiedades por Grupo</CardTitle>
                         <Building2Icon className="h-6 w-6 text-muted-foreground" />
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -72,12 +72,12 @@ export default function SectionGrupos() {
                     </CardContent>
                 </Card>
 
-                <Card className="border-1 shadow-md shadow-black/15 relative border-[0.6px] border-t-[1px] w-[400px] flex flex-row justify-evenly">
-                    <div className="absolute top-0 left-0 w-56">
-                        <h1 className="text-lg  font-medium flex text-left p-3 w-full items-center justify-center">Distribucion de Ingresos por Grupo</h1>
+                <Card className="border-1 shadow-md shadow-black/15 relative border-[0.6px] border-t-[1px] md:w-[400px] w-full flex flex-col md:flex-row md:justify-evenly">
+                    <div className="md:absolute md:top-0 md:left-0 md:w-56 w-full">
+                        <h1 className="md:text-lg text-md  font-medium flex text-left p-3 w-full items-center justify-center">Distribucion de Ingresos por Grupo</h1>
                     </div>
 
-                    <div className="w-3/5 ml-auto mr-2">
+                    <div className="md:w-3/5 md:ml-auto mx-auto md:mr-2">
                         <img src="/chart2.png" className="w-80 h-full" alt="chart" />
                     </div>
                 </Card>

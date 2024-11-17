@@ -9,7 +9,7 @@ export default function DashboardIndexPage() {
             <h1 className='text-3xl text-gray-300 font-medium font-inter mt-8 mx-0 mb-10'>
                  DASHBOARD - <span className='text-[#0c426bd3]'> Vista General </span>{" "}  
             </h1>
-            <main className='space-y-16 w-full ml-5 mb-20'>
+            <main className='space-y-16 ml-4 mr-4 mb-20'>
                 <section>
                     <SectionGrupos />
                 </section>
