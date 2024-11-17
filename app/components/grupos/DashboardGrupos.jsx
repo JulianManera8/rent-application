@@ -187,7 +187,7 @@ export default function DashboardGrupos() {
     <div className={`w-full py-10 px-0`}>
 
       {/* Add new group */}
-      <div className="flex justify-between items-center mb-10">
+      <div className="flex sm:justify-between items-center mb-10 flex-wrap gap-y-3 justify-center">
         <h1 className="text-3xl font-medium text-[#194567] flex justify-between">
           Todos los Grupos
         </h1>
@@ -243,8 +243,8 @@ export default function DashboardGrupos() {
 
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
-              <Card className="bg-gradient-to-br from-white to-[#37a5ea29] shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
-              <CardHeader className="h-1/4">
+                <Card className="bg-gradient-to-br from-white to-[#37a5ea29] shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
+                  <CardHeader className="h-1/4">
                     <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
                     <CardDescription className="pt-1">
                       Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
@@ -323,7 +323,7 @@ export default function DashboardGrupos() {
                   </CardContent>
                 </Card>
               </DialogTrigger>
-              <DialogContent className="md:max-h-[800px] sm:max-h-dvh overflow-scroll">
+              <DialogContent className="md:max-h-[800px] sm:max-h-dvh md:min-w-[440px] w-11/12 rounded-md overflow-scroll">
                 <DialogHeader>
                   {editName ? (
                     <div className="space-y-2">
@@ -356,10 +356,12 @@ export default function DashboardGrupos() {
                       </div>
                     </div>
                   ) : (
-                    <DialogTitle className="text-2xl flex items-center gap-x-8">
-                      Grupo: {grupo.grupo_name}
+                    <DialogTitle className="text-2xl justify-center sm:justify-between gap-y-2 w-full flex flex-wrap items-center gap-x-8">
+                      <p>
+                        Grupo: {grupo.grupo_name}
+                      </p>
                       <div
-                        className="text-2xl flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all"
+                        className="text-2xl flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all mr-0 sm:mr-5"
                         onClick={() => setEditName(!editName)}
                         role="button"
                         tabIndex={0}
@@ -555,6 +557,7 @@ export default function DashboardGrupos() {
         </section>
       ) : (
 
+        //COMPONENTE DE NO HAY GRUPOS
         <div className="w-full flex justify-center h-56">
           <Card className="w-96 h-32 mt-3 flex flex-col justify-center text-center shadow-lg">
             <CardHeader>

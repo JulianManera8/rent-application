@@ -11,9 +11,13 @@ export default function MoneyHistorial() {
   return (
     <div className="container mx-auto w-full mr-14 px-0 ">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl text-gray-300 font-medium font-inter mb-10 mt-8">
-          {" "}
-          DASHBOARD - <span className='text-[#0c426bd3]'>Balances Monetarios </span>{" "}
+        <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-10'>
+          DASHBOARD - <span className='text-[#0c426bd3]'> Balances Monetarios </span>{" "}  
+        </h1>
+      </div>
+      <div className='flex md:justify-between justify-center gap-y-3 gap-x-6 items-center flex-wrap'>
+        <h1 className="text-3xl font-medium text-[#194567] flex justify-between">
+          Todos los Balances
         </h1>
         <AddBalance months={months} setBalanceCreated={setBalanceCreated}/>
       </div>

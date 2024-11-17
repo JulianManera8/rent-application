@@ -6,7 +6,7 @@ import { Home, DollarSign, UserRoundCheckIcon, CreditCard } from 'lucide-react'
 
 export default function SectionPropiedades() {
     return (
-        <div>
+        <div className="-z-10">
             <h1 className="text-3xl font-medium text-[#0c426bd3] mb-3"> Propiedades </h1>
 
             <div className="flex gap-10 flex-wrap">
@@ -45,7 +45,7 @@ export default function SectionPropiedades() {
                     
                 </div>
 
-                <div className="flex flex-col gap-y-5 md:max-w-64 w-full h-full">
+                <div className="flex flex-col gap-y-5 md:max-w-64 w-full h-full -z-10">
 
                     <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[275px] w-full h-2/5 flex flex-col justify-between">
                         <CardHeader className="flex flex-row items-center justify-start w-full md:mb-auto mb-2 space-y-0 py-2">
@@ -71,7 +71,7 @@ export default function SectionPropiedades() {
 
                 </div>
 
-                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[350px] w-full flex flex-col justify-evenly">
+                <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[350px] w-full flex flex-col justify-evenly -z-10">
                     <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 py-1 h-1/3">
                         <CardTitle className="md:text-lg text-md font-medium text-left md:mb-auto mb-3 w-full">Distribucion de formas de cobro </CardTitle>
                         <CreditCard className="h-6 w-6 text-muted-foreground" />

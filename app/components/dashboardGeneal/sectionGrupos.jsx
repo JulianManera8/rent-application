@@ -51,7 +51,7 @@ export default function SectionGrupos() {
                         <CardTitle className="md:text-lg text-md font-medium text-left w-full">Distribucion de Propiedades por Grupo</CardTitle>
                         <Building2Icon className="h-6 w-6 text-muted-foreground" />
                     </CardHeader>
-                    <CardContent className="space-y-3">
+                    <CardContent className="space-y-3 ">
                         <div className="flex items-center text-sm  gap-x-3 w-full ">
                             <span className="w-3/5 text-zinc-600 font-normal overflow-hidden whitespace-nowrap text-ellipsis"> Familia Manera </span> 
                             <Progress className="w-4/5 text-blue-400" value={10} /> 

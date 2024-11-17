@@ -197,7 +197,7 @@ export default function AddBalance({months, setBalanceCreated}) {
           </div>
 
           <SheetFooter className=" flex flex-col sm:flex-col sm:justify-end sm:space-x-2">
-            <div className="flex mt-2 w-full justify-between mb-5">
+            <div className="flex mt-2 w-full flex-wrap-reverse gap-5 justify-center sm:justify-between mb-5">
               <Button type="button" onClick={() => {setFile(null), setIsOpen(false)}}>Cancelar</Button>
               <Button 
                 type="submit"

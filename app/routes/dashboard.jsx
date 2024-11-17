@@ -64,7 +64,7 @@ export default function DashboardIndexPage() {
     <div className="flex font-inter">
       {userLoged ? (
         <>
-          <div className={`fixed ${isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-0'} transition-transform duration-300`}>
+          <div className={`fixed ${isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-0'} transition-transform duration-300 z-50`}>
             <Sidebar 
               responsive={responsive} 
               setResponsive={setResponsive}
@@ -72,7 +72,7 @@ export default function DashboardIndexPage() {
             />
           </div>
           <div 
-            className="flex-1 overflow-hidden mr-[30px] transition-all duration-300 ease-in-out"
+            className="flex-1 overflow-hidden mr-[30px] transition-all duration-300 ease-in-out -z-0"
             style={{ marginLeft: getMarginLeft() }}
           >
             <Outlet />
