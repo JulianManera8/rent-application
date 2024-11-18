@@ -55,14 +55,12 @@ export default function DashboardIndexPage() {
 
   const getMarginLeft = () => {
     if (isMobileView) {
-      return isMobileHidden ? (responsive ? '' : '') : ``;
+      // In mobile view, if the sidebar is hidden, margin is 0; otherwise, it takes full width.
+      return isMobileHidden ? '24px' : '24px';
     }
-
-    if(responsive) {
-      return '100px' 
-    }
-
-    return `${sidebarWidth + 20}px`;
+  
+    // For non-mobile views
+    return responsive ? '100px' : `${sidebarWidth + 20}px`;
   };
 
   return (
@@ -78,7 +76,7 @@ export default function DashboardIndexPage() {
           </div>
           <div 
             style={{ marginLeft: getMarginLeft()}}
-            className={`flex-1 overflow-hidden mr-4 ${isMobileView ? 'mr-0.5' : 'mr-6'} transition-all duration-300 ease-in-out -z-0`}
+            className={`flex-1 overflow-hidden ${isMobileView ? 'mr-6' : 'mr-6'} transition-all duration-300 ease-in-out -z-0`}
           >
             <Outlet />
           </div>
