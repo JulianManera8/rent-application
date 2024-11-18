@@ -55,9 +55,14 @@ export default function DashboardIndexPage() {
 
   const getMarginLeft = () => {
     if (isMobileView) {
-      return isMobileHidden ? '0px' : `0px`;
+      return isMobileHidden ? (responsive ? '' : '') : ``;
     }
-    return `${sidebarWidth + 30}px`;
+
+    if(responsive) {
+      return '100px' 
+    }
+
+    return `${sidebarWidth + 20}px`;
   };
 
   return (
@@ -72,8 +77,8 @@ export default function DashboardIndexPage() {
             />
           </div>
           <div 
-            className="flex-1 overflow-hidden mx-4 transition-all duration-300 ease-in-out -z-0"
-            style={{ marginLeft: 1 + getMarginLeft() }}
+            style={{ marginLeft: getMarginLeft()}}
+            className={`flex-1 overflow-hidden mr-4 ${isMobileView ? 'mr-0.5' : 'mr-6'} transition-all duration-300 ease-in-out -z-0`}
           >
             <Outlet />
           </div>
