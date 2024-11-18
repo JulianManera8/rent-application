@@ -90,7 +90,7 @@ export default function SectionPropiedades() {
             <CardHeader className="w-full bg-[#08598bfb] hover:bg-[#066baae5] transition-all duration-200 rounded-lg text-white flex items-center h-full py-1">
               <CardTitle className="text-md text-left w-full h-full font-normal justify-center flex items-center">
                 <NavLink
-                  to="/dashboard/deptos"
+                  to="/dashboard/money"
                   className="cursor-pointer w-full h-full flex justify-center px-3 items-center"
                 >
                   Ver Balances
@@ -103,7 +103,7 @@ export default function SectionPropiedades() {
             <CardHeader className="w-full rounded-lg bg-green-600 hover:bg-green-500 text-white hover:shadow-black/90 transition-all duration-200 flex items-center h-full py-1">
               <CardTitle className="text-md text-left w-full h-full font-normal justify-center flex items-center">
                 <NavLink
-                  to="/dashboard/deptos/createDepto"
+                  to="/dashboard/money"
                   className="cursor-pointer w-full h-full flex justify-center px-3 items-center"
                 >
                   Cargar Balance

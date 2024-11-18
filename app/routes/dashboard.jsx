@@ -47,7 +47,7 @@ export default function DashboardIndexPage() {
     checkSession();
   }, []);
 
-  const sidebarWidth = responsive ? (isMobileHidden ? 2 : 80 ) : 240;
+  const sidebarWidth = responsive ? (isMobileHidden ? 0 : 80 ) : 240;
 
   const handleMobileHiddenChange = (hidden) => {
     setIsMobileHidden(hidden);
@@ -55,7 +55,7 @@ export default function DashboardIndexPage() {
 
   const getMarginLeft = () => {
     if (isMobileView) {
-      return isMobileHidden ? '30px' : `${sidebarWidth + 30}px`;
+      return isMobileHidden ? '0px' : `0px`;
     }
     return `${sidebarWidth + 30}px`;
   };
@@ -72,8 +72,8 @@ export default function DashboardIndexPage() {
             />
           </div>
           <div 
-            className="flex-1 overflow-hidden mr-[30px] transition-all duration-300 ease-in-out -z-0"
-            style={{ marginLeft: getMarginLeft() }}
+            className="flex-1 overflow-hidden mx-4 transition-all duration-300 ease-in-out -z-0"
+            style={{ marginLeft: 1 + getMarginLeft() }}
           >
             <Outlet />
           </div>

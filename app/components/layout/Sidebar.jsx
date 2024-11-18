@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Button } from "../ui/button"
 import { NavLink, useNavigate } from "@remix-run/react"
-import { Building, DollarSign, Home, Boxes, ArrowLeftFromLine, ArrowRightFromLine, ChevronsRight, ChevronsLeft } from "lucide-react"
+import { Building, DollarSign, Home, Boxes, ArrowLeftFromLine, ArrowRightFromLine, XSquareIcon, MenuSquareIcon } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import { useEffect, useState } from "react"
 import { Skeleton } from "../ui/skeleton"
@@ -52,7 +52,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
     { path: "/dashboard/general", icon: Home, label: "Dashboard" },
     { path: "/dashboard/grupos", icon: Boxes, label: "Grupos" },
     { path: "/dashboard/deptos", icon: Building, label: "Propiedades" },
-    { path: "/dashboard/money", icon: DollarSign, label: "Balance" },
+    { path: "/dashboard/money", icon: DollarSign, label: "Balances" },
   ]
 
   const toggleMobileSidebar = () => {
@@ -63,20 +63,20 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
   return (
     <>
       <Button
-        className={`${!responsive ? 'hidden' : 'fixed'} fixed top-4 transition-all duration-300 ease-in-out 
-        ${isMobileHidden ? 'left-4' : 'left-20'} z-50 pl-1 pr-0 py-2 md:hidden bg-[#0031566d] hover:bg-[#004a8769] text-white`}
+        className={`${!responsive ? 'hidden' : 'fixed'} fixed top-6 transition-all duration-300 ease-in-out 
+        ${isMobileHidden ? 'left-2' : 'left-20'} z-50 px-1 py-2 md:hidden bg-[#0031566d] hover:bg-[#004a8769] text-white`}
         onClick={toggleMobileSidebar}
       >
-        <div className="border-l-2">
-          {isMobileHidden ? <ChevronsRight className="min-w-6 min-h-8" /> : <ChevronsLeft className="min-w-6 min-h-8" />}
+        <div className="">
+          {isMobileHidden ? <MenuSquareIcon className="min-w-8 min-h-8" /> : <XSquareIcon className="min-w-8 min-h-8" />}
         </div>
       </Button>
 
       <div className={`
         fixed inset-y-0 left-0 z-50 flex flex-col h-dvh min-h-dvh
         bg-[#003156]
-        ${isMobileHidden ? '-translate-x-[80%] bg-[#227dc2]' : 'translate-x-0 bg-[#003156]'}
-        ${responsive ? 'w-20' : 'w-60'}
+        ${isMobileHidden ? '-translate-x-[100%]' : 'translate-x-0'}
+        ${responsive ? 'w-20 bg-[#003156]' : 'w-screen sm:w-60 bg-[#003156]'}
         min-w-[5rem] text-white p-4
         transition-all duration-300 ease-in-out
         md:translate-x-0
