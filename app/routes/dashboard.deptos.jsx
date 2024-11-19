@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import  useFetch  from '../hooks/use-fetch'
 import { useUser } from '../hooks/use-user'
 import { getDeptos } from "../database/crudDeptos";
+import { Separator } from "../components/ui/separator";
 
 
 export default function DashboardDeptoPage() {
@@ -49,14 +50,15 @@ export default function DashboardDeptoPage() {
   });
 
 return (
-  <div className="container mx-auto w-full mr-14 px-0 ">
+  <div className="container mx-auto w-full mr-14 md:px-3 px-0 ">
     <div className="flex md:justify-between justify-center items-center">
-      <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-10'>
+      <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-2'>
           DASHBOARD - <span className='text-[#0c426bd3]'> Propiedades </span>{" "}  
       </h1>
     </div>
+    <Separator />
 
-    <div className='flex md:justify-between justify-center gap-y-3 gap-x-6 items-center flex-wrap'>
+    <div className='flex md:justify-between justify-center gap-y-3 gap-x-6 items-center flex-wrap mt-10'>
       <h1 className="sm:text-3xl text-2xl w-max mx-auto sm:mx-0 font-medium text-[#194567] flex justify-between">
         Todas las Propiedades
       </h1>

@@ -145,7 +145,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>
             <Accordion type="multiple" className="w-full" defaultValue={[`item${grupo.id}`]}>
               <AccordionItem value={`item${grupo.id}`}>
-                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-[#37a5ea61] to-white w-full px-3 rounded-t-xl">
+                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-sky-100/80 to-white w-full px-3 rounded-t-xl">
                   <div className="flex justify-between items-center mb-1">
                     <h1 className="text-xl md:text-2xl font-medium text-[#194567]">
                       Grupo: {grupo.grupo_name}
@@ -195,9 +195,8 @@ export default function DashboardMoneyAll({ balanceCreated }) {
                                     size="sm"
                                     className="flex items-center text-xs md:text-sm"
                                   >
-                                    <FileChartColumnIncreasingIcon className="mr-2 h-4 w-4" />
-                                    <span className="hidden md:inline">{balance.file}</span>
-                                    <span className="md:hidden">Balance</span>
+                                    <FileChartColumnIncreasingIcon className="mr-0 h-4 w-4" />
+                                    <span className="hidden md:inline">Balance</span>
                                   </Button>
                                 </TableCell>
                                 <TableCell className="h-full">

@@ -1,31 +1,14 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { NavLink } from "@remix-run/react";
 import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { useUser } from "../../hooks/use-user";
 import { useEffect, useState } from "react";
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, insertGrupo } from "../../database/crudGrupos";
-import { Dot} from "lucide-react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
 
 import { Skeleton } from "../ui/skeleton";
 

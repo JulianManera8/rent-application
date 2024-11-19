@@ -57,7 +57,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>
             <Accordion type="multiple" className="w-full" defaultValue={[`item${grupo.id}`]}>
               <AccordionItem value={`item${grupo.id}`}>
-                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-blue-100 to-white w-full px-3 rounded-t-xl">
+                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-sky-100/80 to-white w-full px-3 rounded-t-xl">
                   <div className="flex justify-between items-center mb-1">
                     <h1 className="text-xl md:text-2xl font-medium text-[#194567]">
                       Grupo: {grupo.grupo_name}
@@ -68,13 +68,13 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
                   <div className="overflow-x-auto">
                     <Table className="border-b-2 w-full">
                       <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-1/6">Direccion</TableHead>
-                          <TableHead className="w-1/6">Propietario</TableHead>
-                          <TableHead className="w-1/6 hidden md:table-cell">Facturador</TableHead>
-                          <TableHead className="w-1/6 hidden md:table-cell">Cobrador</TableHead>
-                          <TableHead className="w-1/6 hidden md:table-cell">Inquilino</TableHead>
-                          <TableHead className="w-1/6">Estado</TableHead>
+                        <TableRow className="text-sm">
+                          <TableHead className="w-1/6 font-normal">Direccion</TableHead>
+                          <TableHead className="w-1/6 font-normal">Propietario</TableHead>
+                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Facturador</TableHead>
+                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Cobrador</TableHead>
+                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Inquilino</TableHead>
+                          <TableHead className="w-1/6 font-normal">Estado</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -133,7 +133,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
             <Card className="w-full md:w-96 h-auto md:h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
               <CardHeader>
                 <CardTitle className="text-base md:text-lg font-medium"> 
-                  {searchTerm.length > 0 ? 'No hay propiedades que coincidan con esa busqueda.' : 'No hay propiedades cargadas por el momento.'}
+                  {searchTerm.length > 0 || filteredDepartamentos.length === 0 ? 'No hay propiedades que coincidan con esa busqueda.' : 'No hay propiedades cargadas por el momento.'}
                 </CardTitle>
               </CardHeader>
               {searchTerm.length > 0 || filteredDepartamentos.length === 0 ? null : (

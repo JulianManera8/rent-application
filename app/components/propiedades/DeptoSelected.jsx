@@ -511,6 +511,7 @@ import { Button } from "../ui/button";
 import { useLocation } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
+import { Separator } from '../ui/separator';
 
 // Mock data - replace with actual data fetching in a real application
 const propertyData = {

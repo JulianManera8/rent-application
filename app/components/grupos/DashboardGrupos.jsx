@@ -7,7 +7,7 @@ import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { EditIcon, FileChartColumnIcon, Dot, ChevronsRight } from "lucide-react";
+import { EditIcon, FileChartColumnIcon, Dot, ChevronsRight, CalendarDays, Building2, Wallet, Globe } from "lucide-react";
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../../database/crudGrupos";
 import { useUser } from '../../hooks/use-user'
@@ -17,6 +17,10 @@ import { getDeptos } from "../../database/crudDeptos";
 import { getBalances } from "../../database/crudBalances";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import SkeCard from "../grupos/skeletonCardsGroups";
+import { Separator } from "../ui/separator"
+import HandleUsers from "../propiedades/HandleUsers";
+import { getAllUser } from "../../database/crudUsers";
+
 
 export default function DashboardGrupos() {
   const [isOpen, setIsOpen] = useState(false)
@@ -24,11 +28,12 @@ export default function DashboardGrupos() {
   const [loadingDelete, setLoadingDelete] = useState(false)
 
   const userLoged_id = useUser()
-
+  const [usersInfo, setUsersInfo] = useState([])
 
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
     nombreGrupo: "",
+    shared_with: []
   });
   const [getGrupoInfo, setGetGrupoInfo] = useState([]);
 
@@ -56,7 +61,7 @@ export default function DashboardGrupos() {
 
   }, [inputBorrar])
 
-  const { loading: loadingUpdateBalance, error: errorUpdateName, data: updatedNameGroup, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
+  const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
 
   useEffect(() => {
     if (id_NewName.idGrupo && id_NewName.newGroupName) {
@@ -111,9 +116,9 @@ export default function DashboardGrupos() {
     }
   }, [userLoged_id]);
 
-  const { loading: loadingGetBalances, data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
+  const { data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
 
-  const { loading: loadingGetDeptos, data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
+  const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
 
   const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
 
@@ -135,6 +140,7 @@ export default function DashboardGrupos() {
             grupo_id: grupo.id,
             grupo_name: grupo.grupo_name, 
             user_id: grupo.user_id,
+            shared_with: grupo.shared_with,
             grupo_createdAt: grupo.created_at
         }));
 
@@ -151,10 +157,17 @@ export default function DashboardGrupos() {
     return setValidated(true)
   }, [createGrupoInfo.nombreGrupo])
 
+  const handleSelectUserChange = (value) => {
+    let arrayUsersId = [] 
+    value?.map(user => arrayUsersId.push(user.user_id))
+
+    setCreateGrupoInfo({...createGrupoInfo, shared_with: arrayUsersId})
+  }
 
   const handleCreateGrupo = async (e) => {
     e.preventDefault();
     setCerrar(true)
+
     try {
         if (userLoged_id) {
             const result = await insertGrupo({ createGrupoInfo });  // Llamada directa a insertGrupo
@@ -169,6 +182,7 @@ export default function DashboardGrupos() {
                         grupo_id: result[0].id,
                         grupo_name: result[0].grupo_name,
                         grupo_createdAt: result[0].created_at,
+                        shared_with: result[0].shared_with,
                         user_id: result[0].user_id,
                     },
                 ]);
@@ -183,8 +197,32 @@ export default function DashboardGrupos() {
     }
   };
 
+  //MANEJAR EL FLUJO DE USUARIOS CON ACCESO
+  const { data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
+
+  useEffect(() => {
+    if (userLoged_id) {
+      fnGetAllUsers();
+    }
+  }, [userLoged_id]);
+
+  useEffect(() => {
+    if (data) {
+      setUsersInfo(
+        data.map((user) => ({
+          user_id: user.id,
+          user_name: user.user_name,
+          user_lastname: user.user_lastname,
+          user_dni: user.user_dni,
+        }))
+      );
+
+    }
+  }, [data, error]);
+
   return (
-    <div className={`w-full py-10 px-0`}>
+    <div className={`w-full py-10`}>
+
 
       {/* Add new group */}
       <div className="flex sm:justify-between items-center mb-10 flex-wrap gap-y-3 justify-center">
@@ -218,6 +256,9 @@ export default function DashboardGrupos() {
                       })
                     }
                   />
+
+                  <HandleUsers onSelectUserChange={handleSelectUserChange} />
+
                   <Button
                     className={`flex justify-center w-full mt-3 ${
                       cerrar ? "bg-green-600 hover:bg-gree-600" : "bg-black"
@@ -232,8 +273,9 @@ export default function DashboardGrupos() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
 
+      </div>
+      
       
       {loadingGetGrupos ? (
         <SkeCard />
@@ -243,17 +285,21 @@ export default function DashboardGrupos() {
 
             <Dialog key={grupo.grupo_id}>
               <DialogTrigger asChild>
-                <Card className="bg-gradient-to-br from-white to-[#37a5ea29] shadow-lg my-5 hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[430px] max-h-[420px]">
-                  <CardHeader className="h-1/4">
+
+                {/* CARDS DE CADA GRUPO */}
+                <Card className="shadow-lg my-5 relative bg-gradient-to-br from-sky-100/50 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[330px] min-h-[460px]">
+                  
+                  <CardHeader className="h-1/5">
                     <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
                     <CardDescription className="pt-1">
                       Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="relative h-3/4">
-                    <div className="h-[43%]">
-                      <p className="mb-2 text-lg font-medium text-gray-400 underline-offset-custom">
-                        Propiedades dentro del grupo:
+                  <CardContent className="relative h-4/5">
+                  
+                    <div className="h-[36%]">
+                      <p className="mb-2 text-lg font-medium flex items-center gap-x-2">
+                        <Building2 className="w-4 h-4"/> Propiedades del grupo:
                       </p>
                       {/* Si hay deptos, solo mostrame los 2 primeros y si hay mas, pone puntos suspensivos */}
                       {deptos?.filter(
@@ -265,7 +311,7 @@ export default function DashboardGrupos() {
                           )
                           .map((depto, i) => (
                             <ul key={i}>
-                              <li className="ml-2 font-medium ">
+                              <li className="ml-2 font-light ">
                                 {i < 2 ? (
                                   <div className="flex items-center">
                                     {" "}
@@ -279,12 +325,15 @@ export default function DashboardGrupos() {
                             </ul>
                           ))
                       ) : (
-                        <p>No hay departamentos asignados a este grupo.</p>
+                        <p className="text-sm text-muted-foreground">No hay propiedades asignadas a este grupo.</p>
                       )}
                     </div>
+
+                    <Separator className="mb-3 bg-zinc-300 h-[1.5px]"/>
+
                     <div className="h-1/2">
-                      <p className="mb-3 text-lg font-medium text-gray-400 underline-offset-custom">
-                        Balances dentro del grupo:
+                      <p className="mb-2 text-lg font-medium flex items-center gap-x-2">
+                        <FileChartColumnIcon className="w-4 h-4"/> Balances del grupo:
                       </p>
                       {balances?.filter(
                         (balance) => balance?.grupo_id === grupo?.grupo_id
@@ -313,17 +362,26 @@ export default function DashboardGrupos() {
                             </ul>
                           ))
                       ) : (
-                        <p>No hay balances asignados a este grupo.</p>
+                        <p className="text-sm text-muted-foreground">No hay balances asignados a este grupo.</p>
                       )}
                     </div>
-                    <div className="absolute flex right-5 bottom-2 gap-1">
-                      <EditIcon />
-                      <p>Ver mas </p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-x-2">
+                        <Globe />
+                        Acceso: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} usuarios 
+                      </div>
+                      <div className=" flex items-center gap-x-2">
+                        <EditIcon />
+                        <p>Abrir </p>
+                      </div>
                     </div>
+
                   </CardContent>
                 </Card>
+
               </DialogTrigger>
-              <DialogContent className="md:max-h-[800px] sm:max-h-dvh md:min-w-[440px] w-11/12 rounded-md overflow-scroll">
+              <DialogContent className="max-h-[90%] md:min-w-[440px] w-11/12 rounded-md overflow-auto">
                 <DialogHeader>
                   {editName ? (
                     <div className="space-y-2">
@@ -424,7 +482,7 @@ export default function DashboardGrupos() {
                           </li>
                         ))
                     ) : (
-                      <p>No hay departamentos asignados a este grupo.</p>
+                      <p>No hay propiedades asignadas a este grupo.</p>
                     )}
                   </ul>
                 </div>
@@ -491,6 +549,34 @@ export default function DashboardGrupos() {
                     )}
                   </ul>
                 </div>
+
+                {/* Render de los BALANCES */}
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2 underline-offset-custom">
+                    Acceso:
+                  </h3>
+                  
+                  <ul>
+                    {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 ? (
+                      usersInfo
+                        .filter((user) => grupo.shared_with.includes(user?.user_id))
+                        .map((user, i) => (
+                          <li key={i} className="flex items-center">
+                            <Dot />
+                            <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
+                              {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
+                              <small>(D.N.I.)</small>
+                            </p>
+                          </li>
+                        ))
+                    ) : (
+                      <li className="text-gray-500 text-sm">Nadie mas tiene acceso a este grupo.</li>
+                    )}
+                  </ul>
+
+
+                </div>
+                
 
                 <DialogFooter className="sm:justify-center gap-y-5 gap-x-6 mt-4">
                   <DialogClose asChild>

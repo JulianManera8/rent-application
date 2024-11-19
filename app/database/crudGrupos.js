@@ -25,6 +25,7 @@ export async function insertGrupo({ createGrupoInfo }) {
                 {
                   user_id: createGrupoInfo.userId,
                   grupo_name: createGrupoInfo.nombreGrupo,
+                  shared_with: createGrupoInfo.shared_with,
                 },
             ])
             .select();

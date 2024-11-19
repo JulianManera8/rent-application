@@ -86,6 +86,7 @@ export async function createDepto({ newDepto }) {
         user_id: newDepto.user_id,
         obs_datos: newDepto.obs_datos, 
         grupo_id: newDepto.grupo_id,
+        shared_with: newDepto.shared_with,
       },
     ])
     .select();
@@ -102,7 +103,7 @@ export async function createDepto({ newDepto }) {
     // Recorre cada archivo en newDepto.files y espera que todos terminen
     await Promise.all(
       newDepto.files.map(async (file) => {
-        const filePath = `documentos/docs${idDeptoCreado}/${Date.now()}_${file.name}`;
+        const filePath = `documentos/docs${idDeptoCreado}/${Date.now()}`;
 
         try {
           const { data: uploadData, error: uploadError } = await supabase.storage
@@ -141,7 +142,7 @@ export async function createDepto({ newDepto }) {
     // Recorre cada archivo en newDepto.files y espera que todos terminen
     await Promise.all(
       newDepto.fotos.map(async (foto) => {
-        const filePath = `fotos_depto/fotos${idDeptoCreado}/${Date.now()}_${foto.name}`;
+        const filePath = `fotos_depto/fotos${idDeptoCreado}/${Date.now()}`;
 
         try {
           const { data: uploadFoto, error: uploadError } = await supabase.storage
