@@ -60,7 +60,7 @@ return (
 
     <div className='flex md:justify-between justify-center gap-y-3 gap-x-6 items-center flex-wrap mt-10'>
       <h1 className="sm:text-3xl text-2xl w-max mx-auto sm:mx-0 font-medium text-[#194567] flex justify-between">
-        Todas las Propiedades
+        Mis Propiedades
       </h1>
 
       <div className="flex gap-5 flex-wrap md:justify-start justify-center"> 

@@ -1,5 +1,6 @@
 // import { NavLink } from "@remix-run/react";
 import DashboardGrupos from "../components/grupos/DashboardGrupos";
+import GruposShared from "../components/grupos/GruposShared";
 import { Separator } from "../components/ui/separator"
 // import { Button } from "../components/ui/button";
 
@@ -13,6 +14,8 @@ export default function DashboardGruposPage() {
       </div>
       <Separator />
       <DashboardGrupos rows={10} border="border-none" showBtn={false} showAll={true}/>
+      <Separator />
+      <GruposShared />
     </div>
   );
 }
