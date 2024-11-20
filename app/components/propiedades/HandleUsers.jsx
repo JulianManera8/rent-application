@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { NavLink } from "@remix-run/react";
 import { Label } from "../ui/label";
 import { useUser } from "../../hooks/use-user";
 import { useEffect, useState } from "react";
@@ -100,13 +99,7 @@ export default function HandleUsers({ onSelectUserChange }) {
   
           ) : (
             <p className="my-2 ml-2">
-              No tienes grupos,{" "}
-              <NavLink
-                to="/dashboard/grupos"
-                className="mb-4 bg-transparent text-green-500 font-medium text-center text-sm hover:scale-105 w-full transition-all"
-              >
-                Ir a crearlo
-              </NavLink>
+              No hay otros usuarios.
             </p>
           )}
 

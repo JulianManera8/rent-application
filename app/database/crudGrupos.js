@@ -81,3 +81,25 @@ export async function editGroupName({ id_NewName }) {
     return null;
   }
 }
+
+export async function editAccess( id_NewAccess ) {
+  try {
+    const { data, error } = await supabase
+      .from('grupos')
+      .update({ shared_with: id_NewAccess.arrayUsersId })
+      .eq('id', id_NewAccess.grupoId)
+      .select()
+
+    if (error) {
+        console.error("Error en la update:", error.message);
+        throw new Error(error.message);
+    }
+
+    console.log("Grupo Actualizado:", data);
+    return data;  
+
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+}

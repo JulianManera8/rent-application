@@ -7,9 +7,9 @@ import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { EditIcon, FileChartColumnIcon, Dot, ChevronsRight, CalendarDays, Building2, Wallet, Globe } from "lucide-react";
+import { EditIcon, UserPlus, FileChartColumnIcon, Dot, ChevronsRight, CalendarDays, Building2, Wallet, Globe, XSquare } from "lucide-react";
 import useFetch from "../../hooks/use-fetch";
-import { getGrupos, insertGrupo, editGroupName, removeGrupo } from "../../database/crudGrupos";
+import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess } from "../../database/crudGrupos";
 import { useUser } from '../../hooks/use-user'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
@@ -20,6 +20,10 @@ import SkeCard from "../grupos/skeletonCardsGroups";
 import { Separator } from "../ui/separator"
 import HandleUsers from "../propiedades/HandleUsers";
 import { getAllUser } from "../../database/crudUsers";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Skeleton } from "../ui/skeleton";
+
+
 
 
 export default function DashboardGrupos() {
@@ -51,6 +55,15 @@ export default function DashboardGrupos() {
     newGroupName: '',
   })
 
+  const [addUserAccess, setAddUserAccess ] = useState(false)
+  
+  const [selectedUser, setSelectedUser] = useState("");
+
+  const [id_NewAccess, setId_NewAccess] = useState({
+    arrayUsersId: [],
+    grupoId: '',
+  })
+
   useEffect(() => {
     
     if(inputBorrar === 'CONFIRMO BORRAR TODO') {
@@ -62,7 +75,7 @@ export default function DashboardGrupos() {
   }, [inputBorrar])
 
   const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
-
+  
   useEffect(() => {
     if (id_NewName.idGrupo && id_NewName.newGroupName) {
       console.log(id_NewName)
@@ -87,6 +100,71 @@ export default function DashboardGrupos() {
     } 
   }, [id_NewName.idGrupo, id_NewName.newGroupName])
 
+  const handleRemoveAccess = async (userId, grupoId) => {
+
+    const grupo = getGrupoInfo.find(g => g.grupo_id === grupoId);
+    if (!grupo) return;
+
+    const newSharedWith = grupo.shared_with.filter(id => id !== userId);
+    
+    const id_NewAccess = {
+      arrayUsersId: newSharedWith,
+      grupoId: grupoId,
+    };
+
+    try {
+      const response = await editAccess(id_NewAccess);
+
+      if (response === null) throw new Error("Failed to update access");
+
+      setGetGrupoInfo((prevGrupos) =>
+        prevGrupos.map((g) =>
+          g.grupo_id === grupoId
+            ? { ...g, shared_with: newSharedWith }
+            : g
+        )
+      );
+
+    } catch (error) {
+      console.error("Error updating access:", error);
+    }
+
+  };
+
+  const handleAddAccess = async (grupoId) => {
+    if (!selectedUser) return;
+
+    const grupo = getGrupoInfo.find(g => g.grupo_id === grupoId);
+    if (!grupo) return;
+
+    const currentSharedWith = Array.isArray(grupo.shared_with) ? grupo.shared_with : [];
+    const newSharedWith = [...new Set([...currentSharedWith, selectedUser])];
+    
+    const id_NewAccess = {
+      arrayUsersId: newSharedWith,
+      grupoId: grupoId,
+    };
+
+    try {
+      const response = await editAccess(id_NewAccess);
+
+      if (response === null) throw new Error("Failed to update access");
+
+      setGetGrupoInfo((prevGrupos) =>
+        prevGrupos.map((g) =>
+          g.grupo_id === grupoId
+            ? { ...g, shared_with: newSharedWith }
+            : g
+        )
+      );
+
+      setSelectedUser("");
+      setAddUserAccess(false);
+
+    } catch (error) {
+      console.error("Error updating access:", error);
+    }
+  };
 
   const handleDeleteGrupo = async (grupoId) => {
 
@@ -198,7 +276,7 @@ export default function DashboardGrupos() {
   };
 
   //MANEJAR EL FLUJO DE USUARIOS CON ACCESO
-  const { data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
+  const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   useEffect(() => {
     if (userLoged_id) {
@@ -369,7 +447,7 @@ export default function DashboardGrupos() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-x-2">
                         <Globe />
-                        Acceso: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} usuarios 
+                        Compartido a: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} usuarios 
                       </div>
                       <div className=" flex items-center gap-x-2">
                         <EditIcon />
@@ -453,7 +531,7 @@ export default function DashboardGrupos() {
                         ?.filter((depto) => depto?.grupo_id === grupo?.grupo_id)
                         .map((depto) => (
                           <li key={depto.id}>
-                            <div className="flex items-center border-b border-t py-3 justify-between">
+                            <div className="flex items-center border-b py-3 justify-between">
                               <div className="h-full flex flex-row items-center ">
                                 <Dot /> {depto?.ubicacion_completa}
                               </div> 
@@ -502,7 +580,7 @@ export default function DashboardGrupos() {
                         )
                         .map((balance, i) => (
                           <li key={balance.id} className="flex mb-2">
-                            <div className="flex items-center border-b border-t py-3 justify-between w-full">
+                            <div className="flex items-center border-b py-3 justify-between w-full">
                               <div className="h-full flex flex-row items-center ">
                                 <Dot /> {balance.mes_balance},{" "}
                                 {balance.año_balance}
@@ -550,31 +628,140 @@ export default function DashboardGrupos() {
                   </ul>
                 </div>
 
-                {/* Render de los BALANCES */}
-                <div className="mt-4">
+                {/* Render de los ACCESOS */}
+                <div className="mt-4 w-full">
                   <h3 className="text-lg font-semibold mb-2 underline-offset-custom">
                     Acceso:
                   </h3>
-                  
-                  <ul>
-                    {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 ? (
-                      usersInfo
-                        .filter((user) => grupo.shared_with.includes(user?.user_id))
-                        .map((user, i) => (
-                          <li key={i} className="flex items-center">
-                            <Dot />
-                            <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
-                              {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
-                              <small>(D.N.I.)</small>
-                            </p>
-                          </li>
-                        ))
-                    ) : (
-                      <li className="text-gray-500 text-sm">Nadie mas tiene acceso a este grupo.</li>
-                    )}
-                  </ul>
+                  <div className="flex-col justify-between items-center">
+                    <div className="flex justify-between items-center">
 
+                      <ul>
+                        {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 ? (
+                        usersInfo
+                          .filter((user) => grupo.shared_with.includes(user?.user_id))
+                          .map((user, i) => (
+                            <li key={i} className="flex items-center mb-3 text-left w-full">
+                              <Dot />
+                              <p className="overflow-hidden text-ellipsis w-full mr-4 whitespace-nowrap pl-1 text-md">
+                                {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
+                                <small>(D.N.I.)</small>
+                              </p>
+                              <AlertDialog>
+                                <AlertDialogTrigger>
+                                  <XSquare
+                                    size={20}
+                                    className="cursor-pointer hover:text-red-500 transition-all ml-auto"
+                                  />
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="text-center">
+                                      Estás a punto de sacar el acceso a <span className="text-red-600">{user.user_name + " " + user.user_lastname}</span> de este grupo
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription className="text-center">
+                                      Puedes volver a darle acceso luego si quieres
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                                    <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      className="h-10"
+                                      onClick={() => handleRemoveAccess(user.user_id, grupo.grupo_id)}
+                                    >
+                                      Sacar Acceso
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="text-gray-500 text-sm w-full">Nadie más tiene acceso a este grupo.</li>
+                        )}
+                      </ul>
+                      
+                    </div>
 
+                    <div className="w-full mt-2">
+                  <Button 
+                    className={`${addUserAccess ? 'hidden' : 'flex'}`}
+                    variant='outline'
+                    onClick={() => setAddUserAccess(!addUserAccess)}
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" /> Agregar accesos
+                  </Button>
+
+                  {addUserAccess && (
+                    <div className="mt-4">
+                      <Select 
+                        value={selectedUser} 
+                        onValueChange={setSelectedUser}
+                        disabled={loading || usersInfo.filter(user => 
+                          user.user_id !== userLoged_id && 
+                          !(Array.isArray(grupo.shared_with) ? grupo.shared_with : []).includes(user.user_id)
+                        ).length === 0}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Seleccionar usuario" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {loading ? (
+                            <>
+                              <Skeleton className="w-2/4 h-5 ml-4 my-3 bg-gray-200" />
+                              <Skeleton className="w-2/4 h-5 ml-4 mb-2 bg-gray-200" />
+                            </>
+                          ) : usersInfo.filter(user => 
+                              user.user_id !== userLoged_id && 
+                              !(Array.isArray(grupo.shared_with) ? grupo.shared_with : []).includes(user.user_id)
+                            ).length > 0 ? (
+                            usersInfo
+                              .filter(user => 
+                                user.user_id !== userLoged_id && 
+                                !(Array.isArray(grupo.shared_with) ? grupo.shared_with : []).includes(user.user_id)
+                              )
+                              .map((user) => (
+                                <SelectItem
+                                  key={user.user_id}
+                                  value={user.user_id}
+                                  className="flex items-center w-full"
+                                >
+                                  <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
+                                    {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
+                                    <small>(D.N.I.)</small>
+                                  </p>
+                                </SelectItem> 
+                              ))
+                          ) : (
+                            <div className="p-2 text-sm text-gray-500">
+                              No hay usuarios disponibles para agregar
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+
+                      <div className="flex justify-center gap-x-5 pb-4 pt-4">
+                        <Button
+                          className="bg-red-600 hover:bg-red-700 text-sm h-8 text-white"
+                          onClick={() => {
+                            setAddUserAccess(false);
+                            setSelectedUser("");
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          className="bg-green-600 hover:bg-green-700 text-sm h-8 text-white"
+                          onClick={() => handleAddAccess(grupo.grupo_id)}
+                          disabled={!selectedUser}
+                        >
+                          Confirmar
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                  </div>
                 </div>
                 
 
@@ -653,7 +840,7 @@ export default function DashboardGrupos() {
             </CardHeader>
           </Card>
           
-          </div>
+        </div>
       )}
     </div>
   );
