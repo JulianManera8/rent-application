@@ -122,7 +122,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   }, [balanceCreated]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className='w-full py-10'>
 
       {loadingGrupos 
       ? (

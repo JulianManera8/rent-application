@@ -35,7 +35,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
 
   console.log(searchTerm)
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div className='w-full py-10'>
       {loadingGrupos 
       ? (
           // Skeleton loading for groups
