@@ -1,6 +1,5 @@
 import Spinner from '../helpers/loaderIcon'
 import HandleGrupo from '../grupos/HandleGrupo';
-import HandleUsers from '../propiedades/HandleUsers';
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -84,15 +83,6 @@ export default function CreateDepto() {
     setNewDepto({...newDepto, grupo_id: value})
   };
 
-  const handleSelectUserChange = (value) => {
-    let arrayUsersId = [] 
-    value?.map(user => arrayUsersId.push(user.user_id))
-
-    setNewDepto({...newDepto, shared_with: arrayUsersId})
-  }
-
-  console.log(newDepto)
-
   const { loading, fn: dbCreatePrueba } = useFetch(createDepto, {newDepto});
 
   const handleSubmit = async (e) => {
@@ -158,8 +148,6 @@ export default function CreateDepto() {
       <Form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
         
         <HandleGrupo onSelectChange={handleSelectChange}/>
-
-        <HandleUsers onSelectUserChange={handleSelectUserChange}/>
 
         <div className="min-w-56">
           <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">

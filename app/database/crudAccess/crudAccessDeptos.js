@@ -1,16 +1,26 @@
 /* eslint-disable no-unused-vars */
 import supabase from '../../lib/supabase';
 
-export async function getAccessDeptos(user_id) {
-  const { data, error } = await supabase
-    .from("departamentos")
-    .select("*")
-    .contains('shared_with', [user_id]);
 
-  if (error) {
-    console.error("Error fetching access deptos:", error);
-    throw new Error("Failed to load deptos");
+export async function getAccessDeptos(gruposShared_ids) {
+  if (gruposShared_ids.length === 0) {
+    return [];
   }
 
-  return data;
+  try {
+    const { data, error } = await supabase
+      .from("departamentos")
+      .select("*")
+      .in('grupo_id', gruposShared_ids.map(grupo => grupo.id));
+
+    if (error) {
+      console.error(error.message);
+      throw new Error("Error fetching departamentos");
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error(error.message);
+    throw error;
+  }
 }

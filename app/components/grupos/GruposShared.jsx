@@ -3,14 +3,11 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import SkeCard from "../grupos/skeletonCardsGroups";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { EditIcon, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search } from 'lucide-react';
+import { EditIcon, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare } from 'lucide-react';
 import { Separator } from "../ui/separator"
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { useUser } from '../../hooks/use-user'
 import { getAccessGrupos } from '../../database/crudAccess/crudAccessGrupos';
 import { getAccessDeptos } from '../../database/crudAccess/crudAccessDeptos';
@@ -88,11 +85,10 @@ export default function GruposShared() {
   useEffect(()=> {
 
     async function fetchAccessDeptos() {
-
       if (userLoged_id && accessGrupos.length > 0) {
         try {
           setLoadingGetDeptos(true);
-          const data = await getAccessDeptos(userLoged_id);
+          const data = await getAccessDeptos(accessGrupos);
           setAccessDeptos(data);
         } catch (err) {
           console.error("Error fetching access grupos:", err);
@@ -104,20 +100,17 @@ export default function GruposShared() {
     }
 
     fetchAccessDeptos()
-  }, [accessGrupos])
+  }, [userLoged_id, accessGrupos])
 
-  useEffect(()=> {
-
-    async function fetchAccessDeptos() {
-
-      if (userLoged_id) {
+  useEffect(() => {
+    async function fetchAccessBalances() {
+      if (userLoged_id && accessGrupos.length > 0) {
         try {
-            console.log(accessGrupos)
           setLoadingGetBalances(true);
           const data = await getAccessBalances(accessGrupos);
           setAccessBalances(data);
         } catch (err) {
-          console.error("Error fetching access grupos:", err);
+          console.error("Error fetching access balances:", err);
           setErrorBalances(err.message);
         } finally {
           setLoadingGetBalances(false);
@@ -125,8 +118,8 @@ export default function GruposShared() {
       }
     }
 
-    fetchAccessDeptos()
-  }, [accessGrupos])
+    fetchAccessBalances();
+  }, [userLoged_id, accessGrupos]);
 
 
   const handleRemoveAccess = async (userId, grupoId, e) => {
@@ -160,6 +153,8 @@ export default function GruposShared() {
         } catch (error) {
             console.error("Error updating access:", error);
             setLoadingRemoveAccess(false); 
+        } finally {
+          setLoadingRemoveAccess(false);
         }
 
     }, 3000);
@@ -297,6 +292,7 @@ export default function GruposShared() {
                           Propiedades:
                         </h3>
                         <ul>
+                          {loadingGetDeptos ? 'CARGANDO' : 'MOSTRAR'}
                           {accessDeptos?.filter(
                             (depto) => depto?.grupo_id === grupo?.id
                           ).length > 0 ? (
@@ -349,8 +345,7 @@ export default function GruposShared() {
                           {accessBalances?.filter(
                             (balance) => balance?.grupo_id === grupo?.id
                           ).length > 0 ? (
-                            accessBalances
-                              ?.filter(
+                            accessBalances?.filter(
                                 (balance) => balance?.grupo_id === grupo?.id
                               )
                               .map((balance) => (

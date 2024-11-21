@@ -5,6 +5,7 @@ import Sidebar from "../components/layout/Sidebar";
 import { useEffect, useState } from "react";
 import supabase from "../lib/supabase";
 import NoAuth from '../components/auth/noAuth'
+import LoadingSpinner from '../components/helpers/loaderIcon'
 
 async function getSession() {
   const {data, error} = await supabase.auth.getSession();
@@ -14,37 +15,44 @@ async function getSession() {
 
 export default function DashboardIndexPage() {
   const [responsive, setResponsive] = useState(false)
-  const [userLoged, setUserLoged] = useState(false);
+  const [authState, setAuthState] = useState('loading');
   const [isMobileHidden, setIsMobileHidden] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
 
   useEffect(() => {
-    // Create a media query list
     const mediaQuery = window.matchMedia('(max-width: 601px)');
     
-    // Handler function
     const handleViewportChange = (e) => {
       setResponsive(e.matches);
       setIsMobileView(e.matches);
     };
 
-    // Initial check
     handleViewportChange(mediaQuery);
     
-    // Add listener for changes
     mediaQuery.addEventListener('change', handleViewportChange);
 
-    // Cleanup
     return () => mediaQuery.removeEventListener('change', handleViewportChange);
   }, []);
 
   useEffect(() => {
     const checkSession = async () => {
       const session = await getSession();
-      setUserLoged(session.session !== null);
+      setAuthState(session.session !== null ? 'authenticated' : 'unauthenticated');
     };
 
     checkSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        setAuthState('authenticated');
+      } else if (event === 'SIGNED_OUT') {
+        setAuthState('unauthenticated');
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const sidebarWidth = responsive ? (isMobileHidden ? 0 : 80 ) : 240;
@@ -55,17 +63,19 @@ export default function DashboardIndexPage() {
 
   const getMarginLeft = () => {
     if (isMobileView) {
-      // In mobile view, if the sidebar is hidden, margin is 0; otherwise, it takes full width.
       return isMobileHidden ? '24px' : '24px';
     }
   
-    // For non-mobile views
     return responsive ? '100px' : `${sidebarWidth + 20}px`;
   };
 
+  if (authState === 'loading') {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="flex font-inter">
-      {userLoged ? (
+      {authState === 'authenticated' ? (
         <>
           <div className={`fixed ${isMobileView && isMobileHidden ? '-translate-x-full' : '-translate-x-0'} transition-transform duration-300 z-50`}>
             <Sidebar 
@@ -89,3 +99,4 @@ export default function DashboardIndexPage() {
     </div>
   );
 }
+

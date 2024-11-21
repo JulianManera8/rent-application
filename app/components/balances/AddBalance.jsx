@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react";
+import { ChevronsUpDown, Plus, XSquare, FileCheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "../ui/sheet";
 import { Form } from "@remix-run/react";
@@ -186,7 +186,7 @@ export default function AddBalance({months, setBalanceCreated}) {
                 <CollapsibleContent className="pl-6 pr-2 flex gap-3 h-12 items-center">
                   <FileCheckIcon size={23} />
                   <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">{file.name}</p>
-                  <X className="text-red-600 cursor-pointer" onClick={removeFile} />
+                  <XSquare className="text-red-600 cursor-pointer" onClick={removeFile} />
                 </CollapsibleContent>
               ) : (
                 <CollapsibleContent className="flex text-center justify-center gap-3 h-12 items-center">

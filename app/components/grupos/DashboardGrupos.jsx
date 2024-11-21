@@ -6,7 +6,7 @@ import { useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { EditIcon, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search } from 'lucide-react';
+import { Pencil, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search, ExpandIcon, CheckSquareIcon } from 'lucide-react';
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess } from "../../database/crudGrupos";
 import { useUser } from '../../hooks/use-user'
@@ -271,11 +271,13 @@ export default function DashboardGrupos() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-lg">
                   Crea un nuevo grupo para tus propiedades
                 </DialogTitle>
-                <DialogDescription className="flex flex-col gap-4 mt-3 mb-3">
-                  <Label className="mt-8 font-bold spaceGrotesk text-lg "> Nombre del grupo </Label>
+                <DialogDescription> Completa el nombre y puedes compartir el acceso a otros usuarios.</DialogDescription>
+
+                <div className="flex flex-col gap-4 mb-3">
+                  <Label className="mt-8 font-bold spaceGrotesk text-md "> Nombre del grupo </Label>
                   <p className="font-semibold text-orange-400 -mt-3">
                     Asegurate de que no se repitan los nombres entre grupos.
                   </p>
@@ -300,7 +302,8 @@ export default function DashboardGrupos() {
                   >
                     {cerrar ? "Creado" : "Agregar"}
                   </Button>
-                </DialogDescription>
+                </div>
+                
               </DialogHeader>
             </DialogContent>
           </Dialog>
@@ -316,7 +319,7 @@ export default function DashboardGrupos() {
               <DialogTrigger asChild>
 
                 {/* CARDS DE LOS GRUPOS */}
-                <Card className="shadow-lg my-5 relative bg-gradient-to-br from-sky-100/70 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[330px] min-h-[460px]">
+                <Card className="shadow-lg my-5 bg-gradient-to-br from-sky-100/70 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[350px] min-h-[460px]">
                   <CardHeader className="h-1/5">
                     <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
                     <CardDescription className="pt-1">
@@ -395,7 +398,7 @@ export default function DashboardGrupos() {
                         Compartido a: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} usuarios 
                       </div>
                       <div className=" flex items-center gap-x-2">
-                        <EditIcon />
+                        <ExpandIcon />
                         <p>Abrir </p>
                       </div>
                     </div>
@@ -405,62 +408,53 @@ export default function DashboardGrupos() {
               </DialogTrigger>
               <DialogContent className="max-h-[90%] md:min-w-[440px] w-11/12 rounded-md overflow-auto">
 
-                <DialogHeader>
+              <DialogHeader>
+                <div className="flex items-center justify-between w-full">
                   {editName ? (
-                    <div className="space-y-2">
-                      <Label className="text-lg">
-                        {" "}
-                        Escribe el nuevo nombre{" "}
-                      </Label>
+                    <div className="flex items-center space-x-4 w-10/12">
                       <Input
-                        type="text"
                         value={id_NewName.newGroupName}
                         onChange={(e) => setNewName({...id_NewName, newGroupName: e.target.value})}
+                        className="flex-grow text-lg mr-2 font-semibold"
                       />
-                      <div className="flex justify-center gap-x-5 pb-4 pt-3">
-                        <Button
-                          className="bg-red-600 hover:bg-red-700 text-white"
-                          onClick={() => {
-                            setEditName(!editName), setNewName("");
-                          }}
-                        >
-                          {" "}
-                          Cancelar{" "}
-                        </Button>
-                        <Button
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          onClick={() => setNewName({ ...id_NewName, idGrupo: grupo.grupo_id })}
-                        >
-                          {" "}
-                          Confirmar{" "}
-                        </Button>
-                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => { setEditName(!editName), setNewName(""); }}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        <XSquare className="h-4 w-4 text-red-600" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setNewName({ ...id_NewName, idGrupo: grupo.grupo_id })} 
+                        className="text-green-500 hover:text-green-700"
+                      >
+                        <CheckSquareIcon className="h-4 w-4 text-green-600" />
+                      </Button>
                     </div>
                   ) : (
-                    <DialogTitle className="text-2xl justify-center sm:justify-between gap-y-2 w-full flex flex-wrap items-center gap-x-8">
-                      <p>
+                    <>
+                      <DialogTitle className="text-2xl font-bold">
                         Grupo: {grupo.grupo_name}
-                      </p>
-                      <div
-                        className="text-2xl flex items-center gap-x-1 text-gray-400 hover:text-blue-500 cursor-pointer transition-all mr-0 sm:mr-5"
+                      </DialogTitle>
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => setEditName(!editName)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            setEditName(!editName);
-                          }
-                        }}
+                        className="text-gray-500 hover:text-blue-500"
                       >
-                        <EditIcon size={22} className="cursor-pointer" />
-                        <p className="text-xs cursor-pointer">Editar nombre</p>
-                      </div>
-                    </DialogTitle>
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Editar nombre
+                      </Button>
+                    </>
                   )}
-                  <DialogDescription className="text-gray-400 text-md">
-                    Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
-                  </DialogDescription>
-                </DialogHeader>
+                </div>
+                <DialogDescription className="text-gray-500 text-sm mt-2">
+                  Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
+                </DialogDescription>
+              </DialogHeader>
                 
                 {/* RENDER DE DEPTOS */}
                 <div className="mt-4">
