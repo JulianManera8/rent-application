@@ -123,7 +123,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
         <div className="mt-auto space-y-4">
           <AlertDialog>
             <AlertDialogTrigger
-              className="w-full h-12 text-base border-2 border-red-600 rounded-lg bg-[#003156] hover:bg-[#004b87] transition-all duration-200 ease-in-out flex items-center justify-center"
+              className="w-full h-12 text-base border-2 border-red-600 rounded-lg bg-[#003156] hover:bg-[#ce2424cc] transition-all duration-200 ease-in-out flex items-center justify-center"
             >
               <img src="/apagado.png" alt="apagado" className="w-6 h-6" />
               <span className={`transition-all duration-300 ease-in-out ${responsive ? 'w-0 opacity-0 ml-0' : 'ml-2 w-auto opacity-100'} overflow-hidden whitespace-nowrap`}>
