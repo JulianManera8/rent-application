@@ -260,7 +260,7 @@ export default function DashboardGrupos() {
 
   return (
     <div className={`w-full py-10`}>
-      <div className="flex sm:justify-between items-center mb-10 flex-wrap gap-y-3 justify-center">
+      <div className="flex sm:justify-between items-center mb-7 flex-wrap gap-y-3 justify-center">
         <h1 className="text-3xl font-medium text-[#194567] flex justify-between">
           Mis Grupos
         </h1>
@@ -316,7 +316,7 @@ export default function DashboardGrupos() {
               <DialogTrigger asChild>
 
                 {/* CARDS DE LOS GRUPOS */}
-                <Card className="shadow-lg my-5 relative bg-gradient-to-br from-sky-100/50 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[330px] min-h-[460px]">
+                <Card className="shadow-lg my-5 relative bg-gradient-to-br from-sky-100/70 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[330px] min-h-[460px]">
                   <CardHeader className="h-1/5">
                     <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
                     <CardDescription className="pt-1">
@@ -595,7 +595,7 @@ export default function DashboardGrupos() {
                               <AlertDialog>
                                 <AlertDialogTrigger>
                                   <XSquare
-                                    size={20}
+                                    size={23}
                                     className="cursor-pointer hover:text-red-500 transition-all ml-auto"
                                   />
                                 </AlertDialogTrigger>

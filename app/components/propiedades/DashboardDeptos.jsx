@@ -133,7 +133,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
             <Card className="w-full md:w-96 h-auto md:h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
               <CardHeader>
                 <CardTitle className="text-base md:text-lg font-medium"> 
-                  {searchTerm.length > 0 || filteredDepartamentos.length === 0 ? 'No hay propiedades que coincidan con esa busqueda.' : 'No hay propiedades cargadas por el momento.'}
+                  {searchTerm.length > 0 || filteredDepartamentos.length !== 0 ? 'No hay propiedades que coincidan con esa busqueda.' : 'No hay propiedades cargadas por el momento.'}
                 </CardTitle>
               </CardHeader>
               {searchTerm.length > 0 || filteredDepartamentos.length === 0 ? null : (
