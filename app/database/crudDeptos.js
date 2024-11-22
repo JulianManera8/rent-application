@@ -103,7 +103,7 @@ export async function createDepto({ newDepto }) {
     // Recorre cada archivo en newDepto.files y espera que todos terminen
     await Promise.all(
       newDepto.files.map(async (file) => {
-        const filePath = `documentos/docs${idDeptoCreado}/${Date.now()}`;
+        const filePath = `documentos/docs${idDeptoCreado}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         try {
           const { data: uploadData, error: uploadError } = await supabase.storage
@@ -138,28 +138,29 @@ export async function createDepto({ newDepto }) {
   //FUNCION PARA CARGAR LAS FOTOS AL BUCKETS
   if (data && newDepto.fotos.length > 0) {
     let idDeptoCreado = data[0].id;
-
+  
     // Recorre cada archivo en newDepto.files y espera que todos terminen
     await Promise.all(
       newDepto.fotos.map(async (foto) => {
-        const filePath = `fotos_depto/fotos${idDeptoCreado}/${Date.now()}`;
-
+        // Generate a unique file path for each file
+        const filePath = `fotos_depto/fotos${idDeptoCreado}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
         try {
           const { data: uploadFoto, error: uploadError } = await supabase.storage
             .from("fotos_depto")
             .upload(filePath, foto);
-
+  
           if (uploadError) {
             console.error(uploadError.message);
             throw new Error("Error uploading the photo");
           }
-
+  
         } catch (error) {
           alert("Error en la subida de la foto, intenta nuevamente o con otra foto");
         }
       })
     );
-
+  
     // Limpia el arreglo de archivos después de subir todos
     newDepto.fotos = [];
   }
@@ -177,7 +178,7 @@ export async function createDepto({ newDepto }) {
 }
 
 // FUNCION PARA CAPTAR LAS URL CREADAS PARA LOS DOCUMENTOS DE CADA DEPTO
-async function getDocsFromBucket(idDeptoCreado) {
+export async function getDocsFromBucket(idDeptoCreado) {
   const { data: docsBucket, error: errorDocs } = await supabase.storage
     .from('documentos')
     .list('documentos/docs' + idDeptoCreado);
@@ -203,7 +204,7 @@ async function getDocsFromBucket(idDeptoCreado) {
 }
 
 // FUNCION PARA CAPTAR LAS URL CREADAS PARA LAS FOTOS DE CADA DEPTO
-async function getFotosFromBucket(idDeptoCreado) {
+export async function getFotosFromBucket(idDeptoCreado) {
   const { data: fotosBucket, error: errorFotos } = await supabase.storage
     .from('fotos_depto')
     .list('fotos_depto/fotos' + idDeptoCreado);

@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import SkeCard from "../grupos/skeletonCardsGroups";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { EditIcon, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare } from 'lucide-react';
+import { EditIcon, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, LucideUserCheck, Expand, UserCheck } from 'lucide-react';
 import { Separator } from "../ui/separator"
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
@@ -257,12 +257,12 @@ export default function GruposShared() {
                           </div>
                         
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-x-2">
-                              <Globe />
-                              Compartido a: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} usuarios 
+                            <div className="flex items-center gap-x-2 text-sm">
+                              <Globe size={20}/>
+                              Compartido con: { grupo?.shared_with ? (grupo.shared_with.length ) : 0}
                             </div>
                             <div className=" flex items-center gap-x-2">
-                              <EditIcon />
+                              <Expand size={17}/>
                               <p>Abrir </p>
                             </div>
                           </div>
@@ -292,7 +292,6 @@ export default function GruposShared() {
                           Propiedades:
                         </h3>
                         <ul>
-                          {loadingGetDeptos ? 'CARGANDO' : 'MOSTRAR'}
                           {accessDeptos?.filter(
                             (depto) => depto?.grupo_id === grupo?.id
                           ).length > 0 ? (
@@ -311,13 +310,13 @@ export default function GruposShared() {
                                         onKeyDown={(e) => {
                                           if (e.key === "Enter") {
                                             navigate(`/dashboard/deptos/${depto.id}`, {
-                                              state: { infoDepto: depto },
+                                              state: { infoDepto: depto, infoGrupo: grupo },
                                             });
                                           }
                                         }}             
                                         onClick={() =>
                                           navigate(`/dashboard/deptos/${depto.id}`, {
-                                            state: { infoDepto: depto },
+                                            state: { infoDepto: depto, infoGrupo: grupo },
                                           })
                                         }
                                       >

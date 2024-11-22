@@ -393,12 +393,12 @@ export default function DashboardGrupos() {
                       )}
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-x-2">
-                        <Globe />
-                        Compartido a: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} usuarios 
+                      <div className="flex items-center gap-x-2 text-sm">
+                        <Globe size={20}/>
+                        Compartido con: { grupo?.shared_with ? (grupo.shared_with.length ) : 0} 
                       </div>
                       <div className=" flex items-center gap-x-2">
-                        <ExpandIcon />
+                        <ExpandIcon size={17}/>
                         <p>Abrir </p>
                       </div>
                     </div>
@@ -480,13 +480,13 @@ export default function DashboardGrupos() {
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
                                       navigate(`/dashboard/deptos/${depto.id}`, {
-                                        state: { infoDepto: depto },
+                                        state: { infoDepto: depto, infoGrupo: grupo },
                                       });
                                     }
                                   }}             
                                   onClick={() =>
                                     navigate(`/dashboard/deptos/${depto.id}`, {
-                                      state: { infoDepto: depto },
+                                      state: { infoDepto: depto, infoGrupo: grupo },
                                     })
                                   }
                                 >
