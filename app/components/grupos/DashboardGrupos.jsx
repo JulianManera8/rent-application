@@ -480,13 +480,13 @@ export default function DashboardGrupos() {
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
                                       navigate(`/dashboard/deptos/${depto.id}`, {
-                                        state: { infoDepto: depto, infoGrupo: grupo },
+                                        state: { infoDepto: depto, infoGrupo: grupo, isShared: false },
                                       });
                                     }
                                   }}             
                                   onClick={() =>
                                     navigate(`/dashboard/deptos/${depto.id}`, {
-                                      state: { infoDepto: depto, infoGrupo: grupo },
+                                      state: { infoDepto: depto, infoGrupo: grupo, isShared: false },
                                     })
                                   }
                                 >

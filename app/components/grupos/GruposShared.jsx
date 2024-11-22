@@ -310,13 +310,13 @@ export default function GruposShared() {
                                         onKeyDown={(e) => {
                                           if (e.key === "Enter") {
                                             navigate(`/dashboard/deptos/${depto.id}`, {
-                                              state: { infoDepto: depto, infoGrupo: grupo },
+                                              state: { infoDepto: depto, infoGrupo: grupo, isShared: true },
                                             });
                                           }
                                         }}             
                                         onClick={() =>
                                           navigate(`/dashboard/deptos/${depto.id}`, {
-                                            state: { infoDepto: depto, infoGrupo: grupo },
+                                            state: { infoDepto: depto, infoGrupo: grupo, isShared: true },
                                           })
                                         }
                                       >
@@ -379,7 +379,7 @@ export default function GruposShared() {
                                             navigate(`/dashboard/money`);
                                           }
                                         }}             
-                                        onClick={() => navigate(`/dashboard/money`)}
+                                        onClick={() => window.open(`${balance.url_excel}`, "_blank")}
                                       >
                                         <ChevronsRight 
                                           size={28}

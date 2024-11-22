@@ -1,11 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand } from 'lucide-react'
+import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand, Lock, Unlock } from 'lucide-react'
 import { Button } from "../ui/button"
 import { useLocation } from "@remix-run/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
+import { Input } from "../ui/input"
+import { Textarea } from "../ui/textarea"
+import { Switch } from "../ui/switch"
+import { Label } from "../ui/label"
 import { getAllUser } from "../../database/crudUsers"
-import {useUser} from '../../hooks/use-user'
+import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch"
 import { useFetchBuckets } from '../../hooks/use-fetchBucket'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger} from "../ui/dialog"
@@ -14,9 +19,12 @@ export default function DeptoSelected() {
   const userLoged_id = useUser();
   const [usersInfo, setUsersInfo] = useState([])
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedInfoDepto, setEditedInfoDepto] = useState({})
 
   const location = useLocation()
-  const {infoDepto, infoGrupo} = location.state
+  const {infoDepto: initialInfoDepto, infoGrupo, isShared} = location.state
+  const [infoDepto, setInfoDepto] = useState(initialInfoDepto)
 
   const { data: userData, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
@@ -57,15 +65,87 @@ export default function DeptoSelected() {
     setCurrentPhotoIndex(index)
   }
 
+  const toggleEditing = () => {
+    if (isEditing) {
+      // Save changes
+      setInfoDepto({ ...infoDepto, ...editedInfoDepto })
+      setEditedInfoDepto({})
+    } else {
+      // Start editing
+      setEditedInfoDepto({ ...infoDepto })
+    }
+    setIsEditing(!isEditing)
+  }
+
+  const handleInputChange = (key, value) => {
+    setEditedInfoDepto({ ...editedInfoDepto, [key]: value })
+  }
+
+  const renderField = (item) => {
+    if (isEditing) {
+      if (item.label === "Inscripto en RELI" || item.label === "Estado") {
+        return (
+          <div className="flex items-center space-x-2">
+            <Switch
+              id={item.label}
+              checked={editedInfoDepto[item.key] || false}
+              onCheckedChange={(checked) => handleInputChange(item.key, checked)}
+            />
+            <Label htmlFor={item.label}>{item.label === "Estado" ? (editedInfoDepto[item.key] ? "Ocupado" : "Desocupado") : "Inscripto en RELI"}</Label>
+          </div>
+        )
+      } else if (item.label === "Notas / Observaciones") {
+        return (
+          <Textarea
+            value={editedInfoDepto[item.key] || ''}
+            onChange={(e) => handleInputChange(item.key, e.target.value)}
+            className="w-full"
+          />
+        )
+      } else {
+        return (
+          <Input
+            type={item.type || "text"}
+            value={editedInfoDepto[item.key] || ''}
+            onChange={(e) => handleInputChange(item.key, e.target.value)}
+            className="w-full"
+          />
+        )
+      }
+    } else {
+      if (item.label === "Inscripto en RELI" || item.label === "Estado") {
+        return (
+          <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
+            {item.label === "Estado" ? (infoDepto[item.key] ? "Ocupado" : "Desocupado") : (infoDepto[item.key] ? "Sí" : "No")}
+          </dd>
+        )
+      } else {
+        return (
+          <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
+            {infoDepto[item.key]}
+          </dd>
+        )
+      }
+    }
+  }
+
+
   return (
     <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-2xl sm:text-3xl text-gray-300 font-medium font-inter">
-          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>
+        <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-2'>              
+          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>{" "}  
         </h1>
-        <Badge variant={infoDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
-          {infoDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
-        </Badge>
+
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className='gap-x-3' onClick={toggleEditing} disabled={isShared}>
+            {isEditing ? <Unlock className="h-8 w-8" /> : <Lock className="w-12 h-12" />}
+            Editar
+          </Button>
+          <Badge variant={infoDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
+            {infoDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
+          </Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -78,25 +158,26 @@ export default function DeptoSelected() {
           <CardContent>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { icon: MapPin, label: "Ubicación", value: infoDepto?.ubicacion_completa },
-                { icon: User, label: "Propietario", value: infoDepto?.propietario_name },
-                { icon: Home, label: "Inquilino", value: infoDepto?.inquilino_name },
-                { icon: User, label: "Locador", value: infoDepto?.locador_name },
-                { icon: CreditCard, label: "Facturador", value: infoDepto?.facturador_name },
-                { icon: FileText, label: "Descripción", value: infoDepto?.descripcion },
-                { icon: Calendar, label: "Vencimiento del Usufructo", value: infoDepto?.vencimiento_usufructo },
-                { icon: DollarSign, label: "Método de cobro", value: infoDepto?.metodo_cobro },
-                { icon: DollarSign, label: "Precio Inicial", value: infoDepto?.monto_cobro_inicio },
-                { icon: DollarSign, label: "Precio Actual", value: infoDepto?.monto_cobro },
-                { icon: Calendar, label: "Última actualización del precio", value: infoDepto?.fecha_actualizacion_cobro },
-                { icon: FileText, label: "Inscripto en RELI", value: infoDepto?.inscripto_reli ? "Sí" : "No" },
-                { icon: NotebookPenIcon, label: "Notas / Observaciones", value: infoDepto?.obs_datos },
+                { icon: MapPin, label: "Ubicación", key: "ubicacion_completa" },
+                { icon: User, label: "Propietario", key: "propietario_name" },
+                { icon: Home, label: "Inquilino", key: "inquilino_name" },
+                { icon: User, label: "Locador", key: "locador_name" },
+                { icon: CreditCard, label: "Facturador", key: "facturador_name" },
+                { icon: FileText, label: "Descripción", key: "descripcion" },
+                { icon: Calendar, label: "Vencimiento del Usufructo", key: "vencimiento_usufructo", type: "date" },
+                { icon: DollarSign, label: "Método de cobro", key: "metodo_cobro" },
+                { icon: DollarSign, label: "Precio Inicial", key: "monto_cobro_inicio", type: "number" },
+                { icon: DollarSign, label: "Precio Actual", key: "monto_cobro", type: "number" },
+                { icon: Calendar, label: "Última actualización del precio", key: "fecha_actualizacion_cobro", type: "date" },
+                { icon: FileText, label: "Inscripto en RELI", key: "inscripto_reli" },
+                { icon: NotebookPenIcon, label: "Notas / Observaciones", key: "obs_datos" },
+                { icon: Home, label: "Estado", key: "ocupado" },
               ].map((item, index) => (
                 <div key={index} className='mb-2'>
                   <dt className="text-base sm:text-lg text-muted-foreground text-[#0f4564] mb-1 opacity-70 flex items-center">
                     <item.icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> {item.label}
                   </dt>
-                  <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>{item.value}</dd>
+                  {renderField(item)}
                 </div>
               ))}
             </dl>
@@ -118,11 +199,10 @@ export default function DeptoSelected() {
                   {propertyDocs && propertyDocs.length > 0 ? (
                     propertyDocs.map((doc, index) => (
                       <li key={index} className="flex items-center justify-left gap-x-5 p-2 rounded-md">
-                        <Button className="flex items-center lg:w-full w-fit justify-start text-sm sm:text-base" onClick={() => window.open(`${doc.doc_url}`, "_blank")}>
+                        <Button className="flex items-center w-full lg:w-fit justify-start text-sm sm:text-base" onClick={() => window.open(`${doc.doc_url}`, "_blank")}>
                           <FileText className="w-4 h-4 mr-2" />
                           Documento {index + 1}
                         </Button>
-                        <p className='inline lg:hidden text-muted-foreground text-sm'> Click para descargar </p>
                       </li>
                     ))
                   ) : (
@@ -183,11 +263,11 @@ export default function DeptoSelected() {
                         <DialogContent className="max-w-[95vw] max-h-[95vh] p-0">
                           <DialogTitle className="sr-only">Imagen ampliada</DialogTitle>
                           <DialogDescription className="sr-only">Vista ampliada de la imagen de la propiedad</DialogDescription>
-                          <div className="relative flex items-center justify-center w-full h-full p-10 md:p-5">
+                          <div className="relative flex items-center justify-center w-full h-full">
                             <img
                               src={propertyImages[currentPhotoIndex].foto_url}
                               alt={`Foto de la propiedad ${currentPhotoIndex + 1}`}
-                              className="max-w-full max-h-[calc(85vh-3rem)] object-contain"
+                              className="max-w-full max-h-[calc(95vh-2rem)] object-contain"
                             />
                             {propertyImages.length > 1 && (
                               <>
@@ -244,7 +324,8 @@ export default function DeptoSelected() {
                           className="text-xs sm:text-sm"
                           onClick={() => window.open(`${propertyImages[currentPhotoIndex].foto_url}`, "_blank")}
                         >
-                          <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                          Descargar
                         </Button>
                       </div>
                       <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs sm:text-sm">
@@ -256,21 +337,21 @@ export default function DeptoSelected() {
                   )}
                 </div>
                 {propertyImages && propertyImages.length > 1 && (
-                  <div className="flex gap-2 sm:gap-4 justify-center overflow-x-auto p-2">
+                  <div className="flex gap-2 sm:gap-4 justify-start overflow-x-auto pb-2">
                     {propertyImages.map((image, index) => (
                       <button
-                      key={index}
-                      onClick={() => selectPhoto(index)}
-                      className={`relative flex-shrink-0 rounded-md overflow-hidden ${
-                        index === currentPhotoIndex ? 'ring-2 p-1 ring-primary' : ''
-                      }`}
-                    >
-                      <img
-                        src={image.foto_url}
-                        alt={`Miniatura ${index + 1}`}
-                        className="h-16 sm:h-20 w-fit object-contain"
-                      />
-                    </button>
+                        key={index}
+                        onClick={() => selectPhoto(index)}
+                        className={`relative flex-shrink-0 rounded-md overflow-hidden ${
+                          index === currentPhotoIndex ? 'ring-2 p-1 ring-primary' : ''
+                        }`}
+                      >
+                        <img
+                          src={image.foto_url}
+                          alt={`Miniatura ${index + 1}`}
+                          className="h-16 sm:h-20 w-16 sm:w-20 object-cover"
+                        />
+                      </button>
                     ))}
                   </div>
                 )}
