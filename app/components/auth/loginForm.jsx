@@ -66,8 +66,8 @@ export default function LoginForm() {
     setLoading(true)
     try {
       const {data: dataSendEmail, error: errorSendEmail} = await supabase.auth.resetPasswordForEmail(userInfo.email, {
-        redirectTo: `${window.location.href}reset-password`
-        // redirectTo: 'https://rent-app.com.ar/reset-password'
+        // redirectTo: `${window.location.href}reset-password`
+        redirectTo: 'https://rent-app.com.ar/reset-password'
       })
 
       if (errorSendEmail) throw new Error(errorSendEmail)
