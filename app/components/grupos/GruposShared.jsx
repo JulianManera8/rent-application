@@ -179,7 +179,7 @@ export default function GruposShared() {
                     <DialogTrigger asChild>
                 
                       {/* CARDS DE LOS GRUPOS */}
-                      <Card className="shadow-lg my-5 relative bg-gradient-to-br from-green-100/60 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[330px] min-h-[460px]">
+                      <Card className="shadow-lg my-5 relative bg-gradient-to-br from-green-100/60 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[460px]">
                         <CardHeader className="h-1/5">
                           <CardTitle>Grupo: {grupo?.grupo_name} </CardTitle>
                           <CardDescription className="pt-1">
@@ -309,14 +309,14 @@ export default function GruposShared() {
                                         tabIndex={0}
                                         onKeyDown={(e) => {
                                           if (e.key === "Enter") {
-                                            navigate(`/dashboard/deptos/${depto.id}`, {
-                                              state: { infoDepto: depto, infoGrupo: grupo, isShared: true },
+                                            navigate(`/dashboard/deptos/shared/${depto.id}`, {
+                                              state: { infoDepto: depto, infoGrupo: grupo },
                                             });
                                           }
                                         }}             
                                         onClick={() =>
-                                          navigate(`/dashboard/deptos/${depto.id}`, {
-                                            state: { infoDepto: depto, infoGrupo: grupo, isShared: true },
+                                          navigate(`/dashboard/deptos/shared/${depto.id}`, {
+                                            state: { infoDepto: depto, infoGrupo: grupo },
                                           })
                                         }
                                       >

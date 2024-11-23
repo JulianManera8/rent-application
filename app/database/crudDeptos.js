@@ -16,6 +16,21 @@ export async function getDeptos({ user_id }) {
   return data;
 }
 
+export async function getDeptoById(id) {
+  const { data, error } = await supabase
+    .from("departamentos")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Falla al cargar el departamento");
+  }
+
+  return data;
+}
+
 //FUNCION PARA ELIMINAR UN DEPTO 
 export async function removeDepto({deptoId}) {
   const { error } = await supabase
@@ -58,7 +73,6 @@ export async function removeDepto({deptoId}) {
 
   return ' '
 }
-
 
 
 //FUNCION PARA CREAR DEPTO, INCLUYENDO UPLOAD DOCS Y FOTOS
@@ -277,3 +291,46 @@ async function insertFotos(idDeptoCreado, listaFotos) {
   );
 }
 
+
+
+export async function editDepto(idDepto, editedInfoDepto) {
+  try {
+    const { data, error } = await supabase
+      .from('departamentos')
+      .update(
+        {
+          ubicacion_completa: editedInfoDepto.ubicacion_completa, 
+          descripcion: editedInfoDepto.descripcion, 
+          ocupado: editedInfoDepto.ocupado, 
+          propietario_name: editedInfoDepto.propietario_name, 
+          locador_name: editedInfoDepto.locador_name, 
+          inquilino_name: editedInfoDepto.inquilino_name, 
+          cobrador_name: editedInfoDepto.cobrador_name, 
+          facturador_name: editedInfoDepto.facturador_name, 
+          usufructuario_name: editedInfoDepto.usufructuario_name, 
+          metodo_cobro: editedInfoDepto.metodo_cobro, 
+          vencimiento_contrato: editedInfoDepto.vencimiento_contrato, 
+          inscripto_reli: editedInfoDepto.inscripto_reli, 
+          vencimiento_usufructo: editedInfoDepto.vencimiento_usufructo, 
+          monto_cobro: editedInfoDepto.monto_cobro, 
+          monto_cobro_inicio: editedInfoDepto.monto_cobro_inicio, 
+          fecha_actualizacion_cobro: editedInfoDepto.fecha_actualizacion_cobro, 
+          obs_datos: editedInfoDepto.obs_datos, 
+        },
+      )
+      .eq('id', idDepto)
+      .select()
+
+    if (error) {
+        console.error("Error en la update:", error.message);
+        throw new Error(error.message);
+    }
+
+    console.log("Departamento Actualizado:", data);
+    return data;
+
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+}

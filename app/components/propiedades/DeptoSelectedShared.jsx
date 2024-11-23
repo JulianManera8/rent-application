@@ -1,61 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand, Lock, Unlock } from 'lucide-react'
+import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand} from 'lucide-react'
 import { Button } from "../ui/button"
 import { useLocation } from "@remix-run/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
-import { Input } from "../ui/input"
-import { Textarea } from "../ui/textarea"
-import { Switch } from "../ui/switch"
-import { Label } from "../ui/label"
 import { getAllUser } from "../../database/crudUsers"
 import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch"
 import { useFetchBuckets } from '../../hooks/use-fetchBucket'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger} from "../ui/dialog"
-import { getDeptoById, editDepto } from "../../database/crudDeptos"
-import { SkeletonDeptoSelected } from '../helpers/skeletonDeptoSelected'
-// import Error from '../helpers/Error'
-
 
 export default function DeptoSelected() {
   const userLoged_id = useUser();
   const [usersInfo, setUsersInfo] = useState([])
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedInfoDepto, setEditedInfoDepto] = useState({})
-  // const [errors, setErrors] = useState(false)
 
   const location = useLocation()
-  const {dataDepto, infoGrupo} = location.state
+  const {infoDepto, infoGrupo} = location.state
 
-  const [isLoading, setIsLoading] = useState(true);
 
   const { data: userData, fn: fnGetAllUsers } = useFetch(getAllUser, {});
-  const { data: deptoData, fn: fetchDepto } = useFetch(getDeptoById, dataDepto?.id);
 
-  const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${dataDepto.id}`})
-  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', 'doc_url' ,{col: 'depto_id', key: `${dataDepto.id}`})
+  const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${infoDepto?.id}`})
+  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', 'doc_url' ,{col: 'depto_id', key: `${infoDepto?.id}`})
 
   useEffect(() => {
     if (userLoged_id) {
       fnGetAllUsers();
     }
   }, [userLoged_id]);
-
-  useEffect(() => {
-    if (dataDepto.id) {
-      fetchDepto(dataDepto.id);
-    }
-  }, [dataDepto.id]);
-
-  useEffect(() => {
-    if (deptoData) {
-      setIsLoading(false);
-    }
-  }, [deptoData]);
-
 
   useEffect(() => {
     if (userData) {
@@ -85,101 +59,35 @@ export default function DeptoSelected() {
     setCurrentPhotoIndex(index)
   }
 
-  
-
-  const toggleEditing = async () => {
-    if (isEditing) {
-      setEditedInfoDepto({ ...deptoData, ...editedInfoDepto });
-    } else {
-      setEditedInfoDepto({ ...deptoData });
-    }
-    setIsEditing(!isEditing);
-    // setErrors(false);
-  }
-
-  const handleInputChange = (key, value) => {
-    setEditedInfoDepto({ ...editedInfoDepto, [key]: value })
-  }
-
-  const saveEdit = async (idDepto) => {
-    const response = await editDepto(idDepto, editedInfoDepto);
-    if (response) {
-      // setInfoDepto(prev => ({ ...prev, ...editedInfoDepto }));
-      setIsLoading(true);
-      await fetchDepto(idDepto)
-      if (deptoData) {
-        setIsLoading(false);
-      }
-      setEditedInfoDepto({});
-      setIsEditing(false);
-    }
-  };
 
   const renderField = (item) => {
-    if (isEditing) {
-      if (item.label === "Inscripto en RELI" || item.label === "Estado") {
-        return (
-          <div className="flex items-center space-x-2">
-            <Switch
-              id={item.label}
-              checked={editedInfoDepto[item.key] || false}
-              onCheckedChange={(checked) => handleInputChange(item.key, checked)}
-            />
-            <Label htmlFor={item.label}>{item.label === "Estado" ? (editedInfoDepto[item.key] ? "Ocupado" : "Desocupado") : "Inscripto en RELI"}</Label>
-          </div>
-        )
-      } else if (item.label === "Notas / Observaciones") {
-        return (
-          <Textarea
-            value={editedInfoDepto[item.key] || ''}
-            onChange={(e) => handleInputChange(item.key, e.target.value)}
-            className="w-full"
-          />
-        )
-      } else {
-        return (
-          <Input
-            type={item.type || "text"}
-            value={editedInfoDepto[item.key] || ''}
-            onChange={(e) => handleInputChange(item.key, e.target.value)}
-            className="w-full"
-          />
-        )
-      }
+    
+    if (item.label === "Inscripto en RELI" || item.label === "Estado") {
+      return (
+        <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
+          {item.label === "Estado" ? (infoDepto[item.key] ? "Ocupado" : "Desocupado") : (infoDepto[item.key] ? "Sí" : "No")}
+        </dd>
+      )
     } else {
-      if (item.label === "Inscripto en RELI" || item.label === "Estado") {
-        return (
-          <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-            {item.label === "Estado" ? (deptoData[item.key] ? "Ocupado" : "Desocupado") : (deptoData[item.key] ? "Sí" : "No")}
-          </dd>
-        )
-      } else {
-        return (
-          <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-            {deptoData[item.key]}
-          </dd>
-        )
-      }
+      return (
+        <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
+          {infoDepto[item.key]}
+        </dd>
+      )
     }
   }
-
-  if (isLoading) {
-    return <SkeletonDeptoSelected />
-  }
+  
 
   return (
     <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-2xl sm:text-3xl text-gray-300 font-medium font-inter">
-          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>
+        <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-2'>              
+          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>{" "}  
         </h1>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className='gap-x-3' onClick={toggleEditing}>
-            {isEditing ? <Unlock className="h-8 w-8" /> : <Lock className="w-12 h-12" />}
-            {isEditing ? 'Cerrar Editar' : 'Editar'}
-          </Button>
-          <Badge variant={deptoData?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
-            {deptoData?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
+
+        <div className="flex items-center gap-3">
+          <Badge variant={infoDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
+            {infoDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
           </Badge>
         </div>
       </div>
@@ -218,21 +126,8 @@ export default function DeptoSelected() {
                   {renderField(item)}
                 </div>
               ))}
+
             </dl>
-            {isEditing && 
-              <div className='grid col-span-2 my-4'>
-                <div className='flex justify-center space-x-5'>
-                  <Button 
-                    className='bg-red-700 hover:bg-red-800' 
-                    onClick={() => {setEditedInfoDepto({}); setIsEditing(false);}}
-                  > 
-                    Cancelar 
-                  </Button>
-                  <Button className='bg-green-600 hover:bg-green-700' onClick={() => saveEdit(deptoData?.id)}> Guardar Cambios </Button>
-                </div>
-                {/* {errors && <p className='text-red-600 text-center w-full mt-5 text-lg font-semibold'> Debes completar todos los campos </p>} */}
-              </div>
-            }
           </CardContent>
         </Card>
 
@@ -411,6 +306,7 @@ export default function DeptoSelected() {
             )}
           </CardContent>
         </Card>
+
       </div>
     </div>
   )

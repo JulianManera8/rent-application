@@ -98,7 +98,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
                               <TableRow
                                 key={dep.id}
                                 className="text-sm md:text-md cursor-pointer"
-                                onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { infoDepto: dep, infoGrupo: grupo, isShared: false }})}
+                                onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { dataDepto: dep, infoGrupo: grupo }})}
                               >
                                 <TableCell className="w-1/6"> {dep.ubicacion_completa}</TableCell>
                                 <TableCell className="w-1/6">  {dep.propietario_name} </TableCell>
