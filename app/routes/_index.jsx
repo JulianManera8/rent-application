@@ -6,21 +6,25 @@ import {
 } from "../components/ui/tabs";
 import SignupForm from "../components/auth/signupForm";
 import LoginForm from "../components/auth/loginForm";
+import { NavLink } from "react-router-dom";
 
 export const meta = () => {
   return [{ title: "RentApp" }];
 };
 
 export default function Index() {
+
   return (
     <div className="font-sans flex md:flex-row flex-col items-center justify-evenly bg-slate-100 min-h-screen">
       <section className="md:w-1/2 w-full md:h-screen mt-8 flex items-center justify-center relative">
         <div className="md:absolute top-[10%] md:top-[15%] flex flex-col text-center items-center md:space-y-7 space-y-3 ">
+          <NavLink to='/'>
           <img
             src="/logo.png"
             alt="Logo"
             className="md:w-32 w-24 shadow-xl border rounded-full mb-5 hover:shadow-2xl transition-all"
           />
+          </NavLink>
           <h1 className="text-3xl md:text-5xl font-bold">Welcome to RentApp</h1>
           <p className="text-lg md:text-2xl">Login to your account, or create one.</p>
         </div>

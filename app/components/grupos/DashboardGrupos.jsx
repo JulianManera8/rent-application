@@ -57,6 +57,7 @@ export default function DashboardGrupos() {
   }, [inputBorrar])
 
   const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
+
   
   useEffect(() => {
     if (id_NewName.idGrupo && id_NewName.newGroupName) {

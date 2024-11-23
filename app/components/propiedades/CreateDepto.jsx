@@ -83,14 +83,14 @@ export default function CreateDepto() {
     setNewDepto({...newDepto, grupo_id: value})
   };
 
-  const { loading, fn: dbCreatePrueba } = useFetch(createDepto, {newDepto});
+  const { loading, fn: dbCreateDepto } = useFetch(createDepto, {newDepto});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (userLoged_id !== null) {
       try {
-        await dbCreatePrueba(newDepto);
+        await dbCreateDepto(newDepto);
 
         setFiles([])
         setFotos([])

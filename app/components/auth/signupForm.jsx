@@ -62,7 +62,7 @@ export default function SignupForm() {
 
     if(userInfo.password === "") {
       setLoading(false) 
-      return setErrors((prevErrors)=> ({...prevErrors, password: 'Debes completar correctamente la contraseña'} ))
+      return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe tener 6 o más caracteres'} ))
     }
 
     if(userInfo.confirmPassword === "") {

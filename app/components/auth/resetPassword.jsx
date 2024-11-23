@@ -35,9 +35,9 @@ export default function ResetPassword() {
   
       if(userInfo.password === "") {
         setLoading(false) 
-        return setErrors((prevErrors)=> ({...prevErrors, password: 'Debes completar correctamente la contraseña'} ))
+        return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe tener 6 o más caracteres'} ))
       }
-  
+
       if(userInfo.confirmPassword === "") {
         setLoading(false) 
         return setErrors((prevErrors)=> ({...prevErrors, confirmPassword: 'Debes completar correctamente la contraseña nuevamente'} ))
@@ -69,10 +69,10 @@ export default function ResetPassword() {
     };
 
   return (
-    <form>
+    <form className="w-full">
       <Card>
         <CardHeader>
-            <CardTitle> Crea una nueva contraseña </CardTitle>
+            <CardTitle className="text-center"> Crea una nueva contraseña </CardTitle>
             <CardDescription className="sr-only"> Las 2 tienen que coincidir </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -140,7 +140,7 @@ export default function ResetPassword() {
           {errors.auth && <Error errorMessage={errors.auth} />}
           {success && (
             <div className="w-full text-center">
-              <p className="text-green-600 font-medium text-lg"> Email enviado correctamente, ¡revísalo! </p>
+              <p className="text-green-600 font-medium text-lg"> Contraseña actualizada, ya puedes iniciar sesión </p>
             </div>
           )}
         </CardFooter>

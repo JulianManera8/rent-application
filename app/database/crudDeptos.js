@@ -32,7 +32,7 @@ export async function getDeptoById(id) {
 }
 
 //FUNCION PARA ELIMINAR UN DEPTO 
-export async function removeDepto({deptoId}) {
+export async function removeDepto(deptoId) {
   const { error } = await supabase
   .from("departamentos")
   .delete()
@@ -136,15 +136,15 @@ export async function createDepto({ newDepto }) {
     );
 
     // Limpia el arreglo de archivos después de subir todos
-    newDepto.files = [];
+
   }
 
   // LLAMA LA FUNCION PARA CAPTAR LOS URL DE LOS DOCS CREADOS
   const { urlDocs: listaDocs } = await getDocsFromBucket(data[0].id);
 
   // LLAMA LA FUNCION PARA CARGAR ESOS URL A LA TABLA DE DOCS Y ASIGNARLOS AL ID DE CADA DEPTO
-  await insertDocs(data[0].id, listaDocs);
-
+  await insertDocs(data[0].id, listaDocs, newDepto.files);
+  newDepto.files = [];
 
   
 
@@ -244,16 +244,17 @@ export async function getFotosFromBucket(idDeptoCreado) {
 }
 
 // FUNCION PARA INSERTAR LAS URL DE LOS DOCS EN LA TABLA
-async function insertDocs(idDeptoCreado, listaDocs) {
-  // Inserta cada URL en la tabla docs_deptos
+async function insertDocs(idDeptoCreado, listaDocs, files) {
+  // Inserta cada URL en la tabla docs_deptos con su nombre correspondiente
   await Promise.all(
-    listaDocs.map(async (url) => {
+    listaDocs.map(async (url, index) => {
       const { data: docsInserted, error: errorInsertDocs } = await supabase
         .from('docs_deptos')
         .insert([
           {
             depto_id: idDeptoCreado,
             doc_url: url,
+            doc_name: files[index].name,
           },
         ]);
 
@@ -290,8 +291,6 @@ async function insertFotos(idDeptoCreado, listaFotos) {
     })
   );
 }
-
-
 
 export async function editDepto(idDepto, editedInfoDepto) {
   try {
@@ -333,4 +332,160 @@ export async function editDepto(idDepto, editedInfoDepto) {
     console.error("Error:", error);
     return null;
   }
+}
+
+export async function removeDocument( docPath ) {
+
+  try {
+    const { error } = await supabase
+      .from("docs_deptos")
+      .delete()
+      .eq("doc_url", docPath);
+
+    if (error) {
+      console.error(error);
+      return error
+    }
+
+    // 2. Eliminar el archivo del bucket de Supabase
+    const { error: storageError } = await supabase.storage
+      .from("documentos")
+      .remove([docPath]); 
+
+    if (storageError) {
+      console.error("Error al eliminar el archivo del bucket:", storageError.message);
+      throw new Error("Error deleting the file from storage");
+    }
+
+    return true;
+
+  } catch (storageError) {
+    console.error(storageError.message);
+  }
+  
+}
+
+
+export async function insertNewDoc({ file, depto_id }) {
+  try {
+    // Create a unique file path
+    const filePath = `documentos/docs${depto_id}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Upload the file
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("documentos")
+      .upload(filePath, file)
+
+    if (uploadError) {
+      console.error("Error uploading file:", uploadError.message)
+      throw new Error("Error al subir el archivo")
+    }
+
+    // Get the public URL for the uploaded file
+    const { data: { publicUrl } } = supabase.storage
+      .from("documentos")
+      .getPublicUrl(filePath)
+
+    // Insert the document record
+    const { data: docData, error: insertError } = await supabase
+      .from('docs_deptos')
+      .insert([
+        {
+          depto_id,
+          doc_url: publicUrl,
+          doc_name: file.name,
+        },
+      ])
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error("Error inserting document record:", insertError.message)
+      // If insert fails, try to delete the uploaded file
+      await supabase.storage.from("documentos").remove([filePath])
+      throw new Error("Error al guardar la información del documento")
+    }
+
+    return docData
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message)
+    }
+    throw new Error("Error inesperado al procesar el documento")
+  }
+}
+
+
+export async function insertNewImage({ file, depto_id }) {
+  try {
+    const filePath = `fotos_depto/fotos${depto_id}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("fotos_depto")
+      .upload(filePath, file)
+
+    if (uploadError) {
+      console.error("Error uploading image:", uploadError.message)
+      throw new Error("Error al subir la imagen")
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("fotos_depto")
+      .getPublicUrl(filePath)
+
+    const { data: imageData, error: insertError } = await supabase
+      .from('fotos_deptos')
+      .insert([
+        {
+          depto_id,
+          foto_url: publicUrl,
+        },
+      ])
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error("Error inserting image record:", insertError.message)
+      await supabase.storage.from("fotos_deptos").remove([filePath])
+      throw new Error("Error al guardar la información de la imagen")
+    }
+
+    return imageData
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message)
+    }
+    throw new Error("Error inesperado al procesar la imagen")
+  }
+}
+
+export async function removeImage( imgPath ) {
+
+  try {
+    const { error } = await supabase
+      .from("fotos_deptos")
+      .delete()
+      .eq("foto_url", imgPath);
+
+    if (error) {
+      console.error(error);
+      return error
+    }
+
+    // 2. Eliminar el archivo del bucket de Supabase
+    const { error: storageError } = await supabase.storage
+      .from("fotos_depto")
+      .remove([imgPath]); 
+
+    if (storageError) {
+      console.error("Error al eliminar el archivo del bucket:", storageError.message);
+      throw new Error("Error deleting the file from storage");
+    }
+
+    return true;
+
+  } catch (storageError) {
+    console.error(storageError.message);
+  }
+  
 }

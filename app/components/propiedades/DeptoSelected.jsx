@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand, Lock, Unlock } from 'lucide-react'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
+import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand, Lock, Unlock, XSquare, Trash2 } from 'lucide-react'
 import { Button } from "../ui/button"
-import { useLocation } from "@remix-run/react"
+import { useLocation, useNavigate } from "@remix-run/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { Input } from "../ui/input"
@@ -14,8 +15,10 @@ import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch"
 import { useFetchBuckets } from '../../hooks/use-fetchBucket'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger} from "../ui/dialog"
-import { getDeptoById, editDepto } from "../../database/crudDeptos"
+import { getDeptoById, editDepto, removeDocument, removeDepto, removeImage,  } from "../../database/crudDeptos"
 import { SkeletonDeptoSelected } from '../helpers/skeletonDeptoSelected'
+import {AddDocumentDialog} from '../propiedades/AddDocumentDialog'
+import {AddImageDialog} from '../propiedades/AddImageDialog'
 // import Error from '../helpers/Error'
 
 
@@ -25,18 +28,35 @@ export default function DeptoSelected() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const [isEditing, setIsEditing] = useState(false)
   const [editedInfoDepto, setEditedInfoDepto] = useState({})
+  const [inputBorrar, setInputBorrar ] = useState('')
+  const [disabledContinue, setDisabledContinue ] = useState(true)
+  const [loadingDelete, setLoadingDelete] = useState(false)
   // const [errors, setErrors] = useState(false)
-
+  const navigate = useNavigate()
   const location = useLocation()
   const {dataDepto, infoGrupo} = location.state
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [ dataDocs, setDataDocs ] = useState([])
+  const [ dataImagen, setDataImagen ] = useState([])
+
   const { data: userData, fn: fnGetAllUsers } = useFetch(getAllUser, {});
   const { data: deptoData, fn: fetchDepto } = useFetch(getDeptoById, dataDepto?.id);
 
   const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${dataDepto.id}`})
-  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', 'doc_url' ,{col: 'depto_id', key: `${dataDepto.id}`})
+  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', '*' ,{col: 'depto_id', key: `${dataDepto.id}`})
+
+  useEffect(() => {
+    if (propertyDocs) {
+      setDataDocs(propertyDocs);
+    }
+  }, [propertyDocs]);
+  useEffect(() => {
+    if (propertyImages) {
+      setDataImagen(propertyImages);
+    }
+  }, [propertyImages]);
 
   useEffect(() => {
     if (userLoged_id) {
@@ -69,15 +89,16 @@ export default function DeptoSelected() {
     }
   }, [userData]);
 
+  //GALLERY OF PHOTOS
   const nextPhoto = () => {
     setCurrentPhotoIndex((prevIndex) => 
-      prevIndex === (propertyImages?.length || 0) - 1 ? 0 : prevIndex + 1
+      prevIndex === (dataImagen?.length || 0) - 1 ? 0 : prevIndex + 1
     )
   }
 
   const prevPhoto = () => {
     setCurrentPhotoIndex((prevIndex) => 
-      prevIndex === 0 ? (propertyImages?.length || 1) - 1 : prevIndex - 1
+      prevIndex === 0 ? (dataImagen?.length || 1) - 1 : prevIndex - 1
     )
   }
 
@@ -86,6 +107,42 @@ export default function DeptoSelected() {
   }
 
   
+  //REMOVE AND ADD NEW DOCUMENTS TO THE PROPERTY
+  const handleDeleteDocument = async (docSelected) => {
+    const docPath = docSelected.doc_url;
+
+    try {
+      await removeDocument(docPath);
+
+      setDataDocs((prevDocs) =>
+        prevDocs.filter((doc) => doc.doc_url !== docPath)
+      );
+
+    } catch (error) {
+      console.error("Error al eliminar el documento:", error.message);
+    }
+  };
+
+  const handleAddDocument = (newDoc) => {
+    setDataDocs(prevDocs => [...prevDocs, newDoc])
+  }
+
+  const handleAddImage = (newImage) => {
+    setDataImagen(prevImages => [...prevImages, newImage])
+  }
+
+  const handleDeleteImage = async (image) => {
+    const imgPath = image.foto_url;
+
+    try {
+      await removeImage(imgPath);
+
+      setDataImagen(prevImages => prevImages.filter((img) => img.foto_url !== imgPath))
+
+    } catch (error) {
+      console.error("Error al eliminar la imagen:", error.message);
+    }
+  };
 
   const toggleEditing = async () => {
     if (isEditing) {
@@ -114,6 +171,29 @@ export default function DeptoSelected() {
       setIsEditing(false);
     }
   };
+
+  useEffect(() => {
+    if(inputBorrar === 'CONFIRMO BORRAR PROPIEDAD') {
+      return setDisabledContinue(false)
+    } else {
+      return setDisabledContinue(true)
+    }
+  }, [inputBorrar])
+
+  const handleDeleteDepto = async (idDepto) => {
+    setLoadingDelete(true)
+    try {
+     await removeDepto(idDepto)
+     setTimeout(() => {
+       setLoadingDelete(false)
+       setInputBorrar('')
+       navigate('/dashboard/deptos')
+     }, 1000);
+    } catch (error) {
+       setLoadingDelete(false)
+       console.error("Error al crear el grupo:", error.message || error);
+     }
+   }
 
   const renderField = (item) => {
     if (isEditing) {
@@ -176,21 +256,62 @@ export default function DeptoSelected() {
         <div className="flex items-center gap-2">
           <Button variant="outline" className='gap-x-3' onClick={toggleEditing}>
             {isEditing ? <Unlock className="h-8 w-8" /> : <Lock className="w-12 h-12" />}
-            {isEditing ? 'Cerrar Editar' : 'Editar'}
+            {isEditing ? 'Cerrar Editor' : 'Editar'}
           </Button>
-          <Badge variant={deptoData?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
-            {deptoData?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
-          </Badge>
+
+          {/* BOTON PARA BORRAR DEPTO */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button variant="destructive" disabled={loadingDelete}>
+                {loadingDelete ? 'Borrando...' : 'Borrar Propiedad'} 
+                </Button>
+              </AlertDialogTrigger>
+            <AlertDialogContent >
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-center">
+                  ¿Estás seguro que quieres eliminar esta propiedad?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-center text-red-600">
+                  Esta acción no se puede deshacer. Esto eliminará
+                  permanentemente el grupo y todos los datos asociados.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="flex flex-col items-center justify-center gap-y-2">
+                <Label htmlFor="confirmDelete">
+                  Escribe &quot; CONFIRMO BORRAR PROPIEDAD &quot; para continuar
+                </Label>
+                <Input
+                  id="confirmDelete"
+                  value={inputBorrar}
+                  onChange={(e) => setInputBorrar(e.target.value)}
+                  className="max-w-[350px]"
+                />
+              </div>
+              <AlertDialogFooter className="sm:justify-center">
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={disabledContinue}
+                  onClick={() => handleDeleteDepto(deptoData.id)}
+                >
+                  <Button variant="destructive" disabled={loadingDelete}>
+                    {loadingDelete ? 'Borrando...' : 'Eliminar'} 
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
         {/* INFO GENERAL */}
         <Card className="lg:col-span-2">
           <CardHeader className='flex-col sm:flex-row items-start sm:items-center justify-between'>
-            <CardTitle className='text-2xl sm:text-3xl mb-2 sm:mb-0'>Información General</CardTitle>
-            <CardDescription className='text-base sm:text-lg text-black font-medium'> Grupo: {infoGrupo.grupo_name} </CardDescription>
-          </CardHeader>
+            <CardTitle className='text-xl sm:text-2xl mb-2 sm:mb-0'>Pertenece al grupo: {infoGrupo.grupo_name} </CardTitle>
+            <Badge variant={deptoData?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
+              {deptoData?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
+            </Badge>          </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
@@ -240,31 +361,83 @@ export default function DeptoSelected() {
         <div className='lg:col-span-1 flex flex-col gap-6'>
           <Card className="flex-grow">
             <CardHeader>
-              <CardTitle className="text-xl sm:text-2xl">Documentos Asociados</CardTitle>
-              <CardDescription>Lista de documentos relacionados con la propiedad</CardDescription>
+              <CardTitle className="text-xl sm:text-2xl flex items-center justify-between">
+                Documentos Asociados
+                <AddDocumentDialog deptoId={deptoData.id} onSuccess={handleAddDocument} />
+              </CardTitle>
+              <CardDescription className="sr-only"> Lista de documentos relacionados con la propiedad </CardDescription>
             </CardHeader>
             <CardContent className="overflow-y-auto max-h-[300px]">
               {docsLoading ? (
-                <p>Cargando documentos...</p>
+                <p className="text-center text-gray-500">Cargando documentos...</p>
               ) : (
                 <ul className="space-y-2">
-                  {propertyDocs && propertyDocs.length > 0 ? (
-                    propertyDocs.map((doc, index) => (
-                      <li key={index} className="flex flex-wrap items-center justify-left gap-y-1 gap-x-5 p-2 rounded-md">
-                        <Button className="flex items-center w-fit justify-start text-sm sm:text-base" onClick={() => window.open(`${doc.doc_url}`, "_blank")}>
+                  {dataDocs && dataDocs.length > 0 ? (
+                    dataDocs.map((doc, index) => (
+                      <li
+                        key={index}
+                        className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 p-2 rounded-md bg-gray-50 hover:bg-gray-100 transition"
+                      >
+                        {/* File Open Button */}
+                        <Button
+                          className="flex items-center min-w-[175px] max-w-full sm:max-w-[175px] whitespace-nowrap overflow-hidden text-ellipsis justify-start text-sm sm:text-base"
+                          onClick={() => window.open(`${doc.doc_url}`, "_blank")}
+                        >
                           <FileText className="w-4 h-4 mr-2" />
-                          Documento {index + 1}
+                          <p className="whitespace-nowrap overflow-hidden text-ellipsis text-sm">
+                            {doc.doc_name}
+                          </p>
                         </Button>
-                        <span className='text-muted-foreground text-xs'> Click para descargar </span>
+                    
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-4">
+                          {/* Delete Dialog */}
+                          <AlertDialog>
+                            <AlertDialogTrigger>
+                              <XSquare size={20}className="cursor-pointer hover:text-red-500 transition-all" />
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="text-center">
+                                  Estás a punto de borrar un documento
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-center">
+                                  Esta acción no se puede revertir, lo deberás volver a cargar
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                                <AlertDialogCancel className="h-10 mt-0">
+                                  Cancelar
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="h-10"
+                                  onClick={() => handleDeleteDocument(doc)}
+                                >
+                                  Continuar
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                    
+                          {/* Download Button */}
+                          <Download
+                            size={20}
+                            className="cursor-pointer hover:text-green-500 transition-all"
+                            onClick={() => window.open(`${doc.doc_url}`, "_blank")}
+                          />
+                        </div>
                       </li>
                     ))
                   ) : (
-                    <li>No hay documentos disponibles</li>
+                    <li className="text-gray-500 text-sm w-full text-center">
+                      No hay documentos cargados.
+                    </li>
                   )}
                 </ul>
               )}
             </CardContent>
           </Card>
+
 
           <Card className="flex-grow">
             <CardHeader>
@@ -296,8 +469,9 @@ export default function DeptoSelected() {
 
         {/* FOTOS DEL DEPTO */}
         <Card className='col-span-full'>
-          <CardHeader>
+          <CardHeader className='flex-row items-center justify-between'>
             <CardTitle className="text-xl sm:text-2xl">Galería de Fotos</CardTitle>
+            <AddImageDialog deptoId={deptoData.id} onSuccess={handleAddImage} />                
           </CardHeader>
           <CardContent>
             {imagesLoading ? (
@@ -305,7 +479,7 @@ export default function DeptoSelected() {
             ) : (
               <div className="space-y-4">
                 <div className="relative mb-6 sm:mb-10">
-                  {propertyImages && propertyImages.length > 0 ? (
+                  {dataImagen && dataImagen.length > 0 ? (
                     <div className='flex justify-center'>
                       <Dialog>
                         <DialogTrigger asChild>
@@ -318,11 +492,11 @@ export default function DeptoSelected() {
                           <DialogDescription className="sr-only">Vista ampliada de la imagen de la propiedad</DialogDescription>
                           <div className="relative flex items-center justify-center w-full h-full">
                             <img
-                              src={propertyImages[currentPhotoIndex].foto_url}
+                              src={dataImagen[currentPhotoIndex].foto_url}
                               alt={`Foto de la propiedad ${currentPhotoIndex + 1}`}
                               className="max-w-[85%] min-h-[calc(90vh-2rem)] max-h-[calc(95vh-2rem)] object-contain"
                             />
-                            {propertyImages.length > 1 && (
+                            {dataImagen.length > 1 && (
                               <>
                                 <Button
                                   variant="ghost"
@@ -346,11 +520,11 @@ export default function DeptoSelected() {
                         </DialogContent>
                       </Dialog>
                       <img
-                        src={propertyImages[currentPhotoIndex].foto_url}
+                        src={dataImagen[currentPhotoIndex].foto_url}
                         alt={`Foto de la propiedad ${currentPhotoIndex + 1}`}
                         className="max-w-[85%] h-48 sm:h-96 object-contain rounded-md"
                       />
-                      {propertyImages.length > 1 && (
+                      {dataImagen.length > 1 && (
                         <>
                           <Button
                             variant="outline"
@@ -370,27 +544,50 @@ export default function DeptoSelected() {
                           </Button>
                         </>
                       )}
-                      <div className="absolute bottom-2 right-2">
+                      <div className="absolute bottom-2 right-2 flex gap-2">
                         <Button
                           variant="secondary"
                           size="sm"
                           className="text-xs sm:text-sm"
-                          onClick={() => window.open(`${propertyImages[currentPhotoIndex].foto_url}`, "_blank")}
+                          onClick={() => window.open(`${dataImagen[currentPhotoIndex].foto_url}`, "_blank")}
                         >
                           <Download className="h-4 sm:w-4" />
                         </Button>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm" className="text-xs sm:text-sm">
+                              <Trash2 className="h-4 sm:w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Esta acción no se puede deshacer. Esto eliminará permanentemente la imagen de la propiedad.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteImage(dataImagen[currentPhotoIndex])}>
+                                Eliminar
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                       <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs sm:text-sm">
-                        {currentPhotoIndex + 1} / {propertyImages.length}
+                        {currentPhotoIndex + 1} / {dataImagen.length}
                       </p>
                     </div>
                   ) : (
                     <p>No hay imágenes disponibles</p>
                   )}
                 </div>
-                {propertyImages && propertyImages.length > 1 && (
+
+                {dataImagen && dataImagen.length > 1 && (
                   <div className="flex gap-2 sm:gap-4 justify-center overflow-x-auto p-2">
-                    {propertyImages.map((image, index) => (
+                    {dataImagen.map((image, index) => (
                       <button
                         key={index}
                         onClick={() => selectPhoto(index)}

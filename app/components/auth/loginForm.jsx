@@ -41,7 +41,8 @@ export default function LoginForm() {
 
     if(userInfo.password === "") {
       setLoading(false) 
-      return setErrors((prevErrors)=> ({...prevErrors, password: 'Debes completar correctamente la contraseña'} ))
+      return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe tener 6 o más caracteres'} ))
+
     }
     
     const { data, error } = await supabase.auth.signInWithPassword({
