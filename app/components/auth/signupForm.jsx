@@ -194,7 +194,6 @@ export default function SignupForm() {
 
           <div className="relative">
             <Input
-              //   onChange={handleInputChange}
               type={passEye ? "password" : "text"}
               name="password"
               placeholder="Confirm password"
@@ -226,7 +225,7 @@ export default function SignupForm() {
             {loading ? <Spinner/> : "Create"}
           </Button>
 
-          {errors.auth && <Error errorMessage={errors.auth} />}
+          {errors.auth && <Error errorMessage={'Ese D.N.I o correo electrónico ya se encuentra registrado, ingresa en tu cuenta.'} />}
 
         </CardFooter>
       </Card>

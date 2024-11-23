@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import {Card,CardContent,CardFooter,CardHeader} from "../ui/card";
+import {Card,CardContent,CardFooter,CardHeader, CardTitle} from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Eye, EyeOff } from "lucide-react";
@@ -19,11 +19,14 @@ export default function LoginForm() {
     password: '',
     auth: '',
   });
+  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
     email: "",
     password: "",
   });
+
+  const [forgotPassword, setForgotPassword] = useState(false)
 
   const handleLogin = async (e) => {
     setLoading(true)
@@ -58,8 +61,81 @@ export default function LoginForm() {
 
   }
 
+  const sendResetPassword = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const {data: dataSendEmail, error: errorSendEmail} = await supabase.auth.resetPasswordForEmail(userInfo.email, {
+        redirectTo: `${window.location.href}reset-password`
+        // redirectTo: 'https://rent-app.com.ar/reset-password'
+      })
+
+      if (errorSendEmail) throw new Error(errorSendEmail)
+      if(dataSendEmail) {
+        setLoading(false)
+        setSuccess(true)
+        setTimeout(() => {
+          setSuccess(false)
+        }, 10000);
+      }
+    } catch (errorSendEmail) {
+      console.error(errorSendEmail)
+      setLoading(false)
+    }
+  }
+
   return (
     <form>
+      {forgotPassword ? (
+        <Card>
+        <CardHeader>
+          <CardTitle className="font-medium text-lg mt-2 text-center w-full">
+            Dinos tu email para enviarte las instrucciones
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              autoComplete="email"
+              className="md:text-lg text-sm w-4/5 mx-auto"
+              value={userInfo.email}
+              onChange={(e) =>
+                setUserInfo({ ...userInfo, email: e.target.value })
+              }
+            />
+            {errors.email && <Error errorMessage={errors.email} />}
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex justify-center gap-5 flex-col">
+          <Button
+            onClick={(e) => sendResetPassword(e)}
+            className="w-fit px-5 md:text-lg text-sm mt-3"
+          >
+            {loading ? <Spinner/> : "Enviar Email"}
+          </Button>
+          {errors.auth && <Error errorMessage={errors.auth} />}
+          {success && (
+            <div className="w-full text-center">
+              <p className="text-green-600 font-medium text-lg"> Email enviado correctamente, ¡revísalo! </p>
+            </div>
+          )}
+        </CardFooter>
+        <div className="w-full my-4  mx-auto text-center">
+            <Button 
+              variant='ghost' 
+              className="border border-zinc-300 text-sky-700" 
+              onClick={(e) => {e.preventDefault(), setForgotPassword(false)}}
+            > 
+              Regresar 
+            </Button>  
+        </div>
+      </Card>
+      ) 
+      : (
       <Card>
         <CardHeader>
         </CardHeader>
@@ -115,7 +191,21 @@ export default function LoginForm() {
           </Button>
           {errors.auth && <Error errorMessage={errors.auth} />}
         </CardFooter>
+        <div className="w-full my-4  mx-auto text-center">
+          <p>¿Olvidaste tu contraseña? 
+            <Button 
+              variant='ghost' 
+              className="border ml-3 border-zinc-300 text-sky-700" 
+              onClick={(e) => {e.preventDefault(), setForgotPassword(true)}}
+            > 
+              Haz click aqui 
+            </Button>  
+          </p>
+        </div>
       </Card>
+      )
+    }
+      
     </form>
   );
 }
