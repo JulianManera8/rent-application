@@ -12,6 +12,7 @@ import Error from '../helpers/Error'
 
 export default function ResetPassword() {
     const navigate = useNavigate();
+    const [success, setSuccess] = useState(false)
 
     const [passEye, setPassEye] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -60,7 +61,10 @@ export default function ResetPassword() {
   
       setTimeout(() => {
         setLoading(false)
-        navigate("/");
+        setSuccess(true)
+        setTimeout(() => {
+            navigate("/");
+        }, 3000);
       }, 2000);
     };
 
@@ -134,6 +138,11 @@ export default function ResetPassword() {
             {loading ? <Spinner/> : "Confirmar"}
           </Button>
           {errors.auth && <Error errorMessage={errors.auth} />}
+          {success && (
+            <div className="w-full text-center">
+              <p className="text-green-600 font-medium text-lg"> Email enviado correctamente, ¡revísalo! </p>
+            </div>
+          )}
         </CardFooter>
       </Card>
     </form>
