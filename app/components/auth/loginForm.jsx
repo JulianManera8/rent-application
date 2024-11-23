@@ -51,7 +51,10 @@ export default function LoginForm() {
 
     if (error) {
       setLoading()
-      return setErrors( (prevErrors) => ({...prevErrors, auth: error.message}))
+      setErrors( (prevErrors) => ({...prevErrors, auth: error.message}))
+      return setTimeout(() => {
+        setErrors({ email: "", password: "", auth: "" });
+      }, 2500);
     }
 
     setTimeout(() => {

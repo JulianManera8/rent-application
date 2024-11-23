@@ -48,7 +48,7 @@ export default function ResetPassword() {
       }
   
       const { data, error } = await supabase.auth.updateUser({
-        password: userInfo
+        password: userInfo.password
       })
   
       if (error) {
