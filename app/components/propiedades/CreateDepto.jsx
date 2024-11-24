@@ -14,6 +14,7 @@ import useFetch from '../../hooks/use-fetch';
 import { useUser } from '../../hooks/use-user';
 import { validateRequired, validateDate, validateNumber } from '../helpers/validation';
 import { Label } from "../ui/label";
+import { SuccessDialog } from "./SuccesDialog";
 
 
 export default function CreateDepto() {
@@ -23,6 +24,7 @@ export default function CreateDepto() {
   const [showFiles, setShowFiles] = useState(false);
   const [showFotos, setShowFotos] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
   const [newDepto, setNewDepto] = useState({
     ubicacion_completa: '',
@@ -84,6 +86,7 @@ export default function CreateDepto() {
       case 'facturador_name':
       case 'usufructuario_name':
       case 'metodo_cobro':
+      case 'grupo_id':
         error = validateRequired(value);
         break;
       case 'vencimiento_contrato':
@@ -176,10 +179,17 @@ export default function CreateDepto() {
   };
 
   useEffect(() => {
-    if(deptoCreated !== null) {
-      navigate(`/dashboard/deptos`);
+    if (deptoCreated !== null) {
+      setShowSuccessDialog(true);
+
+      const timer = setTimeout(() => {
+        setShowSuccessDialog(false);
+        navigate(`/dashboard/deptos`);
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
-  }, [deptoCreated])
+  }, [deptoCreated, navigate]);
 
   const removeFile = (index) => {
     setFiles((f) => f.filter((_, i) => i !== index));
@@ -197,6 +207,7 @@ export default function CreateDepto() {
 
   const isFormValid = () => {
     const requiredFields = [
+      'grupo_id',
       'ubicacion_completa',
       'propietario_name',
       'locador_name',
@@ -226,6 +237,7 @@ export default function CreateDepto() {
       <Form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 gap-y-8 items-start justify-items-stretch">
         <HandleGrupo onSelectChange={handleSelectChange} />
 
+        <SuccessDialog showSuccessDialog={showSuccessDialog}/>
         <FormInput
           label="Ubicación"
           name="ubicacion_completa"

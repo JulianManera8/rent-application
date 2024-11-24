@@ -132,17 +132,28 @@ export default function DeptoSelected() {
   }
 
   const handleDeleteImage = async (image) => {
+    if (!image || !image.foto_url) {
+      console.error("Invalid image data");
+      return;
+    }
+  
     const imgPath = image.foto_url;
-
     try {
       await removeImage(imgPath);
-
-      setDataImagen(prevImages => prevImages.filter((img) => img.foto_url !== imgPath))
-
+  
+      setDataImagen(prevImages => {
+        const newImages = prevImages.filter((img) => img && img.foto_url && img.foto_url !== imgPath);
+        if (currentPhotoIndex >= newImages.length) {
+          setCurrentPhotoIndex(Math.max(0, newImages.length - 1));
+        }
+        return newImages;
+      });
+  
     } catch (error) {
       console.error("Error al eliminar la imagen:", error.message);
     }
   };
+  
 
   const toggleEditing = async () => {
     if (isEditing) {
@@ -489,7 +500,7 @@ export default function DeptoSelected() {
                           <DialogDescription className="sr-only">Vista ampliada de la imagen de la propiedad</DialogDescription>
                           <div className="relative flex items-center justify-center w-full h-full">
                             <img
-                              src={dataImagen[currentPhotoIndex].foto_url}
+                              src={dataImagen[currentPhotoIndex]?.foto_url}
                               alt={`Foto de la propiedad ${currentPhotoIndex + 1}`}
                               className="max-w-[85%] min-h-[calc(90vh-2rem)] max-h-[calc(95vh-2rem)] object-contain"
                             />
