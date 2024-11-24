@@ -45,9 +45,8 @@ export function AddDocumentDialog({ deptoId, onSuccess }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className='flex items-center border cursor-pointer hover:bg-zinc-100 border-green-600 p-1 px-2 rounded-lg my-2 w-fit gap-x-3'>
+        <div className='flex items-center border border-zinc-300 cursor-pointer hover:bg-zinc-100 p-2 rounded-lg my-2 w-fit'>
           <PlusSquare className='text-green-600'/>
-          <span className='text-sm font-normal'> Agregar </span>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { NavLink, useNavigate } from "@remix-run/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import  useFetch  from '../../hooks/use-fetch'
 import { getGrupos } from "../../database/crudGrupos";
@@ -16,6 +16,8 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
 
   const userLoged_id = useUser();
   const navigate = useNavigate()
+  const [showSkeleton, setShowSkeleton] = useState(true)
+
 
   const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
 
@@ -26,6 +28,14 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
       if (errorGrupo) console.error(errorGrupo);
     }
   }, [userLoged_id]);
+
+  useEffect(() => {
+    if(!loadingGrupos) {
+      setTimeout(() => {
+        setShowSkeleton(false)
+      }, (4000));
+    }
+  }, [loadingGrupos])
 
 
   // Filtrar grupos que contienen departamentos filtrados
@@ -50,7 +60,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
           ))
       )
       : (
-        filteredGrupos.length > 0 
+        filteredGrupos?.length > 0 
         ?  
         filteredGrupos.map((grupo) => (
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>
@@ -127,8 +137,19 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
             </Accordion>
           </div>
         ))
-        : (
-          <div className="w-full flex justify-center h-56">
+        :
+        showSkeleton 
+        ? Array.from({ length: 2 }).map((_, index) => (
+          <div key={`skeleton-${index}`} className="flex flex-col md:flex-row w-full justify-between items-start md:items-center relative mb-8 md:mb-12">
+            <div className="flex justify-between w-full items-center mb-4 md:mb-1">
+              <Skeleton className="h-10 w-full md:w-1/2 bg-gray-100" />
+            </div>
+            <div className="flex items-center mt-4 md:mt-0 md:absolute md:top-5 md:right-0">
+              <Skeleton className="h-6 w-32 mr-2" />
+            </div>
+          </div>
+        ))
+        : <div className="w-full flex justify-center h-56">
             <Card className="w-full md:w-96 h-auto md:h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
               <CardHeader>
                 <CardTitle className="text-base md:text-lg font-medium"> 
@@ -146,7 +167,6 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
               )}
             </Card>
           </div>
-        )
       )}
     </div>
   )

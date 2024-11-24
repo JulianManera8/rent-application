@@ -41,6 +41,7 @@ export default function GruposShared() {
   const [accessBalances, setAccessBalances] = useState([]);
   const [loadingGetBalances, setLoadingGetBalances] = useState(true);
   const [errorBalances, setErrorBalances] = useState(null);
+  const [showSkeleton, setShowSkeleton] = useState(true)
 
   const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
@@ -49,6 +50,14 @@ export default function GruposShared() {
       fnGetAllUsers();
     }
   }, [userLoged_id]);
+
+  useEffect(() => {
+    if(!loadingGetGrupos) {
+      setTimeout(() => {
+        setShowSkeleton(false)
+      }, (4000));
+    }
+  }, [loadingGetGrupos])
 
   useEffect(() => {
     if (data) {
@@ -477,13 +486,15 @@ export default function GruposShared() {
                   </Dialog>
                 ))}
             </section>
-            ) : (
-            <div className="flex flex-col items-center justify-center gap-y-4">
-                <p className="text-xl font-medium text-gray-500">
-                No tienes grupos compartidos
-                </p>
-            </div>
-            )}
+            ) : 
+              showSkeleton 
+              ? <SkeCard />
+              : <div className="flex flex-col items-center justify-center gap-y-4">
+                  <p className="text-xl font-medium text-gray-500">
+                    No tienes grupos compartidos
+                  </p>
+                </div>
+            }
         </div>
     );
 }         

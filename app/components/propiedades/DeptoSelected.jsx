@@ -249,7 +249,7 @@ export default function DeptoSelected() {
 
   return (
     <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 gap-x-8">
         <h1 className="text-2xl sm:text-3xl text-gray-300 font-medium font-inter">
           DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>
         </h1>
@@ -261,10 +261,8 @@ export default function DeptoSelected() {
 
           {/* BOTON PARA BORRAR DEPTO */}
           <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <Button variant="destructive" disabled={loadingDelete}>
+            <AlertDialogTrigger disabled={loadingDelete} className="text-sm transition-all duration-200 bg-destructive text-destructive-foreground hover:bg-destructive/70 p-2 rounded-md">
                 {loadingDelete ? 'Borrando...' : 'Borrar Propiedad'} 
-                </Button>
               </AlertDialogTrigger>
             <AlertDialogContent >
               <AlertDialogHeader>
@@ -293,9 +291,7 @@ export default function DeptoSelected() {
                   disabled={disabledContinue}
                   onClick={() => handleDeleteDepto(deptoData.id)}
                 >
-                  <Button variant="destructive" disabled={loadingDelete}>
                     {loadingDelete ? 'Borrando...' : 'Eliminar'} 
-                  </Button>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -311,7 +307,8 @@ export default function DeptoSelected() {
             <CardTitle className='text-xl sm:text-2xl mb-2 sm:mb-0'>Pertenece al grupo: {infoGrupo.grupo_name} </CardTitle>
             <Badge variant={deptoData?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
               {deptoData?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
-            </Badge>          </CardHeader>
+            </Badge>          
+          </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
@@ -360,8 +357,8 @@ export default function DeptoSelected() {
         {/* DOCUMENTOS Y ACCESO DEL DEPTO */}
         <div className='lg:col-span-1 flex flex-col gap-6'>
           <Card className="flex-grow">
-            <CardHeader>
-              <CardTitle className="text-xl sm:text-2xl flex items-center justify-between">
+            <CardHeader className='flex justify-between gap-x-2'>
+              <CardTitle className="text-xl sm:text-xl flex items-center justify-between">
                 Documentos Asociados
                 <AddDocumentDialog deptoId={deptoData.id} onSuccess={handleAddDocument} />
               </CardTitle>
@@ -380,7 +377,7 @@ export default function DeptoSelected() {
                       >
                         {/* File Open Button */}
                         <Button
-                          className="flex items-center min-w-[175px] max-w-full sm:max-w-[175px] whitespace-nowrap overflow-hidden text-ellipsis justify-start text-sm sm:text-base"
+                          className="flex items-center  max-w-full sm:max-w-[175px] whitespace-nowrap overflow-hidden text-ellipsis justify-start text-sm sm:text-base"
                           onClick={() => window.open(`${doc.doc_url}`, "_blank")}
                         >
                           <FileText className="w-4 h-4 mr-2" />

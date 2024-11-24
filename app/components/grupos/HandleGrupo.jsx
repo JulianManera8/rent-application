@@ -62,38 +62,6 @@ export default function HandleGrupo({ onSelectChange }) {
     return setValidated(true);
   }, [createGrupoInfo.nombreGrupo]);
 
-
-  const handleCreateGrupo = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (userLoged_id) {
-        const result = await insertGrupo({ createGrupoInfo });
-        setCerrar(true);
-
-        setTimeout(() => {
-          setCerrar(false);
-          setIsOpen(false);
-        }, 2000);
-
-        if (result && result.length > 0) {
-          setGetGrupoInfo((prev) => [
-            ...prev,
-            {
-              grupo_id: result[0].id,
-              grupo_name: result[0].grupo_name,
-              user_id: result[0].user_id,
-            },
-          ]);
-
-          setCreateGrupoInfo({ ...createGrupoInfo, nombreGrupo: "" });
-        }
-      }
-    } catch (error) {
-      console.error("Error al crear el grupo:", error.message || error);
-    }
-  };
-
   useEffect(() => {
     if (grupoSelectedId != null) {
       const idGrupo = getGrupoInfo.filter((grupo) => {
@@ -107,15 +75,15 @@ export default function HandleGrupo({ onSelectChange }) {
   }, [grupoSelectedId]);
 
   return (
-    <div className="min-w-full space-y-2 mt-1">
-      <Label htmlFor="mesBalance" className="font-bold text-md">
+    <div className="min-w-full">
+      <Label htmlFor="mesBalance" className="font-bold flex justify-between items-center pr-1 mb-2.5">
         Asignar grupo
       </Label>
       <Select
         onValueChange={(value) => setGrupoSelectedId(value)}
         className="w-full"
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full p-2">
           <SelectValue placeholder="Elegir grupo" />
         </SelectTrigger>
 

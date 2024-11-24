@@ -100,7 +100,6 @@ export async function createDepto({ newDepto }) {
         user_id: newDepto.user_id,
         obs_datos: newDepto.obs_datos, 
         grupo_id: newDepto.grupo_id,
-        shared_with: newDepto.shared_with,
       },
     ])
     .select();

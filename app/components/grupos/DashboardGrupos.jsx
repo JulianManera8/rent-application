@@ -47,6 +47,21 @@ export default function DashboardGrupos() {
   const [selectedUser, setSelectedUser] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(true)
+
+  const { data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
+  const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
+  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
+  const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
+  const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
+
+  useEffect(() => {
+    if(!loadingGetGrupos) {
+      setTimeout(() => {
+        setShowSkeleton(false)
+      }, (4000));
+    }
+  }, [loadingGetGrupos])
 
   useEffect(() => {
     if(inputBorrar === 'CONFIRMO BORRAR TODO') {
@@ -56,7 +71,6 @@ export default function DashboardGrupos() {
     }
   }, [inputBorrar])
 
-  const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
 
   
   useEffect(() => {
@@ -160,9 +174,7 @@ export default function DashboardGrupos() {
     }
   }, [userLoged_id]);
 
-  const { data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
-  const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
-  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
+
 
   useEffect(() => {
     if(userLoged_id) {
@@ -230,7 +242,6 @@ export default function DashboardGrupos() {
     }
   };
 
-  const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   useEffect(() => {
     if (userLoged_id) {
@@ -757,17 +768,13 @@ export default function DashboardGrupos() {
           ))}
         </section>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-y-4">
-          <p className="text-xl font-medium text-gray-500">
-            No tienes grupos creados
-          </p>
-          <Button
-            onClick={() => setIsOpen(true)}
-            className="bg-green-600 rounded-lg text-white h-10 px-6 font-bold text-md hover:bg-green-800"
-          >
-            Crear nuevo grupo
-          </Button>
-        </div>
+        showSkeleton 
+        ? <SkeCard />
+        : <div className="flex flex-col items-center justify-center gap-y-4">
+            <p className="text-xl font-medium text-gray-500">
+              No tienes grupos creados
+            </p>
+          </div>
       )}
     </div>
   );

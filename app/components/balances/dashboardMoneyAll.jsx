@@ -8,93 +8,65 @@ import { useUser } from "../../hooks/use-user";
 import { getBalances, removeBalance } from "../../database/crudBalances";
 import { getGrupos } from "../../database/crudGrupos";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
-import { FileChartColumnIncreasingIcon, XSquare, Download } from "lucide-react";
+import { FileLineChartIcon as FileChartColumnIncreasingIcon, XSquare, Download } from 'lucide-react';
 import { Skeleton } from "../ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
-import { NavLink } from "@remix-run/react";
 
 export default function DashboardMoneyAll({ balanceCreated }) {
   const userLoged_id = useUser();
-  const [balanceInfo, setBalanceInfo] = useState([
-    {
-      mes_balance: "",
-      año_balance: "",
-      url_balance: "",
-    },
-  ]);
-  const [grupoInfo, setGrupoInfo] = useState([
-    {
-      nombre_grupo: "",
-      id: "",
-    },
-  ])
+  const [balanceInfo, setBalanceInfo] = useState([]);
   const [sortOrder, setSortOrder] = useState("Mas reciente");
+  const [showSkeleton, setShowSkeleton] = useState(true)
+
+  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
 
   useEffect(() => {
     if (userLoged_id) {
       fnGetBalances({ userId: userLoged_id });
-      fnGetGrupos({ user_id: userLoged_id})
+      fnGetGrupos({ user_id: userLoged_id });
       if (error) console.error(error);
       if (errorGrupo) console.error(errorGrupo);
     }
   }, [userLoged_id]);
 
-  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
+  useEffect(() => {
+    if(!loadingGrupos) {
+      setTimeout(() => {
+        setShowSkeleton(false)
+      }, (4000));
+    }
+  }, [loadingGrupos])
 
-  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
-
-  
   useEffect(() => {
     if (dataBalances) {
-      // Mapa de meses a índices (0 = Enero, 1 = Febrero, ...)
       const monthMap = {
-        "Enero": 0,
-        "Febrero": 1,
-        "Marzo": 2,
-        "Abril": 3,
-        "Mayo": 4,
-        "Junio": 5,
-        "Julio": 6,
-        "Agosto": 7,
-        "Septiembre": 8,
-        "Octubre": 9,
-        "Noviembre": 10,
-        "Diciembre": 11
+        "Enero": 0, "Febrero": 1, "Marzo": 2, "Abril": 3, "Mayo": 4, "Junio": 5,
+        "Julio": 6, "Agosto": 7, "Septiembre": 8, "Octubre": 9, "Noviembre": 10, "Diciembre": 11
       };
   
       const sortedBalances = [...dataBalances].sort((a, b) => {
-        // Convertir año a entero
         const yearA = parseInt(a.año_balance, 10);
         const yearB = parseInt(b.año_balance, 10);
-        
-        // Convertir mes a número (restando 1 para ajustar a 0-indexed)
         const monthA = monthMap[a.mes_balance];
         const monthB = monthMap[b.mes_balance];
   
-        // Verificar si los valores de mes son válidos
         if (isNaN(monthA) || isNaN(monthB)) {
           console.error("Mes inválido:", a.mes_balance, b.mes_balance);
           return 0;
         }
   
-        // Crear las fechas (usamos mesA y mesB como índices numéricos)
         const dateA = new Date(yearA, monthA);
         const dateB = new Date(yearB, monthB);
   
-        // Comparar las fechas
         return sortOrder === "Mas reciente" ? dateB - dateA : dateA - dateB;
       });
   
       setBalanceInfo(sortedBalances);
     }
-  
-    if (dataGrupos) {
-      setGrupoInfo(dataGrupos);
-    }
-  }, [dataBalances, dataGrupos, sortOrder]);
-
+  }, [dataBalances, sortOrder]);
 
   const handleDeleteBalance = async (balanceSelected) => {
     const getPath = balanceSelected.url_excel.substring(75);
@@ -106,7 +78,6 @@ export default function DashboardMoneyAll({ balanceCreated }) {
 
     try {
       await removeBalance(infoBalance);
-
       setBalanceInfo((prevBalances) =>
         prevBalances.filter((balance) => balance.id !== infoBalance.id)
       );
@@ -121,27 +92,24 @@ export default function DashboardMoneyAll({ balanceCreated }) {
     }
   }, [balanceCreated]);
 
+  const isLoading = loadingGrupos || loadingBalance;
+
   return (
     <div className='w-full py-10'>
-
-      {loadingGrupos 
-      ? (
-          // Skeleton loading for groups
-          Array.from({ length: 2 }).map((_, index) => (
-            <div key={`skeleton-${index}`} className="flex flex-col md:flex-row w-full justify-between items-start md:items-center relative mb-8 md:mb-12">
-              <div className="flex justify-between w-full items-center mb-4 md:mb-1">
-                <Skeleton className="h-10 w-full md:w-1/2 bg-gray-100" />
-              </div>
-              <div className="flex items-center mt-4 md:mt-0 md:absolute md:top-5 md:right-0">
-                <Skeleton className="h-6 w-32 mr-2" />
-              </div>
+      {isLoading ? (
+        // Skeleton loading for groups
+        Array.from({ length: 2 }).map((_, index) => (
+          <div key={`skeleton-${index}`} className="flex flex-col md:flex-row w-full justify-between items-start md:items-center relative mb-8 md:mb-12">
+            <div className="flex justify-between w-full items-center mb-4 md:mb-1">
+              <Skeleton className="h-10 w-full md:w-1/2 bg-gray-100" />
             </div>
-          ))
-      )
-      : (
-        grupoInfo.length > 0 
-        ?  
-        grupoInfo.map((grupo) => (
+            <div className="flex items-center mt-4 md:mt-0 md:absolute md:top-5 md:right-0">
+              <Skeleton className="h-6 w-32 mr-2" />
+            </div>
+          </div>
+        ))
+      ) : dataGrupos && dataGrupos.length > 0 ? (
+        dataGrupos.map((grupo) => (
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>
             <Accordion type="multiple" className="w-full" defaultValue={[`item${grupo.id}`]}>
               <AccordionItem value={`item${grupo.id}`}>
@@ -164,19 +132,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                      {loadingBalance 
-                        ? (
-                          // SKELETON
-                          Array.from({ length: 2 }).map((_, i) => (
-                            <TableRow key={i}>
-                              <TableCell><Skeleton className="w-full h-5 bg-gray-200" /></TableCell>
-                              <TableCell><Skeleton className="w-full h-5 bg-gray-200" /></TableCell>
-                              <TableCell><Skeleton className="w-full h-5 bg-gray-200" /></TableCell>
-                              <TableCell><Skeleton className="w-full h-5 bg-gray-200" /></TableCell>
-                            </TableRow>
-                          ))
-                        ) 
-                        : balanceInfo.filter(balance => balance.grupo_id === grupo.id).length === 0 ? (
+                        {balanceInfo.filter(balance => balance.grupo_id === grupo.id).length === 0 ? (
                           <TableRow className="hover:bg-transparent">
                             <TableCell colSpan={6} className="text-left font-semibold py-4">
                               No hay balances todavía.
@@ -220,11 +176,11 @@ export default function DashboardMoneyAll({ balanceCreated }) {
                                         <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
                                           <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
                                           <AlertDialogAction
-                                            className={`h-10 ${loadingBalance ? "opacity-50" : ""}`}
-                                            disabled={loadingBalance}
+                                            className={`h-10 ${isLoading ? "opacity-50" : ""}`}
+                                            disabled={isLoading}
                                             onClick={() => handleDeleteBalance(balance)}
                                           >
-                                            {loadingBalance ? "Cargando..." : "Continuar"}
+                                            {isLoading ? "Cargando..." : "Continuar"}
                                           </AlertDialogAction>
                                         </AlertDialogFooter>
                                       </AlertDialogContent>
@@ -262,25 +218,33 @@ export default function DashboardMoneyAll({ balanceCreated }) {
             </div>
           </div>
         ))
-        : (
-          <div className="w-full flex justify-center h-56">
-            <Card className="w-full md:w-96 h-auto md:h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-base md:text-lg font-medium"> 
-                  No hay grupos creados por el momento, por lo tanto tampoco hay balances.
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-center">
-                <NavLink to='/dashboard/grupos'>
-                  <p className="w-fit items-center flex bg-green-600 rounded-lg text-white h-10 px-4 md:px-6 font-bold text-sm md:text-md hover:bg-green-800">
-                    Ir a Grupos
-                  </p>
-                </NavLink>
-              </CardContent>
-            </Card>
+      ) : (
+        showSkeleton 
+        ?  Array.from({ length: 2 }).map((_, index) => (
+          <div key={`skeleton-${index}`} className="flex flex-col md:flex-row w-full justify-between items-start md:items-center relative mb-8 md:mb-12">
+            <div className="flex justify-between w-full items-center mb-4 md:mb-1">
+              <Skeleton className="h-10 w-full md:w-1/2 bg-gray-100" />
+            </div>
+            <div className="flex items-center mt-4 md:mt-0 md:absolute md:top-5 md:right-0">
+              <Skeleton className="h-6 w-32 mr-2" />
+            </div>
           </div>
-        )
+        ))
+        : <div className="w-full flex justify-center h-56">
+          <Card className="w-full md:w-96 h-auto md:h-40 mt-3 flex flex-col justify-center text-center shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-base md:text-lg font-medium"> 
+                Por el momento no hay balances cargados.
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              
+            </CardContent>
+          </Card>
+        </div>
+        
       )}
     </div>
   )
 }
+

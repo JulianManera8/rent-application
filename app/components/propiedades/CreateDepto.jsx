@@ -1,26 +1,55 @@
-import Spinner from '../helpers/loaderIcon'
-import HandleGrupo from '../grupos/HandleGrupo';
-import { Input } from "../ui/input";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
+import { Form, NavLink, useNavigate } from "@remix-run/react";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
-import { useEffect, useState } from "react";
-import { createDepto } from '../../database/crudDeptos'
-import useFetch from '../../hooks/use-fetch'
-import { useUser } from '../../hooks/use-user'
-import { Form } from "@remix-run/react";
-import {Collapsible,CollapsibleContent,CollapsibleTrigger } from "../ui/collapsible"
-import { ChevronsUpDown, Plus, X, FileCheckIcon } from "lucide-react"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { ChevronsUpDown, Plus, X, FileCheckIcon } from 'lucide-react';
+import { FormInput } from "../helpers/FormInput";
+import HandleGrupo from '../grupos/HandleGrupo';
+import Spinner from '../helpers/loaderIcon';
+import { createDepto } from '../../database/crudDeptos';
+import useFetch from '../../hooks/use-fetch';
+import { useUser } from '../../hooks/use-user';
+import { validateRequired, validateDate, validateNumber } from '../helpers/validation';
+import { Label } from "../ui/label";
 
 
 export default function CreateDepto() {
-
-  const userLoged_id = useUser()
+  const userLoged_id = useUser();
   const [files, setFiles] = useState([]);
   const [fotos, setFotos] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
   const [showFotos, setShowFotos] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const [newDepto, setNewDepto] = useState({
+    ubicacion_completa: '',
+    descripcion: '',
+    ocupado: false,
+    propietario_name: '',
+    locador_name: '',
+    inquilino_name: '',
+    cobrador_name: '',
+    facturador_name: '',
+    usufructuario_name: '',
+    metodo_cobro: '',
+    vencimiento_contrato: '',
+    inscripto_reli: false,
+    vencimiento_usufructo: '',
+    monto_cobro: '',
+    monto_cobro_inicio: '',
+    fecha_actualizacion_cobro: '',
+    user_id: '',
+    obs_datos: '',
+    files: [],
+    fotos: [],
+    grupo_id: '',
+    shared_with: [],
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userLoged_id) {
@@ -34,405 +63,347 @@ export default function CreateDepto() {
   useEffect(() => {
     setNewDepto((prevDepto) => ({
       ...prevDepto,
-      files: files
+      files: files,
+      fotos: fotos,
     }));
-  }, [files])
+  }, [files, fotos]);
 
-  useEffect(() => {
-    setNewDepto((prevDepto) => ({
-      ...prevDepto,
-      fotos: fotos
-    }));
-  }, [fotos])
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewDepto((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    let error = null;
+    switch (name) {
+      case 'ubicacion_completa':
+      case 'propietario_name':
+      case 'locador_name':
+      case 'cobrador_name':
+      case 'facturador_name':
+      case 'usufructuario_name':
+      case 'metodo_cobro':
+        error = validateRequired(value);
+        break;
+      case 'vencimiento_contrato':
+      case 'vencimiento_usufructo':
+      case 'fecha_actualizacion_cobro':
+        error = validateDate(value);
+        break;
+      case 'monto_cobro':
+      case 'monto_cobro_inicio':
+        error = validateNumber(value);
+        break;
+      case 'inquilino_name':
+        if (newDepto.ocupado) {
+          error = validateRequired(value);
+        }
+        break;
+      default:
+        break;
+    }
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
 
   const handleFileChange = (e) => {
-    setFiles((f) => [...f, ...e.target.files]);
+    if (e.target.files) {
+      setFiles((f) => [...f, ...Array.from(e.target.files)]);
+    }
   };
 
   const handleFotoChange = (e) => {
-    setFotos((f) => [...f, ...e.target.files]);
+    if (e.target.files) {
+      setFotos((f) => [...f, ...Array.from(e.target.files)]);
+    }
   };
-
-
-  const [newDepto, setNewDepto] = useState({
-    ubicacion_completa: '', //text
-    descripcion: '', // text
-    ocupado: false, //booleano
-    propietario_name: '', //text
-    locador_name: '', //text
-    inquilino_name: '', //text
-    cobrador_name: '', //text
-    facturador_name: '', //text
-    usufructuario_name: '', //text
-    metodo_cobro: '', //text
-    vencimiento_contrato: '', //date year/month/day
-    inscripto_reli: false, // boolean
-    vencimiento_usufructo: '', //date year/month/day
-    monto_cobro: '', //number 
-    monto_cobro_inicio: '', //number
-    fecha_actualizacion_cobro: '', //date year/month/day
-    user_id: '',
-    obs_datos: '', //text
-    files: files,
-    fotos: fotos,
-    grupo_id:'',
-    shared_with: [], //array
-  })
 
   const handleSelectChange = (value) => {
-    setNewDepto({...newDepto, grupo_id: value})
+    setNewDepto({...newDepto, grupo_id: value});
   };
 
-  const { loading, fn: dbCreateDepto } = useFetch(createDepto, {newDepto});
+  const { loading, data: deptoCreated, fn: dbCreateDepto } = useFetch(createDepto, {newDepto});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate all fields
+    Object.entries(newDepto).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        validateField(key, value);
+      }
+    });
+
+    // Check if there are any errors
+    if (Object.values(errors).some((error) => error !== null)) {
+      console.error('Form has errors. Please correct them before submitting.');
+      return;
+    }
 
     if (userLoged_id !== null) {
       try {
         await dbCreateDepto(newDepto);
-
-        setFiles([])
-        setFotos([])
-
+        // Reset form after successful submission
         setNewDepto({
-          ubicacion_completa: "", //text
-          descripcion: "", // text
-          ocupado: false, //booleano
-          propietario_name: "", //text
-          locador_name: "", //text
-          inquilino_name: "", //text
-          cobrador_name: "", //text
-          facturador_name: "", //text
-          usufructuario_name: "", //text
-          metodo_cobro: "", //text
-          vencimiento_contrato: "", //date year/month/day
-          inscripto_reli: false, // boolean
-          vencimiento_usufructo: "", //date year/month/day
-          monto_cobro: "", //number
-          monto_cobro_inicio: "", //number
-          fecha_actualizacion_cobro: "", //date year/month/day
-          user_id: "",
-          obs_datos: "", //text
-          files: files,
-          fotos: fotos,
-          grupo_id: "", 
-          shared_with: [], //
+          ubicacion_completa: '',
+          descripcion: '',
+          ocupado: false,
+          propietario_name: '',
+          locador_name: '',
+          inquilino_name: '',
+          cobrador_name: '',
+          facturador_name: '',
+          usufructuario_name: '',
+          metodo_cobro: '',
+          vencimiento_contrato: '',
+          inscripto_reli: false,
+          vencimiento_usufructo: '',
+          monto_cobro: '',
+          monto_cobro_inicio: '',
+          fecha_actualizacion_cobro: '',
+          user_id: '',
+          obs_datos: '',
+          files: [],
+          fotos: [],
+          grupo_id: '',
         });
-
+        setFiles([]);
+        setFotos([]);
       } catch (error) {
-        console.error('error al cargar el depto o los docs')
+        console.error('Error al cargar el depto o los docs', error);
       }
     }
-
   };
+
+  useEffect(() => {
+    if(deptoCreated !== null) {
+      navigate(`/dashboard/deptos`);
+    }
+  }, [deptoCreated])
 
   const removeFile = (index) => {
     setFiles((f) => f.filter((_, i) => i !== index));
-    if(files.length === 0) {
-      return setShowFiles(false)
+    if (files.length === 1) {
+      setShowFiles(false);
     }
   };
 
   const removeFoto = (index) => {
     setFotos((f) => f.filter((_, i) => i !== index));
-    if(fotos.length === 0) {
-      return setShowFotos(false)
+    if (fotos.length === 1) {
+      setShowFotos(false);
     }
   };
 
+  const isFormValid = () => {
+    const requiredFields = [
+      'ubicacion_completa',
+      'propietario_name',
+      'locador_name',
+      'cobrador_name',
+      'facturador_name',
+      'usufructuario_name',
+      'metodo_cobro',
+      'vencimiento_contrato',
+      'vencimiento_usufructo',
+      'monto_cobro',
+      'monto_cobro_inicio',
+      'fecha_actualizacion_cobro',
+    ];
 
-  
+    const isValid = requiredFields.every(field => newDepto[field] !== '');
+    
+    // Check inquilino_name only if the property is occupied
+    if (newDepto.ocupado && newDepto.inquilino_name === '') {
+      return false;
+    }
+
+    return isValid && Object.values(errors).every(error => error === null);
+  };
+
   return (
-    <div className="container mx-auto w-full mr-14 px-0 mt-10">
-      <Form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 ml-3 items-start justify-items-stretch min-w-full text-lg ">
-        
-        <HandleGrupo onSelectChange={handleSelectChange}/>
+    <div className="container mx-auto w-full px-4 mt-10">
+      <Form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 gap-y-8 items-start justify-items-stretch">
+        <HandleGrupo onSelectChange={handleSelectChange} />
+
+        <FormInput
+          label="Ubicación"
+          name="ubicacion_completa"
+          placeholder="Ej: San Juan 382, 7-A"
+          value={newDepto.ubicacion_completa}
+          onChange={handleInputChange}
+          error={errors.ubicacion_completa}
+        />
+
+        <FormInput
+          label="Propietario"
+          name="propietario_name"
+          placeholder="Ej: Lionel Messi"
+          value={newDepto.propietario_name}
+          onChange={handleInputChange}
+          error={errors.propietario_name}
+        />
+
+        <FormInput
+          label="Usufructuario"
+          name="usufructuario_name"
+          placeholder="Ej: Lionel Messi"
+          value={newDepto.usufructuario_name}
+          onChange={handleInputChange}
+          error={errors.usufructuario_name}
+        />
+
+        <FormInput
+          label="Locador"
+          name="locador_name"
+          placeholder="Ej: Angel Di Maria"
+          value={newDepto.locador_name}
+          onChange={handleInputChange}
+          error={errors.locador_name}
+        />
+
+        <FormInput
+          label="Locatario / Inquilino"
+          name="inquilino_name"
+          placeholder="Ej: Mateo Messi"
+          value={newDepto.inquilino_name}
+          onChange={handleInputChange}
+          error={errors.inquilino_name}
+          optional={!newDepto.ocupado}
+        />
+
+        <FormInput
+          label="Facturador"
+          name="facturador_name"
+          placeholder="Ej: Angel Di Maria"
+          value={newDepto.facturador_name}
+          onChange={handleInputChange}
+          error={errors.facturador_name}
+        />
+
+        <FormInput
+          label="Cobrador"
+          name="cobrador_name"
+          placeholder="Ej: Angel Di Maria"
+          value={newDepto.cobrador_name}
+          onChange={handleInputChange}
+          error={errors.cobrador_name}
+        />
 
         <div className="min-w-56">
-          <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">
-            <p>Ubicacion</p> <span className='text-gray-400 text-xs'>Calle numero, piso-departamento</span>
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: San Juan 382, 7-A"
-            name="ubicacion_completa"
-            value={newDepto.ubicacion_completa}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, ubicacion_completa: e.target.value })
-            }
-          />
-          {/* {actionData?.errors?.ubicacion_completa && (
-            <Error errorMessage={actionData?.errors?.ubicacion_completa} />
-          )} */}
-        </div>
-        
-        <div className="min-w-56">
-          <label htmlFor="propietario_name" className="font-bold">
-            Propietario
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Lionel Messi"
-            name="propietario_name"
-            value={newDepto.propietario_name}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, propietario_name: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="min-w-56">
-          <label htmlFor="usufructuario_name" className="font-bold">
-            Usufructuario
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Lionel Messi"
-            name="usufructuario_name"
-            value={newDepto.usufructuario_name}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, usufructuario_name: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="min-w-56">
-          <label htmlFor="locador_name" className="font-bold">
-            Locador
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Angel Di Maria"
-            name="locador_name"
-            value={newDepto.locador_name}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, locador_name: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="min-w-56">
-          <label htmlFor="inquilino_name" className="font-bold">
-            Locatario / Inquilino
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Mateo Messi"
-            name="inquilino_name"
-            value={newDepto.inquilino_name}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, inquilino_name: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="min-w-56">
-          <label htmlFor="facturador_name" className="font-bold">
-            Facturador
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Angel Di Maria"
-            name="facturador_name"
-            value={newDepto.facturador_name}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, facturador_name: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="min-w-56">
-          <label htmlFor="cobrador_name" className="font-bold">
-            Cobrador
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Angel Di Maria"
-            name="cobrador_name"
-            value={newDepto.cobrador_name}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, cobrador_name: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="min-w-56">
-          <label htmlFor="descripcion" className="font-bold">
-            Descripción
-          </label>
+          <Label htmlFor="descripcion" className="font-bold flex justify-between items-center pr-1">Descripción (opcional)</Label>
           <Textarea
-            className="mt-2 text-md p-2"
-            rows={4}
-            placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta y parrilla en la terraza."
+            id="descripcion"
             name="descripcion"
+            className="mt-2 text-md p-2"
+            rows={1}
+            placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta."
             value={newDepto.descripcion}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, descripcion: e.target.value })
-            }
+            onChange={handleInputChange}
           />
         </div>
 
-        <div className="min-w-56">
-          <label htmlFor="vencimiento_usufructo" className="font-bold">
-            Vencimiento del Usufructo
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            type="date"
-            name="vencimiento_usufructo"
-            value={newDepto.vencimiento_usufructo}
-            onChange={(e) =>
-              setNewDepto({
-                ...newDepto,
-                vencimiento_usufructo: e.target.value,
-              })
-            }
-          />
-        </div>
+        <FormInput
+          label="Vencimiento del Usufructo"
+          name="vencimiento_usufructo"
+          type="date"
+          value={newDepto.vencimiento_usufructo}
+          onChange={handleInputChange}
+          error={errors.vencimiento_usufructo}
+        />
 
-        <div className="min-w-56">
-          <label htmlFor="vencimiento_contrato" className="font-bold">
-            Vencimiento del contrato
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            type="date"
-            name="vencimiento_contrato"
-            value={newDepto.vencimiento_contrato}
-            onChange={(e) =>
-              setNewDepto({
-                ...newDepto,
-                vencimiento_contrato: e.target.value,
-              })
-            }
-          />
-        </div>
+        <FormInput
+          label="Vencimiento del contrato"
+          name="vencimiento_contrato"
+          type="date"
+          value={newDepto.vencimiento_contrato}
+          onChange={handleInputChange}
+          error={errors.vencimiento_contrato}
+        />
 
-        <div className="min-w-56">
-          <label htmlFor="metodo_cobro" className="font-bold">
-            Metodo de cobro
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder="Ej: Efectivo"
-            name="metodo_cobro"
-            value={newDepto.metodo_cobro}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, metodo_cobro: e.target.value })
-            }
-          />
-        </div>
+        <FormInput
+          label="Metodo de cobro"
+          name="metodo_cobro"
+          placeholder="Ej: Efectivo"
+          value={newDepto.metodo_cobro}
+          onChange={handleInputChange}
+          error={errors.metodo_cobro}
+        />
 
-        <div className="min-w-56">
-          <label htmlFor="monto_cobro_inicio" className="font-bold flex justify-between items-center pr-1">
-            <p>Precio al inicio</p> <span className='text-gray-400 text-xs'>Solo numeros, como el ej.</span>
-          </label>
-          <div className="relative">
-            <span className="absolute top-[6px] left-[7px] font-bold"> $ </span>
-            <Input
-              className="mt-2 text-md p-2 pl-6"
-              placeholder="Ej: 160000"
-              type="number"
-              name="monto_cobro_inicio"
-              value={newDepto.monto_cobro_inicio}
-              onChange={(e) =>
-                setNewDepto({ ...newDepto, monto_cobro_inicio: e.target.value })
-              }
-            />
-          </div>
-        </div>
+        <FormInput
+          label="Precio al inicio"
+          name="monto_cobro_inicio"
+          type="number"
+          placeholder="Ej: 160000"
+          value={newDepto.monto_cobro_inicio}
+          onChange={handleInputChange}
+          error={errors.monto_cobro_inicio}
+          hint="Solo números, como el ej."
+        />
 
-        <div className="min-w-56">
-          <label htmlFor="monto_cobro" className="font-bold flex justify-between items-center pr-1">
-            <p>Precio actual</p> <span className='text-gray-400 text-xs'>Solo numeros, como el ej.</span>
-          </label>
-          <div className="relative">
-            <span className="absolute top-[6px] left-[7px] font-bold"> $ </span>
-            <Input
-              className="mt-2 text-md p-2 pl-6"
-              placeholder="Ej: 360000"
-              type="number"
-              name="monto_cobro"
-              value={newDepto.monto_cobro}
-              onChange={(e) =>
-                setNewDepto({ ...newDepto, monto_cobro: e.target.value })
-              }
-            />
-          </div>
-        </div>
+        <FormInput
+          label="Precio actual"
+          name="monto_cobro"
+          type="number"
+          placeholder="Ej: 360000"
+          value={newDepto.monto_cobro}
+          onChange={handleInputChange}
+          error={errors.monto_cobro}
+          hint="Solo números, como el ej."
+        />
 
-        <div className="min-w-56">
-          <label htmlFor="fecha_actualizacion_cobro" className="font-bold">
-            Ultima actualización del precio
-          </label>
-          <Input
-            className="mt-2 text-md p-2"
-            placeholder=""
-            type="date"
-            name="fecha_actualizacion_cobro"
-            value={newDepto.fecha_actualizacion_cobro}
-            onChange={(e) =>
-              setNewDepto({
-                ...newDepto,
-                fecha_actualizacion_cobro: e.target.value,
-              })
-            }
-          />
-        </div>
+        <FormInput
+          label="Ultima actualización del precio"
+          name="fecha_actualizacion_cobro"
+          type="date"
+          value={newDepto.fecha_actualizacion_cobro}
+          onChange={handleInputChange}
+          error={errors.fecha_actualizacion_cobro}
+        />
 
-        <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-          <label htmlFor="inscripto_reli" className="font-bold text-lg">
-            Inscripto en RELI
-          </label>
+        <div className="min-w-56 flex items-center gap-5 mt-8">
+          <Label htmlFor="inscripto_reli" className="font-bold text-lg">Inscripto en RELI</Label>
           <Checkbox
-            className="h-6 w-6"
+            id="inscripto_reli"
             name="inscripto_reli"
-            checked={newDepto.inscripto_reli}
-            onCheckedChange={(checked) =>
-              setNewDepto((prevState) => ({
-                ...prevState,
-                inscripto_reli: checked,
-              }))
-            }
-          />
-        </div>
-
-        <div className="min-w-56 flex items-center gap-5 mt-[44px]">
-          <label htmlFor="ocupado" className="font-bold text-lg">
-            Propiedad ocupada
-          </label>
-          <Checkbox
             className="h-6 w-6"
-            name="ocupado"
-            checked={newDepto.ocupado} // Vincula el checkbox al estado
-            onCheckedChange={(checked) =>
-              setNewDepto((prevState) => ({
-                ...prevState,
-                ocupado: checked,
-              }))
-            }
+            checked={newDepto.inscripto_reli}
+            onCheckedChange={(checked) => setNewDepto((prev) => ({ ...prev, inscripto_reli: checked }))}
           />
         </div>
 
-        {/* documentos */}
+        <div className="min-w-56 flex items-center gap-5 mt-8">
+          <Label htmlFor="ocupado" className="font-bold text-lg">Propiedad ocupada</Label>
+          <Checkbox
+            id="ocupado"
+            name="ocupado"
+            className="h-6 w-6"
+            checked={newDepto.ocupado}
+            onCheckedChange={(checked) => {
+              setNewDepto((prev) => ({ ...prev, ocupado: checked }));
+              if (!checked) {
+                setNewDepto((prev) => ({ ...prev, inquilino_name: '' }));
+                setErrors((prev) => ({ ...prev, inquilino_name: null }));
+              }
+            }}
+          />
+        </div>
+
+        {/* File upload section */}
         <div className="min-w-56">
           <label htmlFor="documentosVarios" className="font-bold flex justify-between items-center pr-1">
-            <p>Documentos</p> <span className='text-gray-400 text-xs'>Peso max. 50 mb cada uno</span>
+            <p> Documentos (opcional)</p> 
+            <span className='text-gray-400 text-xs'>Peso max. 50 mb cada uno</span>
           </label>
           <div className="file-upload">
-            <Label
+            <label
               htmlFor="file-upload"
               className="cursor-pointer text-black px-4 py-2 h-10 mt-2 rounded-lg border flex items-center justify-between"
             >
               <span>Cargar documentos</span>
-              <Plus
-                size={20}
-                color="green"
-                className="border-[3px] border-green-500 w-5 h-5 rounded-full"
-              />
-            </Label>
-            <Input
+              <Plus size={20} color="green" className="border-[3px] border-green-500 w-5 h-5 rounded-full" />
+            </label>
+            <input
               id="file-upload"
               className="hidden"
               type="file"
@@ -441,63 +412,50 @@ export default function CreateDepto() {
             />
           </div>
 
-          <div>
-            <Collapsible
-              className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${
-                showFiles ? "h-auto" : "h-10"
-              }`}
-            >
-              <CollapsibleTrigger onClick={() => setShowFiles(!showFiles)}>
-                <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
-                  <ChevronsUpDown size={20} />
-                  <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
-                    Ver documentos seleccionados
-                  </p>
-                </div>
-              </CollapsibleTrigger>
+          <Collapsible className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${showFiles ? "h-auto" : "h-10"}`}>
+            <CollapsibleTrigger onClick={() => setShowFiles(!showFiles)}>
+              <div className="flex gap-3 h-10 items-center text-left cursor-pointer pl-2">
+                <ChevronsUpDown size={20} />
+                <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
+                  Ver documentos seleccionados
+                </p>
+              </div>
+            </CollapsibleTrigger>
 
+            <CollapsibleContent>
               {files.length > 0 ? (
                 files.map((file, index) => (
-                  <div key={index}>
-                    <CollapsibleContent className=" pl-6 pr-2 flex gap-3 h-12 items-center">
-                      <FileCheckIcon size={23} />
-                      <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-                        {file.name}
-                      </p>
-                      <X
-                        className="text-red-600 cursor-pointer"
-                        onClick={() => removeFile(index)}
-                      />
-                    </CollapsibleContent>
+                  <div key={index} className="pl-6 pr-2 flex gap-3 h-12 items-center">
+                    <FileCheckIcon size={23} />
+                    <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                      {file.name}
+                    </p>
+                    <X className="text-red-600 cursor-pointer" onClick={() => removeFile(index)} />
                   </div>
                 ))
               ) : (
-                <CollapsibleContent className="flex text-center justify-center gap-3 h-12 items-center">
-                  <p className=" text-xs"> No hay documentos seleccionados</p>
-                </CollapsibleContent>
+                <div className="flex text-center justify-center gap-3 h-12 items-center">
+                  <p className="text-xs">No hay documentos seleccionados</p>
+                </div>
               )}
-            </Collapsible>
-          </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
-        {/* fotos */}
+        {/* Photo upload section */}
         <div className="min-w-56">
           <label htmlFor="upload" className="font-bold flex justify-between items-center pr-1">
-            <p>Fotos</p> <span className='text-gray-400 text-xs'>Peso max. 50 mb cada una</span>
+            <p>Fotos (opcional)</p> <span className='text-gray-400 text-xs'>Peso max. 50 mb cada una</span>
           </label>
           <div className="foto-upload">
-            <Label
+            <label
               htmlFor="foto-upload"
               className="cursor-pointer text-black px-4 py-2 h-10 mt-2 rounded-lg border flex items-center justify-between"
             >
               <span>Cargar fotos</span>
-              <Plus
-                size={20}
-                color="green"
-                className="border-[3px] border-green-500 w-5 h-5 rounded-full"
-              />
-            </Label>
-            <Input
+              <Plus size={20} color="green" className="border-[3px] border-green-500 w-5 h-5 rounded-full" />
+            </label>
+            <input
               id="foto-upload"
               className="hidden"
               type="file"
@@ -507,76 +465,67 @@ export default function CreateDepto() {
             />
           </div>
 
-          <div>
-            <Collapsible
-              className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${
-                showFotos ? "h-auto" : "h-10"
-              }`}
-            >
-              <CollapsibleTrigger onClick={() => setShowFotos(!showFotos)}>
-                <div className="flex gap-3 h-10 items-center text-left  cursor-pointer pl-2">
-                  <ChevronsUpDown size={20} />
-                  <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
-                    Ver fotos seleccionadas
-                  </p>
-                </div>
-              </CollapsibleTrigger>
+          <Collapsible className={`bg-gray-100 border rounded-t-none rounded-b-2xl ${showFotos ? "h-auto" : "h-10"}`}>
+            <CollapsibleTrigger onClick={() => setShowFotos(!showFotos)}>
+              <div className="flex gap-3 h-10 items-center text-left cursor-pointer pl-2">
+                <ChevronsUpDown size={20} />
+                <p className="w-3/4 text-sm whitespace-nowrap overflow-hidden text-ellipsis pt-0">
+                  Ver fotos seleccionadas
+                </p>
+              </div>
+            </CollapsibleTrigger>
 
+            <CollapsibleContent>
               {fotos.length > 0 ? (
                 fotos.map((foto, index) => (
-                  <div key={index}>
-                    <CollapsibleContent className=" pl-6 pr-2 flex gap-3 h-12 items-center">
-                      <FileCheckIcon size={23} />
-                      <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-                        {foto.name}
-                      </p>
-                      <X
-                        className="text-red-600 cursor-pointer"
-                        onClick={() => removeFoto(index)}
-                      />
-                    </CollapsibleContent>
+                  <div key={index} className="pl-6 pr-2 flex gap-3 h-12 items-center">
+                    <FileCheckIcon size={23} />
+                    <p className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                      {foto.name}
+                    </p>
+                    <X className="text-red-600 cursor-pointer" onClick={() => removeFoto(index)} />
                   </div>
                 ))
               ) : (
-                <CollapsibleContent className="flex text-center justify-center gap-3 h-12 items-center">
-                  <p className=" text-xs"> No hay fotos seleccionadas</p>
-                </CollapsibleContent>
+                <div className="flex text-center justify-center gap-3 h-12 items-center">
+                  <p className="text-xs">No hay fotos seleccionadas</p>
+                </div>
               )}
-            </Collapsible>
-          </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
         <div className="min-w-56">
-          <label htmlFor="obs_datos" className="font-bold">
-            {" "}
-            Observaciónes / datos extras
-          </label>
+          <Label htmlFor="obs_datos" className="font-bold">Observaciónes / datos extras (opcional)</Label>
           <Textarea
+            id="obs_datos"
+            name="obs_datos"
             className="mt-2 text-md p-2"
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
-            name="obs_datos"
             rows={4}
             value={newDepto.obs_datos}
-            onChange={(e) =>
-              setNewDepto({ ...newDepto, obs_datos: e.target.value })
-            }
+            onChange={handleInputChange}
           />
         </div>
-
       </Form>
 
       <div className="flex justify-center gap-10 my-8">
+
+        <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
+          <NavLink to='/dashboard/deptos'> Cancelar </NavLink>
+        </Button>
+
         <Button
           type="submit"
-          onClick={(e) => handleSubmit(e)}
+          onClick={handleSubmit}
           className="bg-green-600 h-10 px-6 font-bold text-md hover:bg-green-800"
+          disabled={loading || !isFormValid()}
         >
-        {loading ? "Guardar" : <Spinner/>}
+          {loading ? <Spinner /> : "Guardar"}
         </Button>
-        <Button className="bg-red-600 h-10 px-6 font-bold text-md hover:bg-red-800">
-          CANCELAR
-        </Button>
+        
       </div>
     </div>
   );
 }
+

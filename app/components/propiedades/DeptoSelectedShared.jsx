@@ -23,7 +23,7 @@ export default function DeptoSelected() {
   const { data: userData, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${infoDepto?.id}`})
-  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', 'doc_url' ,{col: 'depto_id', key: `${infoDepto?.id}`})
+  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', '*' ,{col: 'depto_id', key: `${infoDepto?.id}`})
 
   useEffect(() => {
     if (userLoged_id) {
@@ -84,20 +84,16 @@ export default function DeptoSelected() {
         <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-2'>              
           DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>{" "}  
         </h1>
-
-        <div className="flex items-center gap-3">
-          <Badge variant={infoDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
-            {infoDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
-          </Badge>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* INFO GENERAL */}
         <Card className="lg:col-span-2">
-          <CardHeader className='flex-col sm:flex-row items-start sm:items-center justify-between'>
-            <CardTitle className='text-2xl sm:text-3xl mb-2 sm:mb-0'>Información General</CardTitle>
-            <CardDescription className='text-base sm:text-lg text-black font-medium'> Grupo: {infoGrupo.grupo_name} </CardDescription>
+        <CardHeader className='flex-col sm:flex-row items-start sm:items-center justify-between'>
+            <CardTitle className='text-xl sm:text-2xl mb-2 sm:mb-0'>Pertenece al grupo: {infoGrupo.grupo_name} </CardTitle>
+            <Badge variant={infoDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
+              {infoDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
+            </Badge>          
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -148,7 +144,7 @@ export default function DeptoSelected() {
                       <li key={index} className="flex flex-wrap items-center justify-left gap-y-1 gap-x-5 p-2 rounded-md">
                         <Button className="flex items-center w-fit justify-start text-sm sm:text-base" onClick={() => window.open(`${doc.doc_url}`, "_blank")}>
                           <FileText className="w-4 h-4 mr-2" />
-                          Documento {index + 1}
+                          {doc.doc_name} 
                         </Button>
                         <span className='text-muted-foreground text-xs'> Click para descargar </span>
                       </li>
