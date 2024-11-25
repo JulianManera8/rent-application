@@ -232,10 +232,3 @@ export default function SignupForm() {
     </form>
   );
 }
-
-export async function loader() {
-
-    const {data} = await supabase.auth.getUser();
-    console.log(data)
-    return data
-}

@@ -9,7 +9,7 @@ export async function getGrupos({ user_id }) {
     .eq("user_id", user_id);
 
   if (error) {
-    console.error(error);
+
     throw new Error("Falla al cargar todos los grupos");
   }
 
@@ -35,7 +35,6 @@ export async function insertGrupo({ createGrupoInfo }) {
             throw new Error(error.message);
         }
 
-        console.log("Grupo creado:", data);
         return data;  // Asegúrate de que `data` sea retornado correctamente
 
     } catch (error) {
@@ -73,7 +72,6 @@ export async function editGroupName({ id_NewName }) {
         throw new Error(error.message);
     }
 
-    console.log("Grupo Actualizado:", data);
     return data;  // Asegúrate de que `data` sea retornado correctamente
 
   } catch (error) {
@@ -95,7 +93,6 @@ export async function editAccess( id_NewAccess ) {
         throw new Error(error.message);
     }
 
-    console.log("Grupo Actualizado:", data);
     return data;  
 
   } catch (error) {

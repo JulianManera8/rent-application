@@ -56,8 +56,6 @@ export default function ResetPassword() {
         setLoading(false)  
         return setErrors((prevErrors)=> ({...prevErrors, auth: error.message} ))
       }
-
-      if(data) console.log(data)
   
       setTimeout(() => {
         setLoading(false)

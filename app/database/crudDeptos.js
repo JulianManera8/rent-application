@@ -324,7 +324,6 @@ export async function editDepto(idDepto, editedInfoDepto) {
         throw new Error(error.message);
     }
 
-    console.log("Departamento Actualizado:", data);
     return data;
 
   } catch (error) {

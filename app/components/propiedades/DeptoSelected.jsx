@@ -282,7 +282,7 @@ export default function DeptoSelected() {
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-center text-red-600">
                   Esta acción no se puede deshacer. Esto eliminará
-                  permanentemente el grupo y todos los datos asociados.
+                  permanentemente la propiedad y todos sus datos asociados.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="flex flex-col items-center justify-center gap-y-2">
