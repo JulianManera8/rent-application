@@ -1,28 +1,29 @@
-/* eslint-disable no-unused-vars */
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import Spinner from '../helpers/loaderIcon'
-import { Eye, EyeOff } from "lucide-react";
+"use client"
+
+import { useState, useEffect } from "react"
+import { Eye, EyeOff } from 'lucide-react'
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card"
+import { Input } from "../ui/input"
+import { Button } from "../ui/button"
+import { Progress } from "../ui/progress"
 import Error from '../helpers/Error'
-import supabase from "../../lib/supabase";
-import { useState } from "react";
-import { useNavigate } from "@remix-run/react";
+import Spinner from '../helpers/loaderIcon'
+import { useNavigate } from "@remix-run/react"
+import supabase from "../../lib/supabase"
 
 export default function SignupForm() {
 
-  const navigate = useNavigate();
-
-  const [passEye, setPassEye] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [passEye, setPassEye] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({
     name: '',
     lastname: '',
     email: '',
     password: '',
     confirmPassword: '',
+    dni: '',
     auth: '',
-  });
+  })
   
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -31,51 +32,79 @@ export default function SignupForm() {
     dni: '',
     password: "",
     confirmPassword: "",
-  });
+  })
+
+  const [progressValue, setProgressValue] = useState(0)
+  const [progressColor, setProgressColor] = useState("#de1b2e")
+  const [itemValidated, setItemValidated] = useState({
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    length: false,
+  })
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const password = userInfo.password
+    
+    const validations = {
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      length: password.length >= 8,
+    }
+
+    setItemValidated(validations)
+
+    const validCount = Object.values(validations).filter(Boolean).length
+    const newProgressValue = Math.min(validCount * 25, 100)
+    setProgressValue(newProgressValue)
+
+    const colorMap = {
+      0: "#de1b2e",
+      25: "#de8d1b",
+      50: "#edc709",
+      75: "#bced09",
+      100: "#33ed09",
+    }
+    setProgressColor(colorMap[newProgressValue] || "#f72331")
+  }, [userInfo.password])
 
   const handleSignup = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     setLoading(true)
-
-    setErrors({ name: '', lastname: '', email: "", password: "", confirmPassword: '', dni: '', auth: "" });
-
+    setErrors({ name: '', lastname: '', email: "", password: "", confirmPassword: '', dni: '', auth: "" })
 
     if(userInfo.name === "") {
       setLoading(false) 
       return setErrors((prevErrors)=> ({...prevErrors, name: 'Debes completar correctamente el nombre'} ))
     }
-
     if(userInfo.lastname === "") {
       setLoading(false) 
       return setErrors((prevErrors)=> ({...prevErrors, lastname: 'Debes completar correctamente el apellido'} ))
     }
-
     if(userInfo.email === "") {
       setLoading(false) 
       return setErrors((prevErrors)=> ({...prevErrors, email: 'Debes completar correctamente el email'} ))
     }
-
     if(userInfo.dni === "" || userInfo.dni.length !== 8) {
       setLoading(false) 
       return setErrors((prevErrors)=> ({...prevErrors, dni: 'Debes completar correctamente tu DNI'} ))
     }
+  
 
-    if(userInfo.password === "") {
-      setLoading(false) 
-      return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe tener 6 o más caracteres'} ))
-    }
-
-    if(userInfo.confirmPassword === "") {
-      setLoading(false) 
-      return setErrors((prevErrors)=> ({...prevErrors, confirmPassword: 'Debes completar correctamente la contraseña nuevamente'} ))
+    if (!Object.values(itemValidated).every(Boolean)) {
+      setLoading(false)
+      return setErrors(prev => ({ ...prev, password: 'La contraseña no cumple con todos los requisitos' }))
     }
 
     if (userInfo.password !== userInfo.confirmPassword) {
       setLoading(false)
-      return setErrors((prevErrors)=> ({...prevErrors, confirmPassword: 'Las contraseñas no coinciden'} ))
+      return setErrors(prev => ({ ...prev, confirmPassword: 'Las contraseñas no coinciden' }))
     }
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: userInfo.email,
       password: userInfo.password,
       options: {
@@ -87,26 +116,27 @@ export default function SignupForm() {
         }
       },
     });
-
     if (error) {
       setLoading(false)  
       return setErrors((prevErrors)=> ({...prevErrors, auth: error.message} ))
     }
 
+    // Simulating API call
     setTimeout(() => {
       setLoading(false)
-      navigate("/dashboard/general");
-    }, 2000);
-  };
+      navigate("/dashboard/general")
+    }, 2000)
+  }
 
   return (
-    <form>
+    <form onSubmit={handleSignup}>
       <Card>
         <CardHeader>
+          <h2 className="text-2xl font-bold text-center sr-only">Sign Up</h2>
         </CardHeader>
 
         <CardContent className="space-y-5">
-          <div>
+        <div>
             <Input
               type="text"
               name="name"
@@ -134,7 +164,6 @@ export default function SignupForm() {
             />
             {errors.lastname && <Error errorMessage={errors.lastname} />}
           </div>
-
           <div>
             <Input
               type="email"
@@ -149,7 +178,6 @@ export default function SignupForm() {
             />
             {errors.email && <Error errorMessage={errors.email} />}
           </div>
-
           <div>
             <Input
               type="number"
@@ -165,70 +193,67 @@ export default function SignupForm() {
             {errors.dni && <Error errorMessage={errors.dni} />}
           </div>
 
-          <div className="relative">
-            <Input
-              type={passEye ? "password" : "text"}
-              name="password"
-              placeholder="Password"
-              autoComplete="current-password"
-              className="md:text-lg text-md text-sm w-4/5 mx-auto"
-              value={userInfo.password}
-              onChange={(e) =>
-                setUserInfo({ ...userInfo, password: e.target.value })
-              }
-            />
-            {passEye ? (
-              <Eye
-                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
-                onClick={() => setPassEye(!passEye)}
+          <div className="w-4/5 mx-auto">
+            <div className="relative">
+              <Input
+                type={passEye ? "password" : "text"}
+                name="password"
+                placeholder="Password"
+                autoComplete="new-password"
+                className="pr-10"
+                value={userInfo.password}
+                onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
               />
-            ) : (
-              <EyeOff
-                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setPassEye(!passEye)}
-              />
-            )}
+              >
+                {passEye ? <Eye className="h-5 w-5 text-gray-400" /> : <EyeOff className="h-5 w-5 text-gray-400" />}
+              </button>
+            </div>
+            
+            <div className="mt-3">
+              <Progress value={progressValue > 0 ? progressValue : 5} className="h-2" colorProgress={progressColor } />
 
+              <ul className="list-inside mt-2 text-sm text-muted-foreground">
+                <li className={itemValidated.uppercase ? 'line-through' : ''}>- Mayúscula</li>
+                <li className={itemValidated.lowercase ? 'line-through' : ''}>- Minúscula</li>
+                <li className={itemValidated.number ? 'line-through' : ''}>- Número</li>
+                <li className={itemValidated.length ? 'line-through' : ''}>- 8 caracteres mínimo</li>
+              </ul>
+            </div>
           </div>
           {errors.password && <Error errorMessage={errors.password} />}
 
-          <div className="relative">
+          <div className="w-4/5 mx-auto relative">
             <Input
               type={passEye ? "password" : "text"}
-              name="password"
+              name="confirmPassword"
               placeholder="Confirm password"
-              autoComplete="current-password"
-              className="md:text-lg text-md text-sm w-4/5 mx-auto"
+              autoComplete="new-password"
+              className="pr-10"
               value={userInfo.confirmPassword}
-              onChange={(e) =>
-                setUserInfo({ ...userInfo, confirmPassword: e.target.value })
-              }
+              onChange={(e) => setUserInfo({ ...userInfo, confirmPassword: e.target.value })}
             />
-            {passEye ? (
-              <Eye
-                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
-                onClick={() => setPassEye(!passEye)}
-              />
-            ) : (
-              <EyeOff
-                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
-                onClick={() => setPassEye(!passEye)}
-              />
-            )}
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setPassEye(!passEye)}
+            >
+              {passEye ? <Eye className="h-5 w-5 text-gray-400" /> : <EyeOff className="h-5 w-5 text-gray-400" />}
+            </button>
           </div>
           {errors.confirmPassword && <Error errorMessage={errors.confirmPassword} />}
-
         </CardContent>
 
-        <CardFooter className="flex justify-center gap-5 flex-col">
-          <Button onClick={handleSignup} className="w-fit px-5 md:text-lg text-md text-sm mt-3">
-            {loading ? <Spinner/> : "Create"}
+        <CardFooter className="flex justify-center mt-5">
+          <Button type="submit" className="w-fit">
+            {loading ? <Spinner /> : "Create Account"}
           </Button>
-
-          {errors.auth && <Error errorMessage={'Ese D.N.I o correo electrónico ya se encuentra registrado, ingresa en tu cuenta.'} />}
-
         </CardFooter>
       </Card>
     </form>
-  );
+  )
 }
+
