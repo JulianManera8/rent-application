@@ -1,6 +1,6 @@
 import { NavLink } from "@remix-run/react"
-import {Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { Progress } from "../ui/progress"
+import {Card, CardContent, CardHeader, CardTitle } from "../../ui/card"
+import { Progress } from "../../ui/progress"
 
 import { Home, DollarSign, UserRoundCheckIcon, CreditCard } from 'lucide-react'
 

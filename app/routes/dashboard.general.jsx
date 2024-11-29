@@ -1,6 +1,6 @@
-import SectionBalances from '../components/dashboardGeneal/sectionBalances'
-import SectionGrupos from '../components/dashboardGeneal/sectionGrupos'
-import SectionPropiedades from '../components/dashboardGeneal/sectionPropiedades'
+import SectionBalances from '../components/dashboardGeneal/balanceSection/sectionBalances'
+import SectionGrupos from '../components/dashboardGeneal/groupSection/sectionGrupos'
+import SectionPropiedades from '../components/dashboardGeneal/propertySection/sectionPropiedades'
 import { Separator } from '../components/ui/separator'
 
 
