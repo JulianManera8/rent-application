@@ -142,7 +142,7 @@ export default function SignupForm() {
               name="name"
               placeholder="Name"
               autoComplete="given-name"
-              className="md:text-lg text-md text-sm w-4/5 mx-auto"
+              className="md:text-lg text-md w-4/5 mx-auto"
               value={userInfo.name}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, name: e.target.value })
@@ -200,7 +200,7 @@ export default function SignupForm() {
                 name="password"
                 placeholder="Password"
                 autoComplete="new-password"
-                className="pr-10"
+                className="pr-10 md:text-lg text-md"
                 value={userInfo.password}
                 onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
               />
@@ -232,7 +232,7 @@ export default function SignupForm() {
               name="confirmPassword"
               placeholder="Confirm password"
               autoComplete="new-password"
-              className="pr-10"
+              className="pr-10 md:text-lg text-md"
               value={userInfo.confirmPassword}
               onChange={(e) => setUserInfo({ ...userInfo, confirmPassword: e.target.value })}
             />

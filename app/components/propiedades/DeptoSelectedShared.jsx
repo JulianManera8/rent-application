@@ -68,15 +68,25 @@ export default function DeptoSelected() {
           {item.label === "Estado" ? (infoDepto[item.key] ? "Ocupado" : "Desocupado") : (infoDepto[item.key] ? "Sí" : "No")}
         </dd>
       )
+    } else if (item.type === "number") {
+      return (
+               <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
+                  $ {infoDepto[item.key] ? formatNumber(infoDepto[item.key]) : "-"}
+               </dd>
+           );
     } else {
       return (
         <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-          {infoDepto[item.key]}
+          {infoDepto[item.key] ? infoDepto[item.key] : "-"}
         </dd>
       )
     }
   }
-  
+
+
+  function formatNumber(num) {
+    return new Intl.NumberFormat('es-AR').format(num);
+  }
 
   return (
     <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">

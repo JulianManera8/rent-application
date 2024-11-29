@@ -150,7 +150,7 @@ export default function LoginForm() {
               name="email"
               placeholder="Email"
               autoComplete="email"
-              className="md:text-lg text-sm w-4/5 mx-auto"
+              className="md:text-lg text-md w-4/5 mx-auto"
               value={userInfo.email}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, email: e.target.value })
@@ -159,29 +159,23 @@ export default function LoginForm() {
             {errors.email && <Error errorMessage={errors.email} />}
           </div>
 
-          <div className="relative">
+          <div className="w-4/5 mx-auto relative">
             <Input
               type={passEye ? "password" : "text"}
-              name="password"
               placeholder="Password"
-              autoComplete="current-password"
-              className="md:text-lg text-sm w-4/5 mx-auto"
+              name="password"
+              autoComplete="new-password"
+              className="pr-10 md:text-lg text-md"
               value={userInfo.password}
-              onChange={(e) =>
-                setUserInfo({ ...userInfo, password: e.target.value })
-              }
+              onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
             />
-            {passEye ? (
-              <Eye
-                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
-                onClick={() => setPassEye(!passEye)}
-              />
-            ) : (
-              <EyeOff
-                className="absolute inset-y-0 my-auto right-0 pl-0.5 sm:pl-0 text-gray-400 cursor-pointer"
-                onClick={() => setPassEye(!passEye)}
-              />
-            )}
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setPassEye(!passEye)}
+            >
+              {passEye ? <Eye className="h-5 w-5 text-gray-400" /> : <EyeOff className="h-5 w-5 text-gray-400" />}
+            </button>
           </div>
           {errors.password && <Error errorMessage={errors.password} />}
         </CardContent>

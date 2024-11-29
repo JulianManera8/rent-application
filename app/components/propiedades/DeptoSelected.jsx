@@ -207,55 +207,72 @@ export default function DeptoSelected() {
    }
 
   const renderField = (item) => {
-    if (isEditing) {
-      if (item.label === "Inscripto en RELI" || item.label === "Estado") {
-        return (
-          <div className="flex items-center space-x-2">
-            <Switch
-              id={item.label}
-              checked={editedInfoDepto[item.key] || false}
-              onCheckedChange={(checked) => handleInputChange(item.key, checked)}
-            />
-            <Label htmlFor={item.label}>{item.label === "Estado" ? (editedInfoDepto[item.key] ? "Ocupado" : "Desocupado") : "Inscripto en RELI"}</Label>
-          </div>
-        )
-      } else if (item.label === "Notas / Observaciones") {
-        return (
-          <Textarea
-            value={editedInfoDepto[item.key] || ''}
-            onChange={(e) => handleInputChange(item.key, e.target.value)}
-            className="w-full"
-          />
-        )
-      } else {
-        return (
-          <Input
-            type={item.type || "text"}
-            value={editedInfoDepto[item.key] || ''}
-            onChange={(e) => handleInputChange(item.key, e.target.value)}
-            className="w-full"
-          />
-        )
-      }
-    } else {
-      if (item.label === "Inscripto en RELI" || item.label === "Estado") {
-        return (
-          <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-            {item.label === "Estado" ? (deptoData[item.key] ? "Ocupado" : "Desocupado") : (deptoData[item.key] ? "Sí" : "No")}
-          </dd>
-        )
-      } else {
-        return (
-          <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-            {deptoData[item.key]}
-          </dd>
-        )
-      }
-    }
-  }
+   if (isEditing) {
+       if (item.label === "Inscripto en RELI" || item.label === "Estado") {
+           return (
+               <div className="flex items-center space-x-2">
+                   <Switch
+                       id={item.label}
+                       checked={editedInfoDepto[item.key] || false}
+                       onCheckedChange={(checked) => handleInputChange(item.key, checked)}
+                   />
+                   <Label htmlFor={item.label}>
+                       {item.label === "Estado"
+                           ? (editedInfoDepto[item.key] ? "Ocupado" : "Desocupado")
+                           : "Inscripto en RELI"}
+                   </Label>
+               </div>
+           );
+       } else if (item.label === "Notas / Observaciones") {
+           return (
+               <Textarea
+                   value={editedInfoDepto[item.key] || "―"}
+                   onChange={(e) => handleInputChange(item.key, e.target.value)}
+                   className="w-full"
+               />
+           );
+       } else {
+           return (
+               <Input
+                   type={item.type || "text"}
+                   value={editedInfoDepto[item.key] || "―"}
+                   onChange={(e) => handleInputChange(item.key, e.target.value)}
+                   className="w-full"
+               />
+           );
+       }
+   } else {
+       if (item.label === "Inscripto en RELI" || item.label === "Estado") {
+           return (
+               <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
+                   {item.label === "Estado"
+                       ? (deptoData[item.key] ? "Ocupado" : "Desocupado")
+                       : deptoData[item.key] ? "Sí" : "No"}
+               </dd>
+           );
+       } else if (item.type === "number") {
+           return (
+               <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
+                   $ {deptoData[item.key] ? formatNumber(deptoData[item.key]) : "―"}
+               </dd>
+           );
+       } else {
+           return (
+               <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
+                   {deptoData[item.key] ? deptoData[item.key] : "―"}
+               </dd>
+           );
+       }
+   }
+  };
+
 
   if (isLoading) {
     return <SkeletonDeptoSelected />
+  }
+
+  function formatNumber(num) {
+    return new Intl.NumberFormat('es-AR').format(num);
   }
 
   return (
