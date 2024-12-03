@@ -16,11 +16,11 @@ export async function getGroups(userId) {
 }
 
 
-export async function getDeptos(userId) {
+export async function getBalances(userId) {
     //tengo que acceder a los deptos de cada grupo
     try {
         const {data, error} = await supabase
-        .from('departamentos')
+        .from('balances')
         .select('*')
         .eq('user_id', userId)
 
@@ -29,5 +29,9 @@ export async function getDeptos(userId) {
     } catch (error) {
         console.error(error)
     }
+
+
 }
+
+
 

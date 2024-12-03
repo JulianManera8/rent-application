@@ -74,7 +74,7 @@ export default function IncomesPerGroups({ userId }) {
         <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[400px] w-full flex flex-col justify-evenly">
             <CardHeader className="flex flex-row items-center md:mb-2 mb-2 justify-start w-full space-y-0 py-1 h-1/3">
                 <CardTitle className="md:text-lg text-md font-medium text-left w-full">
-                    {loading ? <Skeleton className="w-48 h-5 mt-1 bg-zinc-200"/> : 'Distribucion de Ingresos por Grupo'}
+                    Distribucion de Ingresos por Grupo
                 </CardTitle>
                 <CircleDollarSignIcon className="h-6 w-6 text-muted-foreground" />
             </CardHeader>
