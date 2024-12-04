@@ -36,12 +36,12 @@ export default function LoginForm() {
 
     if(userInfo.email === "") {
       setLoading(false) 
-      return setErrors((prevErrors)=> ({...prevErrors, email: 'Debes completar correctamente el email'} ))
+      return setErrors((prevErrors)=> ({...prevErrors, email: 'Debes escribir correctamente tu email'} ))
     }
 
     if(userInfo.password === "") {
       setLoading(false) 
-      return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe tener 6 o más caracteres'} ))
+      return setErrors((prevErrors)=> ({...prevErrors, password: 'Debes escribir tu contraseña'} ))
 
     }
     
@@ -52,7 +52,7 @@ export default function LoginForm() {
 
     if (error) {
       setLoading()
-      setErrors( (prevErrors) => ({...prevErrors, auth: error.message}))
+      setErrors( (prevErrors) => ({...prevErrors, auth: 'Email o contraseña incorrectos'}))
       return setTimeout(() => {
         setErrors({ email: "", password: "", auth: "" });
       }, 2500);
