@@ -47,7 +47,7 @@ function GroupIncomeRow({ group }) {
   return (
     <div className="flex items-center text-sm gap-x-3 w-full">
       <span className="w-3/5 text-zinc-600 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
-        Grupo: {group.group}
+        {group.group}
       </span>
       <Progress 
         className="w-4/5 text-blue-400" 
@@ -58,7 +58,7 @@ function GroupIncomeRow({ group }) {
         "w-[36%] font-medium flex-col flex items-center text-xs",
         group.percentage > 0 ? "text-blue-400" : "text-zinc-400"
       )}>
-        <p> % {group.percentage} </p>
+        <p> {group.percentage} % </p>
         <p> $ {new Intl.NumberFormat('es-AR').format(group.income)} </p>
       </span>
     </div>

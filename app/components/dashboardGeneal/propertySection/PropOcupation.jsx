@@ -69,7 +69,7 @@ export default function PropOcupation({ userId }) {
                             ? <span className="text-md text-zinc-600 font-normal mb-2">No hay propiedades</span> 
                             : (
                                 <>
-                                    <span className="text-2xl text-blue-400 font-medium mb-2"> % {totalOcupationRate} </span>
+                                    <span className="text-2xl text-blue-400 font-medium mb-2"> {totalOcupationRate} % </span>
                                     {totalOcupation && <span className="text-lg text-blue-400 font-normal mb-2"> {totalOcupation} / {totalDeptos} ocupados </span>}
                                 </>
                             )
