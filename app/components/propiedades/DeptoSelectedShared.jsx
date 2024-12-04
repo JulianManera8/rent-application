@@ -92,7 +92,7 @@ export default function DeptoSelected() {
     <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className='sm:text-3xl text-lg text-gray-300 font-medium font-inter mt-8 mx-0 mb-2'>              
-          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Seleccionada </span>{" "}  
+          DASHBOARD - <span className='text-[#0c426bd3]'> Propiedad Compartida </span>{" "}  
         </h1>
       </div>
 
