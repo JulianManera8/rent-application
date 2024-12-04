@@ -114,7 +114,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
                                 <TableCell className="w-1/6">  {dep.propietario_name} </TableCell>
                                 <TableCell className="w-1/6 hidden md:table-cell"> {dep.facturador_name} </TableCell>
                                 <TableCell className="w-1/6 hidden md:table-cell"> {dep.cobrador_name} </TableCell>
-                                <TableCell className="w-1/6 hidden md:table-cell"> {dep.inquilino_name} </TableCell>
+                                <TableCell className="w-1/6 hidden md:table-cell"> {dep.inquilino_name ? dep.inquilino_name : '―'} </TableCell>
                                 <TableCell className="w-1/6">
                                   <span
                                     className={`px-2 py-1 rounded-full text-xs md:text-sm font-semibold ${

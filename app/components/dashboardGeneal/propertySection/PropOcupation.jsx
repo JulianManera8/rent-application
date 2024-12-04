@@ -66,11 +66,14 @@ export default function PropOcupation({ userId }) {
                 ) : (
                     <div className="flex justify-between items-center">
                         {deptoInfo.length === 0 
-                            ? <span className="text-lg text-zinc-600 font-normal mb-2">No hay propiedades ocupadas</span> 
-                            : <span className="text-2xl text-blue-400 font-medium mb-2"> % {totalOcupationRate} </span>
+                            ? <span className="text-md text-zinc-600 font-normal mb-2">No hay propiedades</span> 
+                            : (
+                                <>
+                                    <span className="text-2xl text-blue-400 font-medium mb-2"> % {totalOcupationRate} </span>
+                                    {totalOcupation && <span className="text-lg text-blue-400 font-normal mb-2"> {totalOcupation} / {totalDeptos} ocupados </span>}
+                                </>
+                            )
                         }
-                        {totalOcupation && <span className="text-lg text-blue-400 font-normal mb-2"> {totalOcupation} / {totalDeptos} ocupados </span>
-                    }
                     </div>
                 )}
             </CardContent>

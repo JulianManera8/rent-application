@@ -1,59 +1,100 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/button";
+/* eslint-disable react/prop-types */
+import { useEffect, useState, useMemo } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card"
+import { Button } from "../../ui/button"
 import { useUser } from '../../../hooks/use-user'
-import { getGroups } from "../groupSection/getGroupData";
-import { getBalances } from "./getBalanceData";
+import { getGroups } from "../groupSection/getGroupData"
+import { getBalances } from "./getBalanceData"
+import { FileLineChartIcon as FileChartColumnIcon, FileLineChartIcon as FileChartColumnIncreasingIcon } from 'lucide-react'
+import { Skeleton } from "../../ui/skeleton"
 
-import {
-  FileChartColumnIcon,
-  FileChartColumnIncreasingIcon,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Skeleton } from "../../ui/skeleton";
+const calculateBalancesByGroup = (groups, balances) => {
+  if (!groups || !balances) return []
+
+  return groups.map(group => ({
+    grupo: group,
+    balance: balances
+      .filter(balance => balance.grupo_id === group.id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 1)
+  }))
+}
+
+function LoadingSkeleton() {
+  return (
+    <>
+      {Array(3).fill(0).map((_, i) => (
+        <div className="flex items-center text-sm gap-x-3 w-full" key={i}>
+          <Skeleton className="w-3/5 h-4 bg-zinc-200"/>
+          <Skeleton className="w-4/5 h-4 bg-zinc-200"/>
+          <Skeleton className="w-[36%] h-4 bg-zinc-200"/>
+        </div>
+      ))}
+    </>
+  )
+}
+
+function GroupBalanceRow({ groupBalance }) {
+  return (
+    <div className="flex items-center text-md font-bold gap-x-4 w-full flex-wrap">
+      <span className="w-full font-normal underline mb-2 text-zinc-600">
+        Grupo: {groupBalance.grupo.grupo_name}
+      </span>
+      {groupBalance.balance.length > 0 ? (
+        <div className="flex flex-row justify-between ml-8 mx-5 w-full">
+          <div className="flex items-center sm:w-fit space-x-2">
+            <span className="text-md w-max font-medium text-right text-blue-400">
+              {groupBalance.balance[0].mes_balance}, {groupBalance.balance[0].año_balance}
+            </span>
+          </div>
+          <Button
+            variant="outline"
+            className="flex items-center space-x-2 text-md"
+          >
+            <FileChartColumnIncreasingIcon className="h-3 w-3" />
+            <a href={groupBalance.balance[0].url_excel} target="_blank" rel="noreferrer">
+              Balance
+            </a>
+          </Button>
+        </div>
+      ) : (
+        <span className="ml-8 mx-5 font-medium my-1"> No hay balances</span>
+      )}
+    </div>
+  )
+}
 
 export default function SectionPropiedades() {
   const userLoged_id = useUser()
-  const [loading, setLoading] = useState(true)
-  const [balancesByGroup, setBalancesByGroup] = useState([])
-  const [showSkeleton, setShowSkeleton] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
+  const [groups, setGroups] = useState([])
+  const [balances, setBalances] = useState([])
 
   useEffect(() => {
-    async function getData() {
+    async function fetchData() {
       if (userLoged_id) {
-        setLoading(true)
-        const [dataGroups, dataBalances] = await Promise.all([
-          getGroups(userLoged_id),
-          getBalances(userLoged_id)
-        ])
-        divideBalances(dataGroups, dataBalances);
-        setLoading(false)
+        setIsLoading(true)
+        try {
+          const [dataGroups, dataBalances] = await Promise.all([
+            getGroups(userLoged_id),
+            getBalances(userLoged_id)
+          ])
+          setGroups(dataGroups || [])
+          setBalances(dataBalances || [])
+        } catch (error) {
+          console.error("Error fetching data:", error)
+        } finally {
+          setIsLoading(false)
+        }
       }
     }
-    getData()
+    fetchData()
   }, [userLoged_id])
 
-  useEffect(() => {
-    if (!loading) {
-      const timer = setTimeout(() => {
-        setShowSkeleton(false)
-      }, 2000)
-      return () => clearTimeout(timer)
-    }
-  }, [loading])
-
-  function divideBalances(dataGroups, dataBalances) {
-    if(dataGroups && dataBalances) {
-      const groupsWithBalances = dataGroups.map(group => ({
-        grupo: group,
-        balance: dataBalances
-          .filter(balance => balance.grupo_id === group.id)
-          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          .slice(0, 1)
-      }))
-      console.log(groupsWithBalances)
-      setBalancesByGroup(groupsWithBalances)
-    }
-  }
+  const balancesByGroup = useMemo(() => 
+    calculateBalancesByGroup(groups, balances),
+    [groups, balances]
+  )
 
   return (
     <div>
@@ -68,40 +109,14 @@ export default function SectionPropiedades() {
             <FileChartColumnIcon className="h-6 w-6 text-muted-foreground" />
           </CardHeader>
           <CardContent className="space-y-3">
-            {loading || showSkeleton ? (
-              Array(3).fill(0).map((_, i) => (
-                <div className="flex items-center text-sm gap-x-3 w-full" key={i}>
-                  <Skeleton className="w-3/5 h-4 bg-zinc-200"/>
-                  <Skeleton className="w-4/5 h-4 bg-zinc-200"/>
-                  <Skeleton className="w-[36%] h-4 bg-zinc-200"/>
-                </div>
+            {isLoading ? (
+              <LoadingSkeleton />
+            ) : balancesByGroup.length > 0 ? (
+              balancesByGroup.map((groupBalance, index) => (
+                <GroupBalanceRow key={index} groupBalance={groupBalance} />
               ))
             ) : (
-              balancesByGroup.map((el, i) => (
-                <div className="flex items-center text-md font-bold gap-x-4 w-full flex-wrap" key={i}>
-                  <span className="w-full font-normal underline mb-2 text-zinc-600">
-                    Grupo: {el.grupo.grupo_name}
-                  </span>
-                  {el.balance.length > 0 ? (
-                    <div className="flex flex-row justify-between ml-8 mx-5 w-full">
-                      <div className="flex items-center sm:w-fit space-x-2">
-                        <span className="text-md w-max font-medium text-right text-blue-400">
-                          {el.balance[0].mes_balance}, {el.balance[0].año_balance}
-                        </span>
-                      </div>
-                      <Button
-                        variant="outline"
-                        className="flex items-center space-x-2 text-md"
-                      >
-                        <FileChartColumnIncreasingIcon className="h-3 w-3" />
-                        <a href={el.balance[0].url_excel} target="_blank" rel="noreferrer">
-                          Balance
-                        </a>
-                      </Button>
-                    </div>
-                  ) : (<span className="ml-8 mx-5 font-medium my-1"> No hay balances</span>)}
-                </div>
-              ))
+              <span className="text-md text-zinc-600 font-normal mb-2">No hay grupos</span>
             )}
           </CardContent>
         </Card>
