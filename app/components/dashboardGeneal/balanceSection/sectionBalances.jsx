@@ -41,7 +41,7 @@ function GroupBalanceRow({ groupBalance }) {
         Grupo: {groupBalance.grupo.grupo_name}
       </span>
       {groupBalance.balance.length > 0 ? (
-        <div className="flex flex-row justify-between ml-8 mx-5 w-full">
+        <div className="flex flex-row justify-between md:ml-8 ml-3 mx-5 w-full">
           <div className="flex items-center sm:w-fit space-x-2">
             <span className="text-md w-max font-medium text-right text-blue-400">
               {groupBalance.balance[0].mes_balance}, {groupBalance.balance[0].año_balance}

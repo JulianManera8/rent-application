@@ -18,7 +18,7 @@ export default function MoneyHistorial() {
       </div>
       <Separator />
       <div className='flex md:justify-between justify-center gap-y-3 gap-x-6 items-center flex-wrap mt-10'>
-        <h1 className="text-3xl font-medium text-[#194567] flex justify-between">
+        <h1 className="sm:text-3xl text-2xl font-medium text-[#194567] flex justify-between">
           Mis Balances
         </h1>
         <AddBalance months={months} setBalanceCreated={setBalanceCreated}/>

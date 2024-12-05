@@ -16,7 +16,7 @@ export default function QuickAccess() {
     return (
         <div className="flex items-end mb-2">
             <DropdownMenu className=''>
-                <DropdownMenuTrigger className="bg-[#003156] hover:bg-[#1d5d80] transition-all duration-150 h-10 w-fit px-3 rounded-md text-white font-semibold">Atajos</DropdownMenuTrigger>
+                <DropdownMenuTrigger className="bg-[#003156] hover:bg-[#1d5d80] transition-all duration-150 h-10 w-fit px-2 rounded-md text-white font-semibold text-xs">Atajos</DropdownMenuTrigger>
                 <DropdownMenuContent>
                     {navItems.map((item, i) => (
                         <div key={i}>

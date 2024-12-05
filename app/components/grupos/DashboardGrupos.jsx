@@ -272,8 +272,8 @@ export default function DashboardGrupos() {
 
   return (
     <div className={`w-full py-10`}>
-      <div className="flex sm:justify-between items-center mb-7 flex-wrap gap-y-3 justify-center">
-        <h1 className="text-3xl font-medium text-[#194567] flex justify-between">
+      <div className="flex sm:justify-between items-center mb-7 flex-wrap gap-x-6  gap-y-3 justify-center">
+        <h1 className="sm:text-3xl text-2xl font-medium text-[#194567] flex justify-between">
           Mis Grupos
         </h1>
         <div>
@@ -448,7 +448,7 @@ export default function DashboardGrupos() {
                     </div>
                   ) : (
                     <>
-                      <DialogTitle className="text-2xl font-bold">
+                      <DialogTitle className="md:text-2xl text-lg text-left font-bold">
                         Grupo: {grupo.grupo_name}
                       </DialogTitle>
                       <Button
