@@ -132,7 +132,7 @@ export default function SignupForm() {
     <form onSubmit={handleSignup}>
       <Card>
         <CardHeader>
-          <h2 className="text-2xl font-bold text-center sr-only">Sign Up</h2>
+          <h2 className="text-2xl font-bold text-center sr-only">Crear Cuenta</h2>
         </CardHeader>
 
         <CardContent className="space-y-5">
@@ -140,7 +140,7 @@ export default function SignupForm() {
             <Input
               type="text"
               name="name"
-              placeholder="Name"
+              placeholder="Nombre"
               autoComplete="given-name"
               className="md:text-lg text-md w-4/5 mx-auto"
               value={userInfo.name}
@@ -154,7 +154,7 @@ export default function SignupForm() {
             <Input
               type="text"
               name="lastname"
-              placeholder="Lastname"
+              placeholder="Apellido"
               autoComplete='family-name'
               className="md:text-lg text-md  w-4/5 mx-auto"
               value={userInfo.lastname}
@@ -198,7 +198,7 @@ export default function SignupForm() {
               <Input
                 type={passEye ? "password" : "text"}
                 name="password"
-                placeholder="Password"
+                placeholder="Contraseña"
                 autoComplete="new-password"
                 className="pr-10 md:text-lg text-md"
                 value={userInfo.password}
@@ -230,7 +230,7 @@ export default function SignupForm() {
             <Input
               type={passEye ? "password" : "text"}
               name="confirmPassword"
-              placeholder="Confirm password"
+              placeholder="Confirmar contraseña"
               autoComplete="new-password"
               className="pr-10 md:text-lg text-md"
               value={userInfo.confirmPassword}
@@ -249,7 +249,7 @@ export default function SignupForm() {
 
         <CardFooter className="flex justify-center mt-5">
           <Button type="submit" className="w-fit">
-            {loading ? <Spinner /> : "Create Account"}
+            {loading ? <Spinner /> : "Crear Cuenta"}
           </Button>
         </CardFooter>
       </Card>

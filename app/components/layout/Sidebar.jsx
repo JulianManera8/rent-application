@@ -12,6 +12,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(null)
+  const [lastname, setLastname] = useState(null)
   const [loadingUser, setLoadingUser] = useState(true)
   const [isMobileHidden, setIsMobileHidden] = useState(false)
   
@@ -22,6 +23,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
       const { data } = await supabase.auth.getUser()
       setLoadingUser(false)
       setName(data?.user.user_metadata.name)
+      setLastname(data?.user.user_metadata.lastname)
     }
 
     const timer = setTimeout(() => {
@@ -93,7 +95,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
             <>
               <img src="/logo.png" alt="Logo" className={`${responsive ? 'h-12 w-12' : 'h-16 w-16'} mb-2 transition-all`} />
               <div className={`mt-2 text-center transition-all duration-300 ease-in-out ${responsive ? 'w-0 opacity-0' : 'w-auto opacity-100'} overflow-hidden whitespace-nowrap`}>
-                <h2 className="text-md md:text-lg font-semibold">Welcome, {name}</h2>
+                <h2 className="text-md md:text-lg font-semibold">{name} {lastname}</h2>
               </div>
             </>
           )}

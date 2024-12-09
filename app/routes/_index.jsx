@@ -25,8 +25,8 @@ export default function Index() {
             className="md:w-32 w-24 shadow-xl border rounded-full mb-5 hover:shadow-2xl transition-all"
           />
           </NavLink>
-          <h1 className="text-3xl md:text-5xl font-bold">Welcome to RentApp</h1>
-          <p className="text-lg md:text-2xl">Login to your account, or create one.</p>
+          <h1 className="text-3xl md:text-5xl font-bold">RentApp</h1>
+          <p className="text-lg md:text-2xl">Gestión eficiente y sencilla de propiedades en alquiler.</p>
         </div>
       </section>
 
@@ -35,10 +35,10 @@ export default function Index() {
           <Tabs defaultValue="account" className="w-full shadow-2xl bg-transparent border border-gray-300 rounded-md">
             <TabsList className="grid grid-cols-2 w-full h-16 md:h-20 bg-[#003156]">
               <TabsTrigger value="account" className="h-[75%] text-lg md:text-xl w-[95%] mx-auto font-bold text-gray-300">
-                Login
+                Iniciar sesión
               </TabsTrigger>
               <TabsTrigger value="signip" className="h-[75%] text-lg md:text-xl w-[95%] mx-auto font-bold text-gray-300">
-                Create Account
+                Crear Cuenta
               </TabsTrigger>
             </TabsList>
             <TabsContent value="account">

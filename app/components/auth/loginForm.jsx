@@ -162,7 +162,7 @@ export default function LoginForm() {
           <div className="w-4/5 mx-auto relative">
             <Input
               type={passEye ? "password" : "text"}
-              placeholder="Password"
+              placeholder="Contraseña"
               name="password"
               autoComplete="new-password"
               className="pr-10 md:text-lg text-md"
@@ -185,7 +185,7 @@ export default function LoginForm() {
             onClick={(e) => handleLogin(e)}
             className="w-fit px-5 md:text-lg text-sm mt-3"
           >
-            {loading ? <Spinner/> : "Login"}
+            {loading ? <Spinner/> : "Iniciar Sesión"}
           </Button>
           {errors.auth && <Error errorMessage={errors.auth} />}
         </CardFooter>
