@@ -284,32 +284,22 @@ async function insertFotos(idDeptoCreado, listaFotos) {
 }
 
 export async function editDepto(idDepto, editedInfoDepto) {
+  console.log(editedInfoDepto)
+  const filteredDeptoData = Object.fromEntries(
+    Object.entries(editedInfoDepto).map(([key, value]) => {
+      if (typeof value === 'string' && value.trim() === '') {
+        return [key, null]; // Convertir cadenas vacías a null
+      }
+      return [key, value]; // Dejar el valor tal cual
+    })
+  );
+  console.log(filteredDeptoData)
+
+
   try {
     const { data, error } = await supabase
       .from('departamentos')
-      .update(
-        {
-          ubicacion_completa: editedInfoDepto.ubicacion_completa, 
-          descripcion: editedInfoDepto.descripcion, 
-          ocupado: editedInfoDepto.ocupado, 
-          propietario_name: editedInfoDepto.propietario_name, 
-          locador_name: editedInfoDepto.locador_name, 
-          inquilino_name: editedInfoDepto.inquilino_name, 
-          cobrador_name: editedInfoDepto.cobrador_name, 
-          facturador_name: editedInfoDepto.facturador_name, 
-          usufructuario_name: editedInfoDepto.usufructuario_name, 
-          metodo_cobro: editedInfoDepto.metodo_cobro, 
-          finalizacion_contrato: editedInfoDepto.finalizacion_contrato, 
-          inscripto_reli: editedInfoDepto.inscripto_reli, 
-          finalizacion_usufructo: editedInfoDepto.finalizacion_usufructo, 
-          monto_cobro: editedInfoDepto.monto_cobro, 
-          monto_cobro_inicio: editedInfoDepto.monto_cobro_inicio, 
-          fecha_actualizacion_cobro: editedInfoDepto.fecha_actualizacion_cobro, 
-          obs_datos: editedInfoDepto.obs_datos, 
-          inicio_contrato: editedInfoDepto.inicio_contrato,
-          inicio_usufructo: editedInfoDepto.inicio_usufructo,
-        },
-      )
+      .update([filteredDeptoData])
       .eq('id', idDepto)
       .select()
 

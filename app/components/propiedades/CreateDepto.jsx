@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Form, NavLink, useNavigate } from "@remix-run/react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { Checkbox } from "../ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { ChevronsUpDown, Plus, X, FileCheckIcon } from 'lucide-react';
 import { FormInput } from "../helpers/FormInput";
@@ -15,6 +14,7 @@ import { useUser } from '../../hooks/use-user';
 import { validateRequired, validateDate, validateNumber } from '../helpers/validation';
 import { Label } from "../ui/label";
 import { SuccessDialog } from "./SuccesDialog";
+import { Switch } from "../ui/switch";
 
 
 export default function CreateDepto() {
@@ -318,10 +318,10 @@ export default function CreateDepto() {
 
         <div className="min-w-56 flex items-center gap-5 my-auto">
           <Label htmlFor="ocupado" className="font-bold text-lg">Propiedad ocupada</Label>
-          <Checkbox
+          <Switch
             id="ocupado"
             name="ocupado"
-            className="h-6 w-6"
+            className="h-6 w-[44px] bg-zinc-400"
             checked={newDepto.ocupado}
             onCheckedChange={(checked) => {
             setNewDepto((prev) => ({
@@ -343,6 +343,9 @@ export default function CreateDepto() {
             }
             }}
           />
+          <Label>
+            {newDepto.ocupado ? 'Si' : 'No'}
+          </Label>
         </div>
 
         <FormInput
@@ -405,7 +408,7 @@ export default function CreateDepto() {
           <Textarea
             id="descripcion"
             name="descripcion"
-            className="mt-2 text-md p-2 border-zinc-500"
+            className="mt-2 text-md p-2 border-zinc-500 bg-white placeholder:text-zinc-300 font-light"
             rows={1}
             placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta."
             value={newDepto.descripcion}
@@ -493,13 +496,16 @@ export default function CreateDepto() {
 
         <div className="min-w-56 flex items-center gap-5 mt-8">
           <Label htmlFor="inscripto_reli" className="font-bold text-lg">Inscripto en RELI</Label>
-          <Checkbox
+          <Switch
             id="inscripto_reli"
             name="inscripto_reli"
-            className="h-6 w-6"
+            className="h-6 w-[44px] bg-zinc-400"
             checked={newDepto.inscripto_reli}
             onCheckedChange={(checked) => setNewDepto((prev) => ({ ...prev, inscripto_reli: checked }))}
           />
+          <Label>
+            {newDepto.inscripto_reli ? 'Si' : 'No'}
+          </Label>
         </div>
 
         {/* File upload section */}
@@ -613,7 +619,7 @@ export default function CreateDepto() {
           <Textarea
             id="obs_datos"
             name="obs_datos"
-            className="mt-2 text-md p-2 border-zinc-500"
+            className="mt-2 text-md p-2 border-zinc-500 bg-white placeholder:text-zinc-300 font-light"
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
             rows={4}
             value={newDepto.obs_datos}

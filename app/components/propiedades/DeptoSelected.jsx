@@ -172,7 +172,6 @@ export default function DeptoSelected() {
   const saveEdit = async (idDepto) => {
     const response = await editDepto(idDepto, editedInfoDepto);
     if (response) {
-      // setInfoDepto(prev => ({ ...prev, ...editedInfoDepto }));
       setIsLoading(true);
       await fetchDepto(idDepto)
       if (deptoData) {
@@ -208,39 +207,68 @@ export default function DeptoSelected() {
 
   const renderField = (item) => {
    if (isEditing) {
-       if (item.label === "Inscripto en RELI" || item.label === "Estado") {
-           return (
-               <div className="flex items-center space-x-2">
-                   <Switch
-                       id={item.label}
-                       checked={editedInfoDepto[item.key] || false}
-                       onCheckedChange={(checked) => handleInputChange(item.key, checked)}
-                   />
-                   <Label htmlFor={item.label}>
-                       {item.label === "Estado"
-                           ? (editedInfoDepto[item.key] ? "Ocupado" : "Desocupado")
-                           : "Inscripto en RELI"}
-                   </Label>
-               </div>
-           );
-       } else if (item.label === "Notas / Observaciones") {
-           return (
-               <Textarea
-                   value={editedInfoDepto[item.key] || "―"}
-                   onChange={(e) => handleInputChange(item.key, e.target.value)}
-                   className="w-full"
-               />
-           );
-       } else {
-           return (
-               <Input
-                   type={item.type || "text"}
-                   value={editedInfoDepto[item.key] || "―"}
-                   onChange={(e) => handleInputChange(item.key, e.target.value)}
-                   className="w-full"
-               />
-           );
-       }
+    if (item.label === "Inscripto en RELI" || item.label === "Estado") {
+      return (
+        <div className="flex items-center space-x-2">
+          <Switch
+            id={item.label}
+            checked={editedInfoDepto[item.key] || false}
+            onCheckedChange={(checked) => {
+              // Actualiza el estado del Switch
+              setEditedInfoDepto((prevState) => ({
+                ...prevState,
+                [item.key]: checked,
+              }));
+    
+              // Si cambia a "Desocupado", limpia los datos relacionados
+              if (!checked && item.label === "Estado") {
+                setEditedInfoDepto((prevState) => ({
+                  ...prevState,
+                  inquilino_name: '',
+                  inicio_contrato: '',
+                  finalizacion_contrato: '',
+                  monto_cobro: 0,
+                }));
+              }
+            }}
+          />
+          <Label htmlFor={item.label}>
+            {item.label === "Estado"
+              ? (editedInfoDepto[item.key] ? "Ocupado" : "Desocupado")
+              : "Inscripto en RELI"}
+          </Label>
+        </div>
+      );
+    } else if (item.label === "Notas / Observaciones") {
+        return (
+            <Textarea
+                value={editedInfoDepto[item.key] || "―"}
+                onChange={(e) => handleInputChange(item.key, e.target.value)}
+                className="w-full"
+            />
+        );
+    } else if (item.label === "Usufructuario") {
+        return (
+          <Input
+            type={item.type || "text"}
+            value={editedInfoDepto[item.key] ? editedInfoDepto[item.key] : ''}
+            onChange={ (e) => { 
+              handleInputChange(item.key, e.target.value),                  
+              setEditedInfoDepto((prev)=> ({...prev, inicio_usufructo: '', finalizacion_usufructo: '',}))
+            }}
+            className="w-full"
+          />
+        )
+    } else {
+        return (
+            <Input
+                type={item.type || "text"}
+                value={editedInfoDepto[item.key] ? editedInfoDepto[item.key] : ''}
+                onChange={(e) => handleInputChange(item.key, e.target.value)}
+                className="w-full"
+            />
+        );
+    }
    } else {
        if (item.label === "Inscripto en RELI" || item.label === "Estado") {
            return (
