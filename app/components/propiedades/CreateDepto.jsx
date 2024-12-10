@@ -302,9 +302,9 @@ export default function CreateDepto() {
   return (
     <div className="container mx-auto w-full px-4 mt-10">
       <Form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 gap-y-8 items-start justify-items-stretch">
-        <HandleGrupo onSelectChange={handleSelectChange} />
-
         <SuccessDialog showSuccessDialog={showSuccessDialog}/>
+
+        <HandleGrupo onSelectChange={handleSelectChange} />
 
         <FormInput
           label="Ubicación"
@@ -316,6 +316,7 @@ export default function CreateDepto() {
           disabled={false}
         />
 
+        {/* OCUPADO */}
         <div className="min-w-56 flex items-center gap-5 my-auto">
           <Label htmlFor="ocupado" className="font-bold text-lg">Propiedad ocupada</Label>
           <Switch
@@ -355,14 +356,6 @@ export default function CreateDepto() {
           value={newDepto.propietario_name}
           onChange={handleInputChange}
           error={errors.propietario_name}
-        />
-
-        <FormInput
-          label="Usufructuario (opcional)"
-          name="usufructuario_name"
-          placeholder="Ej: Lionel Messi"
-          value={newDepto.usufructuario_name}
-          onChange={handleInputChange}
         />
 
         <FormInput
@@ -409,12 +402,19 @@ export default function CreateDepto() {
             id="descripcion"
             name="descripcion"
             className="mt-2 text-md p-2 border-zinc-500 bg-white placeholder:text-zinc-300 font-light"
-            rows={1}
             placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta."
             value={newDepto.descripcion}
             onChange={handleInputChange}
           />
         </div>
+
+        <FormInput
+          label="Usufructuario (opcional)"
+          name="usufructuario_name"
+          placeholder="Ej: Lionel Messi"
+          value={newDepto.usufructuario_name}
+          onChange={handleInputChange}
+        />
 
         <FormInput
           label="Inicio del Usufructo"
@@ -453,6 +453,20 @@ export default function CreateDepto() {
           error={errors.finalizacion_contrato}
           disabled={!newDepto.ocupado}
         />
+
+        <div className="min-w-56 flex items-center gap-5 mt-8">
+          <Label htmlFor="inscripto_reli" className="font-bold text-lg">Inscripto en RELI</Label>
+          <Switch
+            id="inscripto_reli"
+            name="inscripto_reli"
+            className="h-6 w-[44px] bg-zinc-400"
+            checked={newDepto.inscripto_reli}
+            onCheckedChange={(checked) => setNewDepto((prev) => ({ ...prev, inscripto_reli: checked }))}
+          />
+          <Label>
+            {newDepto.inscripto_reli ? 'Si' : 'No'}
+          </Label>
+        </div>
 
         <FormInput
           label="Método de cobro (opcional)"
@@ -493,20 +507,6 @@ export default function CreateDepto() {
           onChange={handleInputChange}
           error={errors.fecha_actualizacion_cobro}
         />
-
-        <div className="min-w-56 flex items-center gap-5 mt-8">
-          <Label htmlFor="inscripto_reli" className="font-bold text-lg">Inscripto en RELI</Label>
-          <Switch
-            id="inscripto_reli"
-            name="inscripto_reli"
-            className="h-6 w-[44px] bg-zinc-400"
-            checked={newDepto.inscripto_reli}
-            onCheckedChange={(checked) => setNewDepto((prev) => ({ ...prev, inscripto_reli: checked }))}
-          />
-          <Label>
-            {newDepto.inscripto_reli ? 'Si' : 'No'}
-          </Label>
-        </div>
 
         {/* File upload section */}
         <div className="min-w-56">
@@ -621,7 +621,6 @@ export default function CreateDepto() {
             name="obs_datos"
             className="mt-2 text-md p-2 border-zinc-500 bg-white placeholder:text-zinc-300 font-light"
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
-            rows={4}
             value={newDepto.obs_datos}
             onChange={handleInputChange}
           />
