@@ -84,6 +84,12 @@ export default function CreateDepto() {
           updatedDepto.monto_cobro = '';
         }
       }
+      if(name === 'usufructuario_name') {
+        if (e.target.value.trim() === '') {
+          updatedDepto.inicio_usufructo = '';
+          updatedDepto.finalizacion_usufructo = '';
+        }
+      }
       return updatedDepto;
     });
     validateField(name, value);
@@ -318,23 +324,23 @@ export default function CreateDepto() {
             className="h-6 w-6"
             checked={newDepto.ocupado}
             onCheckedChange={(checked) => {
-    setNewDepto((prev) => ({
-      ...prev,
-      ocupado: checked,
-      inquilino_name: checked ? prev.inquilino_name : '',
-      inicio_contrato: checked ? prev.inicio_contrato : '',
-      finalizacion_contrato: checked ? prev.finalizacion_contrato : '',
-      monto_cobro: checked ? prev.monto_cobro : ''
-    }));
-    if (!checked) {
-      setErrors((prev) => ({
-        ...prev,
-        inquilino_name: null,
-        inicio_contrato: null,
-        finalizacion_contrato: null,
-        monto_cobro: null
-      }));
-    }
+            setNewDepto((prev) => ({
+              ...prev,
+              ocupado: checked,
+              inquilino_name: checked ? prev.inquilino_name : '',
+              inicio_contrato: checked ? prev.inicio_contrato : '',
+              finalizacion_contrato: checked ? prev.finalizacion_contrato : '',
+              monto_cobro: checked ? prev.monto_cobro : '',
+            }));
+            if (!checked) {
+              setErrors((prev) => ({
+                ...prev,
+                inquilino_name: null,
+                inicio_contrato: null,
+                finalizacion_contrato: null,
+                monto_cobro: null
+              }));
+            }
             }}
           />
         </div>
@@ -354,7 +360,6 @@ export default function CreateDepto() {
           placeholder="Ej: Lionel Messi"
           value={newDepto.usufructuario_name}
           onChange={handleInputChange}
-          error={errors.usufructuario_name}
         />
 
         <FormInput
@@ -447,12 +452,11 @@ export default function CreateDepto() {
         />
 
         <FormInput
-          label="Método de cobro"
+          label="Método de cobro (opcional)"
           name="metodo_cobro"
           placeholder="Ej: Efectivo"
           value={newDepto.metodo_cobro}
           onChange={handleInputChange}
-          error={errors.metodo_cobro}
         />
 
         <FormInput
