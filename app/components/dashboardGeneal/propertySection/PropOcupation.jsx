@@ -46,7 +46,7 @@ export default function PropOcupation({ userId }) {
 
         setTotalOcupation( (ocupados.length ) )
         setTotalDeptos(ocupadosArr.length)
-        setTotalOcupationRate( ((ocupados.length * 100) / ocupadosArr.length ) )
+        setTotalOcupationRate( ((ocupados.length * 100) / ocupadosArr.length ).toFixed(0) )
     }
 
 

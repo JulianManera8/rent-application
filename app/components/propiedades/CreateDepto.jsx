@@ -37,9 +37,9 @@ export default function CreateDepto() {
     facturador_name: '',
     usufructuario_name: '',
     metodo_cobro: '',
-    vencimiento_contrato: '',
+    finalizacion_contrato: '',
     inscripto_reli: false,
-    vencimiento_usufructo: '',
+    finalizacion_usufructo: '',
     monto_cobro: '',
     monto_cobro_inicio: '',
     fecha_actualizacion_cobro: '',
@@ -48,7 +48,8 @@ export default function CreateDepto() {
     files: [],
     fotos: [],
     grupo_id: '',
-    shared_with: [],
+    inicio_contrato: '',
+    inicio_usufructo: '',
   });
 
   const navigate = useNavigate();
@@ -72,7 +73,19 @@ export default function CreateDepto() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewDepto((prev) => ({ ...prev, [name]: value }));
+    setNewDepto((prev) => {
+      const updatedDepto = { ...prev, [name]: value };
+      if (name === 'ocupado') {
+        const isOcupado = value === 'true';
+        if (!isOcupado) {
+          updatedDepto.inquilino_name = '';
+          updatedDepto.inicio_contrato = '';
+          updatedDepto.finalizacion_contrato = '';
+          updatedDepto.monto_cobro = '';
+        }
+      }
+      return updatedDepto;
+    });
     validateField(name, value);
   };
 
@@ -84,23 +97,40 @@ export default function CreateDepto() {
       case 'locador_name':
       case 'cobrador_name':
       case 'facturador_name':
-      case 'usufructuario_name':
       case 'metodo_cobro':
+      case 'monto_cobro_inicio':
       case 'grupo_id':
         error = validateRequired(value);
         break;
-      case 'vencimiento_contrato':
-      case 'vencimiento_usufructo':
       case 'fecha_actualizacion_cobro':
         error = validateDate(value);
         break;
       case 'monto_cobro':
-      case 'monto_cobro_inicio':
         error = validateNumber(value);
         break;
       case 'inquilino_name':
         if (newDepto.ocupado) {
           error = validateRequired(value);
+        }
+        break;
+      case 'inicio_contrato':
+        if (newDepto.ocupado) {
+          error = validateDate(value);
+        }
+        break;
+      case 'finalizacion_contrato':
+        if (newDepto.ocupado) {
+          error = validateDate(value);
+        }
+        break;
+      case 'inicio_usufructo':
+        if (newDepto.usufructuario_name) {
+          error = validateDate(value);
+        }
+        break;
+      case 'finalizacion_usufructo':
+        if (newDepto.usufructuario_name) {
+          error = validateDate(value);
         }
         break;
       default:
@@ -145,38 +175,63 @@ export default function CreateDepto() {
 
     if (userLoged_id !== null) {
       try {
-        await dbCreateDepto(newDepto);
-        // Reset form after successful submission
-        setNewDepto({
-          ubicacion_completa: '',
-          descripcion: '',
-          ocupado: false,
-          propietario_name: '',
-          locador_name: '',
-          inquilino_name: '',
-          cobrador_name: '',
-          facturador_name: '',
-          usufructuario_name: '',
-          metodo_cobro: '',
-          vencimiento_contrato: '',
-          inscripto_reli: false,
-          vencimiento_usufructo: '',
-          monto_cobro: '',
-          monto_cobro_inicio: '',
-          fecha_actualizacion_cobro: '',
-          user_id: '',
-          obs_datos: '',
-          files: [],
-          fotos: [],
-          grupo_id: '',
-        });
-        setFiles([]);
-        setFotos([]);
+        const deptoWithoutEmptyDates = removeEmptyDates(newDepto);
+        const deptoToSubmit = {
+          ...deptoWithoutEmptyDates,
+          files,
+          fotos,
+          user_id: userLoged_id
+        };
+        const data = await dbCreateDepto({ newDepto: deptoToSubmit });
+        if (data) {
+          setShowSuccessDialog(true);
+          // Reset form after successful submission
+          setNewDepto({
+            ubicacion_completa: '',
+            descripcion: '',
+            ocupado: false,
+            propietario_name: '',
+            locador_name: '',
+            inquilino_name: '',
+            cobrador_name: '',
+            facturador_name: '',
+            usufructuario_name: '',
+            metodo_cobro: '',
+            finalizacion_contrato: '',
+            inscripto_reli: false,
+            finalizacion_usufructo: '',
+            monto_cobro: '',
+            monto_cobro_inicio: '',
+            fecha_actualizacion_cobro: '',
+            user_id: '',
+            obs_datos: '',
+            grupo_id: '',
+            inicio_contrato: '',
+            inicio_usufructo: '',
+          });
+          setFiles([]);
+          setFotos([]);
+        }
       } catch (error) {
         console.error('Error al cargar el depto o los docs', error);
+        // Handle error (e.g., show error message to user)
       }
     }
   };
+
+  function removeEmptyDates(deptoInfo) {
+    const dateFields = ['finalizacion_contrato', 'finalizacion_usufructo', 'fecha_actualizacion_cobro', 'inicio_contrato', 'inicio_usufructo'];
+    
+    const filteredDepto = { ...deptoInfo };
+    
+    dateFields.forEach(field => {
+      if (filteredDepto[field] === '') {
+        delete filteredDepto[field];
+      }
+    });
+  
+    return filteredDepto;
+  }
 
   useEffect(() => {
     if (deptoCreated !== null) {
@@ -213,19 +268,25 @@ export default function CreateDepto() {
       'locador_name',
       'cobrador_name',
       'facturador_name',
-      'usufructuario_name',
-      'metodo_cobro',
-      'vencimiento_contrato',
-      'vencimiento_usufructo',
-      'monto_cobro',
       'monto_cobro_inicio',
-      'fecha_actualizacion_cobro',
     ];
 
     const isValid = requiredFields.every(field => newDepto[field] !== '');
     
     // Check inquilino_name only if the property is occupied
     if (newDepto.ocupado && newDepto.inquilino_name === '') {
+      return false;
+    }
+
+    if (newDepto.ocupado && newDepto.inicio_contrato === '' && newDepto.finalizacion_contrato === '') {
+      return false;
+    }
+
+    if (newDepto.ocupado && newDepto.monto_cobro === '') {
+      return false;
+    }
+
+    if (newDepto.usufructuario_name && newDepto.inicio_usufructo === '' && newDepto.finalizacion_usufructo === '') {
       return false;
     }
 
@@ -238,6 +299,7 @@ export default function CreateDepto() {
         <HandleGrupo onSelectChange={handleSelectChange} />
 
         <SuccessDialog showSuccessDialog={showSuccessDialog}/>
+
         <FormInput
           label="Ubicación"
           name="ubicacion_completa"
@@ -245,7 +307,37 @@ export default function CreateDepto() {
           value={newDepto.ubicacion_completa}
           onChange={handleInputChange}
           error={errors.ubicacion_completa}
+          disabled={false}
         />
+
+        <div className="min-w-56 flex items-center gap-5 my-auto">
+          <Label htmlFor="ocupado" className="font-bold text-lg">Propiedad ocupada</Label>
+          <Checkbox
+            id="ocupado"
+            name="ocupado"
+            className="h-6 w-6"
+            checked={newDepto.ocupado}
+            onCheckedChange={(checked) => {
+    setNewDepto((prev) => ({
+      ...prev,
+      ocupado: checked,
+      inquilino_name: checked ? prev.inquilino_name : '',
+      inicio_contrato: checked ? prev.inicio_contrato : '',
+      finalizacion_contrato: checked ? prev.finalizacion_contrato : '',
+      monto_cobro: checked ? prev.monto_cobro : ''
+    }));
+    if (!checked) {
+      setErrors((prev) => ({
+        ...prev,
+        inquilino_name: null,
+        inicio_contrato: null,
+        finalizacion_contrato: null,
+        monto_cobro: null
+      }));
+    }
+            }}
+          />
+        </div>
 
         <FormInput
           label="Propietario"
@@ -257,7 +349,7 @@ export default function CreateDepto() {
         />
 
         <FormInput
-          label="Usufructuario"
+          label="Usufructuario (opcional)"
           name="usufructuario_name"
           placeholder="Ej: Lionel Messi"
           value={newDepto.usufructuario_name}
@@ -282,6 +374,7 @@ export default function CreateDepto() {
           onChange={handleInputChange}
           error={errors.inquilino_name}
           optional={!newDepto.ocupado}
+          disabled={!newDepto.ocupado}
         />
 
         <FormInput
@@ -307,7 +400,7 @@ export default function CreateDepto() {
           <Textarea
             id="descripcion"
             name="descripcion"
-            className="mt-2 text-md p-2"
+            className="mt-2 text-md p-2 border-zinc-500"
             rows={1}
             placeholder="Ej: 5 dormitorios, 3 baños, 350mt², edificio con pileta."
             value={newDepto.descripcion}
@@ -316,25 +409,45 @@ export default function CreateDepto() {
         </div>
 
         <FormInput
-          label="Vencimiento del Usufructo"
-          name="vencimiento_usufructo"
+          label="Inicio del Usufructo"
+          name="inicio_usufructo"
           type="date"
-          value={newDepto.vencimiento_usufructo}
+          value={newDepto.inicio_usufructo}
           onChange={handleInputChange}
-          error={errors.vencimiento_usufructo}
+          disabled={!newDepto.usufructuario_name}
         />
 
         <FormInput
-          label="Vencimiento del contrato"
-          name="vencimiento_contrato"
+          label="Finalización del Usufructo"
+          name="finalizacion_usufructo"
           type="date"
-          value={newDepto.vencimiento_contrato}
+          value={newDepto.finalizacion_usufructo}
           onChange={handleInputChange}
-          error={errors.vencimiento_contrato}
+          disabled={!newDepto.usufructuario_name}
         />
 
         <FormInput
-          label="Metodo de cobro"
+          label="Inicio del contrato"
+          name="inicio_contrato"
+          type="date"
+          value={newDepto.inicio_contrato}
+          onChange={handleInputChange}
+          error={errors.inicio_contrato}
+          disabled={!newDepto.ocupado}
+        />
+
+        <FormInput
+          label="Finalización del contrato"
+          name="finalizacion_contrato"
+          type="date"
+          value={newDepto.finalizacion_contrato}
+          onChange={handleInputChange}
+          error={errors.finalizacion_contrato}
+          disabled={!newDepto.ocupado}
+        />
+
+        <FormInput
+          label="Método de cobro"
           name="metodo_cobro"
           placeholder="Ej: Efectivo"
           value={newDepto.metodo_cobro}
@@ -359,13 +472,14 @@ export default function CreateDepto() {
           type="number"
           placeholder="Ej: 360000"
           value={newDepto.monto_cobro}
+          disabled={!newDepto.ocupado}
           onChange={handleInputChange}
           error={errors.monto_cobro}
           hint="Solo números, como el ej."
         />
 
         <FormInput
-          label="Ultima actualización del precio"
+          label="Ultima actualización del precio (opcional)"
           name="fecha_actualizacion_cobro"
           type="date"
           value={newDepto.fecha_actualizacion_cobro}
@@ -381,23 +495,6 @@ export default function CreateDepto() {
             className="h-6 w-6"
             checked={newDepto.inscripto_reli}
             onCheckedChange={(checked) => setNewDepto((prev) => ({ ...prev, inscripto_reli: checked }))}
-          />
-        </div>
-
-        <div className="min-w-56 flex items-center gap-5 mt-8">
-          <Label htmlFor="ocupado" className="font-bold text-lg">Propiedad ocupada</Label>
-          <Checkbox
-            id="ocupado"
-            name="ocupado"
-            className="h-6 w-6"
-            checked={newDepto.ocupado}
-            onCheckedChange={(checked) => {
-              setNewDepto((prev) => ({ ...prev, ocupado: checked }));
-              if (!checked) {
-                setNewDepto((prev) => ({ ...prev, inquilino_name: '' }));
-                setErrors((prev) => ({ ...prev, inquilino_name: null }));
-              }
-            }}
           />
         </div>
 
@@ -508,11 +605,11 @@ export default function CreateDepto() {
         </div>
 
         <div className="min-w-56">
-          <Label htmlFor="obs_datos" className="font-bold">Observaciónes / datos extras (opcional)</Label>
+          <Label htmlFor="obs_datos" className="font-bold">Observaciones / datos extras (opcional)</Label>
           <Textarea
             id="obs_datos"
             name="obs_datos"
-            className="mt-2 text-md p-2"
+            className="mt-2 text-md p-2 border-zinc-500"
             placeholder="Ej: Admite mascotas, fue reaconcidionado recientemente, cocina nueva a estrenar."
             rows={4}
             value={newDepto.obs_datos}

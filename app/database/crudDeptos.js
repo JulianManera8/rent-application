@@ -77,31 +77,23 @@ export async function removeDepto(deptoId) {
 
 //FUNCION PARA CREAR DEPTO, INCLUYENDO UPLOAD DOCS Y FOTOS
 export async function createDepto({ newDepto }) {
+
+  const filteredDeptoData = Object.fromEntries(
+    Object.entries(newDepto).filter(([key, value]) => {
+      if (typeof value === 'string' && value.trim() === '') {
+        return false;
+      }
+      return true;
+    })
+  );
+
+  const { files, fotos, ...deptoData } = filteredDeptoData;
+  console.log(deptoData);
+
+  // Insert the main depto data
   const { data, error } = await supabase
     .from("departamentos")
-    .insert([
-      {
-        ubicacion_completa: newDepto.ubicacion_completa, 
-        descripcion: newDepto.descripcion, 
-        ocupado: newDepto.ocupado, 
-        propietario_name: newDepto.propietario_name, 
-        locador_name: newDepto.locador_name, 
-        inquilino_name: newDepto.inquilino_name, 
-        cobrador_name: newDepto.cobrador_name, 
-        facturador_name: newDepto.facturador_name, 
-        usufructuario_name: newDepto.usufructuario_name, 
-        metodo_cobro: newDepto.metodo_cobro, 
-        vencimiento_contrato: newDepto.vencimiento_contrato, 
-        inscripto_reli: newDepto.inscripto_reli, 
-        vencimiento_usufructo: newDepto.vencimiento_usufructo, 
-        monto_cobro: newDepto.monto_cobro, 
-        monto_cobro_inicio: newDepto.monto_cobro_inicio, 
-        fecha_actualizacion_cobro: newDepto.fecha_actualizacion_cobro, 
-        user_id: newDepto.user_id,
-        obs_datos: newDepto.obs_datos, 
-        grupo_id: newDepto.grupo_id,
-      },
-    ])
+    .insert([deptoData])
     .select();
 
   if (error) {
@@ -307,13 +299,15 @@ export async function editDepto(idDepto, editedInfoDepto) {
           facturador_name: editedInfoDepto.facturador_name, 
           usufructuario_name: editedInfoDepto.usufructuario_name, 
           metodo_cobro: editedInfoDepto.metodo_cobro, 
-          vencimiento_contrato: editedInfoDepto.vencimiento_contrato, 
+          finalizacion_contrato: editedInfoDepto.finalizacion_contrato, 
           inscripto_reli: editedInfoDepto.inscripto_reli, 
-          vencimiento_usufructo: editedInfoDepto.vencimiento_usufructo, 
+          finalizacion_usufructo: editedInfoDepto.finalizacion_usufructo, 
           monto_cobro: editedInfoDepto.monto_cobro, 
           monto_cobro_inicio: editedInfoDepto.monto_cobro_inicio, 
           fecha_actualizacion_cobro: editedInfoDepto.fecha_actualizacion_cobro, 
           obs_datos: editedInfoDepto.obs_datos, 
+          inicio_contrato: editedInfoDepto.inicio_contrato,
+          inicio_usufructo: editedInfoDepto.inicio_usufructo,
         },
       )
       .eq('id', idDepto)

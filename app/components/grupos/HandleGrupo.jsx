@@ -81,9 +81,9 @@ export default function HandleGrupo({ onSelectChange }) {
       </Label>
       <Select
         onValueChange={(value) => setGrupoSelectedId(value)}
-        className="w-full"
+        className="w-full border-zinc-500"
       >
-        <SelectTrigger className="w-full p-2">
+        <SelectTrigger className="w-full p-2 border-zinc-500">
           <SelectValue placeholder="Elegir grupo" />
         </SelectTrigger>
 
