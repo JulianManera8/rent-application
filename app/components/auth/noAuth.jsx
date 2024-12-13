@@ -14,9 +14,12 @@ export default function Component() {
           </p>
         </div>
         <div className="mt-8 space-y-6">
-          <div className="text-sm text-center">
+          <div className="text-sm text-center flex flex-col justify-between">
             <p className="font-medium text-indigo-600">
               Por favor inicia sesión, o confirma el email para poder disfrutar de este sistema y todas sus funcionalidades.
+            </p>
+            <p className="font-medium text-indigo-600 mt-6">
+              Recuerda revisar el &quot;spam&quot; o &quot;correo no deseado&quot; si no encuentras el correo que te enviamos en la bandeja principal.
             </p>
           </div>
           <div className="flex justify-center">
