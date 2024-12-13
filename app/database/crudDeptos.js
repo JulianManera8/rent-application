@@ -88,7 +88,6 @@ export async function createDepto({ newDepto }) {
   );
 
   const { files, fotos, ...deptoData } = filteredDeptoData;
-  console.log(deptoData);
 
   // Insert the main depto data
   const { data, error } = await supabase
@@ -284,7 +283,6 @@ async function insertFotos(idDeptoCreado, listaFotos) {
 }
 
 export async function editDepto(idDepto, editedInfoDepto) {
-  console.log(editedInfoDepto)
   const filteredDeptoData = Object.fromEntries(
     Object.entries(editedInfoDepto).map(([key, value]) => {
       if (typeof value === 'string' && value.trim() === '') {
@@ -293,7 +291,7 @@ export async function editDepto(idDepto, editedInfoDepto) {
       return [key, value]; // Dejar el valor tal cual
     })
   );
-  console.log(filteredDeptoData)
+
 
 
   try {

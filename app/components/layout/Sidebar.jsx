@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { Skeleton } from "../ui/skeleton"
 import supabase from "../../lib/supabase"
 import Spinner from '../helpers/loaderIcon'
+import DisplayDate from "../helpers/DisplayDate"
 
 export default function Sidebar({ responsive, setResponsive, onMobileHiddenChange }) {
   const navigate = useNavigate()
@@ -123,6 +124,9 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
         </nav>
         
         <div className="mt-auto space-y-4">
+          <DisplayDate responsive={responsive} />
+          
+
           <AlertDialog>
             <AlertDialogTrigger
               className="w-full h-12 text-base border-2 border-red-600 rounded-lg bg-[#003156] hover:bg-[#ce2424cc] transition-all duration-200 ease-in-out flex items-center justify-center"

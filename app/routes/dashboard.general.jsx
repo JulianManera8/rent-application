@@ -1,4 +1,5 @@
 import SectionBalances from '../components/dashboardGeneal/balanceSection/sectionBalances'
+import SectionGeneral from '../components/dashboardGeneal/generalSection/sectionGeneral'
 import SectionGrupos from '../components/dashboardGeneal/groupSection/sectionGrupos'
 import SectionPropiedades from '../components/dashboardGeneal/propertySection/sectionPropiedades'
 import QuickAccess from '../components/dashboardGeneal/QuickAccess'
@@ -21,6 +22,9 @@ export default function DashboardIndexPage() {
             <Separator />
 
             <main className='space-y-16 mr-0 mb-20 mt-10'>
+                <section>
+                    <SectionGeneral />
+                </section>
                 <section>
                     <SectionGrupos />
                 </section>
