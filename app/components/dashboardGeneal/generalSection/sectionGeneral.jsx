@@ -5,10 +5,10 @@ export default function SectionGrupos() {
     const userLoged_id = useUser()
 
     return (
-        <div>
+        <div className='w-full'>
             <h1 className="text-3xl font-medium text-[#0c426bd3] mb-3"> General </h1>
 
-            <div className="flex gap-10 flex-wrap">
+            <div className="flex gap-10 flex-wrap w-full">
                 
                 <EndContract userId={userLoged_id}/>
 

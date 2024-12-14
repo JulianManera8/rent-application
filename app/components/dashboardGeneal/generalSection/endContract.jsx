@@ -1,133 +1,137 @@
 /* eslint-disable react/prop-types */
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card"
-import { CalendarClockIcon } from 'lucide-react'
-import { getDeptos } from "../propertySection/getPropertyData"
 import { useEffect, useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card"
+import { Badge } from "../../ui/badge"
+import { Button } from "../../ui/button"
 import { Skeleton } from "../../ui/skeleton"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-import { compareAsc, format } from 'date-fns';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table"
+import { CalendarClock, ArrowRight, CheckSquare } from 'lucide-react'
+import { compareAsc, format, differenceInDays } from 'date-fns'
 import { es } from "date-fns/locale"
+import { getDeptos } from "../propertySection/getPropertyData"
+import { getGroups } from "../groupSection/getGroupData"
+import { useNavigate } from "@remix-run/react"
 
 
-
-export default function EndContract({userId}) {
-    const [deptosInfo, setDeptosInfo] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [showSkeleton, setShowSkeleton] = useState(true)
-
-    useEffect(() => {
-        async function getData() {
-            if (userId) {
-                setLoading(true)
-                const data = await getDeptos(userId);
-                if (data) {
-                    setDeptosInfo( orderProperties(data) )
-                }
-                setLoading(false)
-            }
-        }
-        getData();
-    }, [userId])
+export default function EndContract({ userId }) {
+    const [deptosInfo, setDeptosInfo] = useState([]);
+    const [gruposInfo, setGruposInfo] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate()
 
     useEffect(() => {
-        if (!loading) {
-            setTimeout(() => {
-                setShowSkeleton(false)
-            }, 2000);
+      async function getData() {
+        if (userId) {
+          setLoading(true);
+          const dataDeptos = await getDeptos(userId);
+          const dataGrupos = await getGroups(userId);
+          if (dataDeptos && dataGrupos) {
+            setDeptosInfo(orderProperties(dataDeptos));
+            setGruposInfo(dataGrupos)
+          }
+          setLoading(false);
         }
-    }, [loading])
-
-    function orderProperties(data) {
-        // Filtrar departamentos ocupados
-        const deptosOcupados = data.filter(depto => depto.ocupado);
-    
-        // Obtener propiedades relevantes con las fechas como objetos Date
-        const propAndDates = deptosOcupados.map(depto => ({
-            idDepto: depto.id,
-            ubicacion: depto.ubicacion_completa,
-            endContract: new Date(depto.finalizacion_contrato), // Convertir directamente a Date
-        }));
-    
-        // Ordenar de la más próxima a la más lejana usando compareAsc
-        const propiedadesOrdenadas = propAndDates.sort((a, b) =>
-            compareAsc(a.endContract, b.endContract)
-        );
-    
-        // Formatear las fechas para mostrar de forma legible
-        const resultado = propiedadesOrdenadas.map(depto => ({
-            idDepto: depto.idDepto,
-            ubicacion: depto.ubicacion,
-            endContract: format(depto.endContract, 'dd/MM/yyyy', {locale: es}),
-            status: 
-        }));
-    
-        console.log(resultado);
-        return resultado; // Retornar el array ordenado
+      }
+      getData();
+    }, [userId]);
+  
+    function orderProperties(deptos) {
+      const deptosOcupados = deptos
+        .filter(depto => depto.ocupado)
+        .filter(depto => {
+          const finContratoDif = differenceInDays(new Date(depto.finalizacion_contrato), new Date());
+          return finContratoDif < 93;
+        });
+  
+      const propAndDates = deptosOcupados.map(depto => ({
+        idDepto: depto.id,
+        ubicacion: depto.ubicacion_completa,
+        endContract: new Date(depto.finalizacion_contrato),
+        grupo_id: depto.grupo_id
+      }));
+  
+      const propiedadesOrdenadas = propAndDates.sort((a, b) =>
+        compareAsc(a.endContract, b.endContract)
+      );
+  
+      return propiedadesOrdenadas.map(depto => {
+        console.log(depto)
+        const daysRemaining = differenceInDays(depto.endContract, new Date());
+        return {
+          id: depto.idDepto,
+          ubicacion: depto.ubicacion,
+          endContract: format(depto.endContract, 'dd/MM/yyyy', { locale: es }),
+          status: daysRemaining <= 0 ? 'VENCIDO' : daysRemaining,
+          grupo_info: gruposInfo?.filter(grupo=> grupo?.id === depto.grupo_id)
+        };
+      });
     }
 
+    function getStatusColor(status) {
+      if (status === 'VENCIDO') return 'text-red-600 border-none text-md';
+      if (status < 30) return 'bg-red-100 text-red-800 border-red-300';
+      if (status < 60) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      return 'bg-green-100 text-green-800 border-green-300';
+    }
+    console.log(deptosInfo)
 
-    return (
-        <div>
-            <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] min-h-[100px] h-full flex flex-col justify-between pb-2">
-                <CardHeader className="flex flex-row items-center justify-start w-full space-y-0 pt-2 pb-0">
-                    <CardTitle className="text-lg font-medium text-left w-full">
-                        Proximas finalizaciones de contrato
-                    </CardTitle>
-                    <CalendarClockIcon className="h-6 w-6 text-muted-foreground" />
-                </CardHeader>
-                <CardContent className="flex flex-col justify-between">
-                    {loading || showSkeleton ? (
-                        <>
-                            <span className="text-lg text-zinc-200 font-normal mb-2 -mt-3"> <Skeleton className="w-28 h-4 bg-zinc-200"/> </span> 
-                            <span className="text-sm text-zinc-200"> <Skeleton className="w-28 h-4 bg-zinc-200"/> </span>
-                        </>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <Table className="border-b-2 border-t-2 w-full">
-                              <TableHeader>
-                                <TableRow>
-                                  <TableHead className="w-1/4">PROPIEDAD</TableHead>
-                                  <TableHead className="w-1/4">FINALIZA</TableHead>
-                                  <TableHead className="w-1/4">ESTADO</TableHead>
-                                  <TableHead className="w-1/4">ACCIONES</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              {/* <TableBody>
-                                {balanceInfo.filter(balance => balance.grupo_id === grupo.id).length === 0 ? (
-                                  <TableRow className="hover:bg-transparent">
-                                    <TableCell colSpan={6} className="text-left font-semibold py-4">
-                                      No hay balances todavía.
-                                    </TableCell>
-                                  </TableRow>
-                                ) : (
-                                  balanceInfo
-                                    .filter(balance => balance.grupo_id === grupo.id)
-                                    .map((balance, i) => (
-                                      <TableRow key={i} className="h-full text-sm md:text-lg">
-                                        <TableCell className="w-1/4"> {balance.año_balance} </TableCell>
-                                        <TableCell className="w-1/4"> {balance.mes_balance} </TableCell>
-                                        <TableCell className="w-1/4">
-                                          <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="flex items-center text-xs md:text-sm"
-                                          >
-                                            <FileChartColumnIncreasingIcon className="mr-0 h-4 w-4" />
-                                            <span className="hidden md:inline">Balance</span>
-                                          </Button>
-                                        </TableCell>
-                                        <TableCell className="h-full">
-                                          
-                                        </TableCell>
-                                      </TableRow>
-                                    ))
-                                )}
-                              </TableBody> */}
-                            </Table>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-        </div>
-    )
+  return (
+    <Card className="w-full max-w-4xl shadow-lg">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-md md:text-lg font-bold">
+          Próximas finalizaciones de contrato
+        </CardTitle>
+        <CalendarClock className="h-6 w-6 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <div className="space-y-6 my-5">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        ) : deptosInfo.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center p-6 space-y-2">
+            <CheckSquare className="h-8 w-8 text-green-500" />
+            <p className="text-md font-medium">No hay propiedades con contratos próximos a finalizar.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-2/5">Propiedad</TableHead>
+                  <TableHead className="w-1/5">Finaliza</TableHead>
+                  <TableHead className="w-1/5">Restante</TableHead>
+                  <TableHead className="w-1/5">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {deptosInfo.map(depto => (
+                  <TableRow key={depto.idDepto}>
+                    <TableCell className="font-medium">{depto.ubicacion}</TableCell>
+                    <TableCell>{depto.endContract}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={`p-2 text-md ${getStatusColor(depto.status)}`}>
+                        {depto.status === 'VENCIDO' ? 'VENCIDO' : `${depto.status} días`}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm" className="hover:bg-transparent text-blue-900 hover:text-blue-600"                                 
+                      onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { dataDepto: depto, infoGrupo: depto.grupo_info}})}
+                      >
+                        Ver Propiedad
+                        <ArrowRight className="mr-0 h-5 w-5" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
+
