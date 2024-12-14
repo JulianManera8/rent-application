@@ -36,7 +36,7 @@ export default function ResetPassword() {
   
       if(userInfo.password === "") {
         setLoading(false) 
-        return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe tener 6 o más caracteres'} ))
+        return setErrors((prevErrors)=> ({...prevErrors, password: 'La contraseña debe cumplir con los requisitos de seguridad'} ))
       }
 
       if(userInfo.confirmPassword === "") {
