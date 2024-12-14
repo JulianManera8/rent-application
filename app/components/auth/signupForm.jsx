@@ -1,15 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState,  } from "react"
 import { Eye, EyeOff } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { Progress } from "../ui/progress"
 import Error from '../helpers/Error'
 import Spinner from '../helpers/loaderIcon'
 import { useNavigate } from "@remix-run/react"
 import supabase from "../../lib/supabase"
+import ValidatePassword from '../auth/validatePassword'
 
 export default function SignupForm() {
 
@@ -34,42 +34,7 @@ export default function SignupForm() {
     confirmPassword: "",
   })
 
-  const [progressValue, setProgressValue] = useState(0)
-  const [progressColor, setProgressColor] = useState("#de1b2e")
-  const [itemValidated, setItemValidated] = useState({
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    length: false,
-  })
-
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const password = userInfo.password
-    
-    const validations = {
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /\d/.test(password),
-      length: password.length >= 8,
-    }
-
-    setItemValidated(validations)
-
-    const validCount = Object.values(validations).filter(Boolean).length
-    const newProgressValue = Math.min(validCount * 25, 100)
-    setProgressValue(newProgressValue)
-
-    const colorMap = {
-      0: "#de1b2e",
-      25: "#de8d1b",
-      50: "#edc709",
-      75: "#bced09",
-      100: "#33ed09",
-    }
-    setProgressColor(colorMap[newProgressValue] || "#f72331")
-  }, [userInfo.password])
 
   const handleSignup = async (e) => {
     e.preventDefault()
@@ -91,12 +56,6 @@ export default function SignupForm() {
     if(userInfo.dni === "" || userInfo.dni.length !== 8) {
       setLoading(false) 
       return setErrors((prevErrors)=> ({...prevErrors, dni: 'Debes completar correctamente tu DNI'} ))
-    }
-  
-
-    if (!Object.values(itemValidated).every(Boolean)) {
-      setLoading(false)
-      return setErrors(prev => ({ ...prev, password: 'La contraseña no cumple con todos los requisitos' }))
     }
 
     if (userInfo.password !== userInfo.confirmPassword) {
@@ -200,7 +159,7 @@ export default function SignupForm() {
                 name="password"
                 placeholder="Contraseña"
                 autoComplete="new-password"
-                className="pr-10 md:text-lg text-md"
+                className="pr-10 text-md"
                 value={userInfo.password}
                 onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
               />
@@ -213,16 +172,7 @@ export default function SignupForm() {
               </button>
             </div>
             
-            <div className="mt-3">
-              <Progress value={progressValue > 0 ? progressValue : 5} className="h-2" colorProgress={progressColor } />
-
-              <ul className="list-inside mt-2 text-sm text-muted-foreground">
-                <li className={itemValidated.uppercase ? 'line-through' : ''}>- Mayúscula</li>
-                <li className={itemValidated.lowercase ? 'line-through' : ''}>- Minúscula</li>
-                <li className={itemValidated.number ? 'line-through' : ''}>- Número</li>
-                <li className={itemValidated.length ? 'line-through' : ''}>- 8 caracteres mínimo</li>
-              </ul>
-            </div>
+            <ValidatePassword password={userInfo.password}/>
           </div>
           {errors.password && <Error errorMessage={errors.password} />}
 

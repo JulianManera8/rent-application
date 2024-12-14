@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useNavigate } from "@remix-run/react";
 import Spinner from '../helpers/loaderIcon'
 import Error from '../helpers/Error'
+import ValidatePassword from "./validatePassword";
 
 export default function ResetPassword() {
     const navigate = useNavigate();
@@ -97,9 +98,11 @@ export default function ResetPassword() {
                 onClick={() => setPassEye(!passEye)}
               />
             )}
-
         </div>
-          {errors.password && <Error errorMessage={errors.password} />}
+        <div className="w-4/5 mx-auto">
+          <ValidatePassword password={userInfo.password}/>
+        </div>
+          
 
         <div className="relative">
             <Input
@@ -125,7 +128,6 @@ export default function ResetPassword() {
               />
             )}
         </div>
-          {errors.confirmPassword && <Error errorMessage={errors.confirmPassword} />}
         </CardContent>
 
         <CardFooter className="flex justify-center gap-5 flex-col">
@@ -135,7 +137,10 @@ export default function ResetPassword() {
           >
             {loading ? <Spinner/> : "Confirmar"}
           </Button>
+          {errors.confirmPassword && <Error errorMessage={errors.confirmPassword} />}
+          {errors.password && <Error errorMessage={errors.password} />}
           {errors.auth && <Error errorMessage={errors.auth} />}
+
           {success && (
             <div className="w-full text-center">
               <p className="text-green-600 font-medium text-lg"> Contraseña actualizada, ya puedes iniciar sesión </p>
