@@ -50,7 +50,7 @@ function GroupIncomeRow({ group }) {
         {group.group}
       </span>
       <Progress 
-        className="w-[70%] text-blue-400" 
+        className="w-[100%] text-blue-400" 
         value={group.percentage}
         colorProgress="#2798f5"
       />
@@ -97,7 +97,7 @@ export default function IncomesPerGroups({ userId }) {
   )
 
   return (
-    <Card className="border-[0.6px] border-t-[1px] shadow-md shadow-black/15 md:w-[400px] w-full min-h-[120px] flex flex-col justify-evenly">
+    <Card className="border-[0.6px] border-t-[1px] shadow-md shadow-black/15 md:w-[500px] w-full min-h-[120px] flex flex-col justify-evenly">
       <CardHeader className="flex flex-row items-center justify-start w-full mt-3 space-y-0 pt-0 h-1/3">
         <CardTitle className="text-md md:text-lg font-medium text-left w-full">
           Distribucion de Ingresos por Grupo
