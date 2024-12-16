@@ -101,7 +101,7 @@ export default function SignupForm() {
               name="name"
               placeholder="Nombre"
               autoComplete="given-name"
-              className="md:text-lg text-md w-4/5 mx-auto"
+              className="md:text-lg text-sm w-11/12 mx-auto"
               value={userInfo.name}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, name: e.target.value })
@@ -115,7 +115,7 @@ export default function SignupForm() {
               name="lastname"
               placeholder="Apellido"
               autoComplete='family-name'
-              className="md:text-lg text-md  w-4/5 mx-auto"
+              className="md:text-lg text-sm  w-11/12 mx-auto"
               value={userInfo.lastname}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, lastname: e.target.value })
@@ -129,7 +129,7 @@ export default function SignupForm() {
               name="email"
               placeholder="Email"
               autoComplete="email"
-              className="md:text-lg text-md text-sm w-4/5 mx-auto"
+              className="md:text-lg text-sm w-11/12 mx-auto"
               value={userInfo.email}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, email: e.target.value })
@@ -143,7 +143,7 @@ export default function SignupForm() {
               name="dni"
               placeholder="D.N.I (sin puntos, solo numeros)"
               autoComplete="off"
-              className="md:text-lg text-md text-sm w-4/5 mx-auto"
+              className="md:text-lg text-sm w-11/12 mx-auto"
               value={userInfo.dni}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, dni: e.target.value })
@@ -152,14 +152,14 @@ export default function SignupForm() {
             {errors.dni && <Error errorMessage={errors.dni} />}
           </div>
 
-          <div className="w-4/5 mx-auto">
+          <div className="w-11/12 mx-auto">
             <div className="relative">
               <Input
                 type={passEye ? "password" : "text"}
                 name="password"
                 placeholder="Contraseña"
                 autoComplete="new-password"
-                className="pr-10 text-md"
+                className="pr-10 text-sm"
                 value={userInfo.password}
                 onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
               />
@@ -176,13 +176,13 @@ export default function SignupForm() {
           </div>
           {errors.password && <Error errorMessage={errors.password} />}
 
-          <div className="w-4/5 mx-auto relative">
+          <div className="w-11/12 mx-auto relative">
             <Input
               type={passEye ? "password" : "text"}
               name="confirmPassword"
               placeholder="Confirmar contraseña"
               autoComplete="new-password"
-              className="pr-10 md:text-lg text-md"
+              className="pr-10 md:text-lg text-sm"
               value={userInfo.confirmPassword}
               onChange={(e) => setUserInfo({ ...userInfo, confirmPassword: e.target.value })}
             />

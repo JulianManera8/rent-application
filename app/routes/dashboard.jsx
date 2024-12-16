@@ -86,7 +86,7 @@ export default function DashboardIndexPage() {
           </div>
           <div 
             style={{ marginLeft: getMarginLeft()}}
-            className={`flex-1 overflow-hidden ${isMobileView ? 'mr-6' : 'mr-6'} transition-all duration-300 ease-in-out -z-0`}
+            className={`flex-1 overflow-hidden ${isMobileView ? 'mr-6 mt-8' : 'mr-6'} transition-all duration-300 ease-in-out -z-0`}
           >
             <Outlet />
           </div>

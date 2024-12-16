@@ -46,16 +46,16 @@ function LoadingSkeleton() {
 function GroupIncomeRow({ group }) {
   return (
     <div className="flex items-center text-sm gap-x-3 w-full">
-      <span className="md:w-3/5  text-zinc-600 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
+      <span className="w-3/5  text-zinc-600 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
         {group.group}
       </span>
       <Progress 
-        className="w-[100%] text-blue-400" 
+        className="w-full text-blue-400" 
         value={group.percentage}
         colorProgress="#2798f5"
       />
       <span className={cn(
-        "w-[43%] font-medium flex-col flex items-center text-xs",
+        "w-[50%] font-medium flex-col flex items-center text-xs",
         group.percentage > 0 ? "text-blue-400" : "text-zinc-400"
       )}>
         <p> {group.percentage} % </p>

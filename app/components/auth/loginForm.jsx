@@ -104,7 +104,7 @@ export default function LoginForm() {
               name="email"
               placeholder="Email"
               autoComplete="email"
-              className="md:text-lg text-sm w-4/5 mx-auto"
+              className="md:text-lg text-sm w-11/12 mx-auto"
               value={userInfo.email}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, email: e.target.value })
@@ -150,7 +150,7 @@ export default function LoginForm() {
               name="email"
               placeholder="Email"
               autoComplete="email"
-              className="md:text-lg text-md w-4/5 mx-auto"
+              className="md:text-lg text-sm w-11/12 mx-auto"
               value={userInfo.email}
               onChange={(e) =>
                 setUserInfo({ ...userInfo, email: e.target.value })
@@ -159,13 +159,13 @@ export default function LoginForm() {
             {errors.email && <Error errorMessage={errors.email} />}
           </div>
 
-          <div className="w-4/5 mx-auto relative">
+          <div className="w-11/12 mx-auto relative">
             <Input
               type={passEye ? "password" : "text"}
               placeholder="Contraseña"
               name="password"
               autoComplete="new-password"
-              className="pr-10 md:text-lg text-md"
+              className="pr-10 md:text-lg text-sm"
               value={userInfo.password}
               onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
             />
@@ -189,11 +189,11 @@ export default function LoginForm() {
           </Button>
           {errors.auth && <Error errorMessage={errors.auth} />}
         </CardFooter>
-        <div className="w-full my-4  mx-auto text-center">
-          <p>¿Olvidaste tu contraseña? 
+        <div className="w-11/12 my-4 mx-auto text-center">
+          <p className="">¿Olvidaste tu contraseña? 
             <Button 
               variant='ghost' 
-              className="border ml-3 border-zinc-300 text-sky-700" 
+              className="border ml-3 mt-2 border-zinc-300 text-sky-700" 
               onClick={(e) => {e.preventDefault(), setForgotPassword(true)}}
             > 
               Haz click aqui 

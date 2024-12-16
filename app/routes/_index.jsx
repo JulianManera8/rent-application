@@ -26,7 +26,7 @@ export default function Index() {
           />
           </NavLink>
           <h1 className="text-3xl md:text-5xl font-bold">RentApp</h1>
-          <p className="text-lg md:text-2xl">Gestión eficiente y sencilla de propiedades en alquiler.</p>
+          <p className="text-lg md:text-2xl max-w-[90%]">Gestión eficiente y sencilla de propiedades en alquiler.</p>
         </div>
       </section>
 

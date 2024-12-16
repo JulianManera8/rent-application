@@ -9,10 +9,10 @@ import { Separator } from '../components/ui/separator'
 export default function DashboardIndexPage() {
     return (
         <div className='flex flex-col w-full mr-7 md:px-3 px-0'> 
-            <div className='fixed right-0 top-6 mr-4'>
+            <div className='fixed right-0 top-6 mr-4 z-50'>
                 <QuickAccess />
             </div>
-            <div className='flex md:justify-between md:ml-0 ml-10 justify-left'>
+            <div className='flex md:justify-between md:ml-0 justify-center md:justify-left'>
                 <h1 className="sm:text-3xl text-lg text-gray-300 font-medium font-inter md:mt-8 mt-0 mx-0 mb-2">
                     DASHBOARD - <span className='text-[#0c426bd3] whitespace-nowrap'> Vista General </span>{" "}  
                 </h1>
