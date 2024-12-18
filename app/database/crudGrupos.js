@@ -96,28 +96,57 @@ export async function editAccess( id_NewAccess ) {
     return data;  
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error:", error.message);
     return null;
+  }
+}
+
+export async function getRoleUser( {user_id} ) {
+  try {
+    const {data, error} = await supabase
+    .from('roles_group_shared')
+    .select('*')
+    .eq("user_id", user_id);
+
+
+    if(error) throw new Error(error.message)
+    return data
+  } catch (error){
+    alert(error)
   }
 }
 
 export async function setRoleUser( id_NewAccess ) {
   try {
     const {data, error} = await supabase
-    .from('roles-group-shared')
+    .from('roles_group_shared')
     .insert([
       {
-        user_id: id_NewAccess.selectedUser,
+        user_id: id_NewAccess.userLoged_id,
+        user_id_access: id_NewAccess.selectedUser,
         grupo_id: id_NewAccess.grupoId,
         role: id_NewAccess.roleUser
       }
     ])
-    .select('*')
+    .select()
 
-    if(data) console.log(data)
-
-    if(error) throw new Error(error)
+    if(error) throw new Error(error.message)
+    return data
   } catch (error){
-    console.alert(error)
+    alert(error)
+  }
+}
+
+export async function removeRoleUser(grupo_id, user_id_access) {
+  try {
+    const { error } = await supabase
+      .from('roles_group_shared')
+      .delete()
+      .match({ grupo_id, user_id_access: user_id_access }); // Busca por ambas columnas
+
+    if (error) throw new Error(error.message); // Incluye el mensaje de error
+
+  } catch (error) {
+    alert(`Error al eliminar el rol: ${error.message}`);
   }
 }

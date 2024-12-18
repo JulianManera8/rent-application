@@ -8,13 +8,13 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Pencil, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search, ExpandIcon, CheckSquareIcon } from 'lucide-react';
 import useFetch from "../../hooks/use-fetch";
-import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess, setRoleUser } from "../../database/crudGrupos";
+import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess, setRoleUser, getRoleUser, removeRoleUser } from "../../database/crudGrupos";
 import { useUser } from '../../hooks/use-user'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { getDeptos } from "../../database/crudDeptos";
 import { getBalances } from "../../database/crudBalances";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogHeader, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import SkeCard from "../grupos/skeletonCardsGroups";
 import { Separator } from "../ui/separator"
 import HandleUsers from "../propiedades/HandleUsers";
@@ -28,6 +28,7 @@ export default function DashboardGrupos() {
   const userLoged_id = useUser()
   const [usersInfo, setUsersInfo] = useState([])
   const [role, setRole] = useState('viewer')
+  const [rolePerUser, setRolePerUser] = useState([])
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
     nombreGrupo: "",
@@ -54,7 +55,7 @@ export default function DashboardGrupos() {
   const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
   const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
   const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
-  const { error: errorSetRole, fn: fnsetRoleUser } = useFetch(setRoleUser, { id_NewName } )
+  const { data: rolesUsers, error: errorGetRoles, fn: fnGetRoleUser} = useFetch(getRoleUser, {user_id: userLoged_id} )
   const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   useEffect(() => {
@@ -93,63 +94,120 @@ export default function DashboardGrupos() {
   }, [id_NewName.idGrupo, id_NewName.newGroupName])
 
   const handleRemoveAccess = async (userId, grupoId) => {
-    const grupo = getGrupoInfo.find(g => g.grupo_id === grupoId);
-    if (!grupo) return;
-
-    const newSharedWith = grupo.shared_with.filter(id => id !== userId);
-    
+    // Obtener el grupo
+    const grupo = getGrupoInfo.find((g) => g.grupo_id === grupoId);
+    if (!grupo) {
+      console.error(`Grupo con ID ${grupoId} no encontrado`);
+      return;
+    }
+  
+    // Actualizar el array `shared_with` eliminando al usuario
+    const newSharedWith = grupo.shared_with.filter((id) => id !== userId);
+  
+    // Crear el objeto con datos necesarios
     const id_NewAccess = {
       arrayUsersId: newSharedWith,
       grupoId: grupoId,
     };
-
+  
     try {
+      // Actualizar acceso (Supabase)
+      console.log("Actualizando acceso...");
       const response = await editAccess(id_NewAccess);
-      if (response === null) throw new Error("Failed to update access");
+      if (!response) {
+        console.error("La respuesta de editAccess es nula o indefinida");
+        throw new Error("Falló al actualizar acceso en la base de datos");
+      }
+      console.log("Acceso actualizado exitosamente");
+  
+      // Eliminar rol del usuario (Supabase)
+      console.log("Eliminando rol del usuario...");
+      const responseDeleteRole = await removeRoleUser(grupoId, userId);
+      if (responseDeleteRole === null) {
+        console.error("La respuesta de removeRoleUser es nula");
+        throw new Error("Falló al eliminar rol del usuario");
+      }
+      console.log("Rol del usuario eliminado exitosamente");
+  
+      // Actualizar estado local (grupos)
       setGetGrupoInfo((prevGrupos) =>
         prevGrupos.map((g) =>
-          g.grupo_id === grupoId
-            ? { ...g, shared_with: newSharedWith }
-            : g
+          g.grupo_id === grupoId ? { ...g, shared_with: newSharedWith } : g
         )
       );
+  
+      // Actualizar estado local (roles)
+      setRolePerUser((prevRoles) =>
+        prevRoles.filter((role) => role.user_with_access.id !== userId)
+      );
+  
+      console.log(`Acceso eliminado correctamente para el usuario ${userId}`);
     } catch (error) {
-      console.error("Error updating access:", error);
+      console.error("Error al actualizar acceso:", error.message);
+      // You might want to show an error message to the user here
     }
   };
 
   const handleAddAccess = async (grupoId) => {
-    if (!selectedUser) return;
+  if (!selectedUser) {
+    console.error("No user selected");
+    return;
+  }
 
-    const grupo = getGrupoInfo.find(g => g.grupo_id === grupoId);
-    if (!grupo) return;
+  const grupo = getGrupoInfo.find(g => g.grupo_id === grupoId);
+  if (!grupo) {
+    console.error("Group not found");
+    return;
+  }
 
-    const currentSharedWith = Array.isArray(grupo.shared_with) ? grupo.shared_with : [];
-    const newSharedWith = [...new Set([...currentSharedWith, selectedUser])];
-    
-    const id_NewAccess = {
-      arrayUsersId: newSharedWith,
-      grupoId: grupoId,
-      selectedUser: selectedUser,
-      roleUser: role
-    };
-
-    try {
-      const response = await editAccess(id_NewAccess);
-      if (response === null) throw new Error("Failed to update access");
-      setGetGrupoInfo((prevGrupos) =>
-        prevGrupos.map((g) =>
-          g.grupo_id === grupoId
-            ? { ...g, shared_with: newSharedWith }
-            : g
-        )
-      );
-      setSelectedUser("");
-      setAddUserAccess(false);
-    } catch (error) {
-      console.error("Error updating access:", error);
-    }
+  const currentSharedWith = Array.isArray(grupo.shared_with) ? grupo.shared_with : [];
+  const newSharedWith = [...new Set([...currentSharedWith, selectedUser])];
+  
+  const id_NewAccess = {
+    userLoged_id: userLoged_id,
+    arrayUsersId: newSharedWith,
+    grupoId: grupoId,
+    selectedUser: selectedUser,
+    roleUser: role
   };
+
+  try {
+    const responseHandleAccess = await editAccess(id_NewAccess);
+    const responseSetRole = await setRoleUser(id_NewAccess);
+    
+    if (!responseHandleAccess) throw new Error("Failed to update access");
+    if (!responseSetRole) throw new Error("Failed to set role");
+
+    setGetGrupoInfo((prevGrupos) =>
+      prevGrupos.map((g) =>
+        g.grupo_id === grupoId
+          ? { ...g, shared_with: newSharedWith }
+          : g
+      )
+    );
+
+    // Update rolePerUser state immediately
+    setRolePerUser((prevRoles) => [
+      ...prevRoles,
+      {
+        grupo: grupoId,
+        user_with_access: usersInfo.find(user => user.user_id === selectedUser),
+        role: role
+      }
+    ]);
+
+    // Refresh the roles from the server
+    fnGetRoleUser({userLoged_id});
+
+    setSelectedUser("");
+    setRole('viewer');
+    setAddUserAccess(false);
+  } catch (error) {
+    console.error("Error updating access:", error);
+  }
+};
+
+  console.log(role)
 
   const handleDeleteGrupo = async (grupoId) => {
    try {
@@ -168,24 +226,20 @@ export default function DashboardGrupos() {
   }
 
   useEffect(() => {
-    if (userLoged_id) {
-      setCreateGrupoInfo((prevInfo) => ({
-        ...prevInfo,
-        userId: userLoged_id,
-      }));
-    }
-  }, [userLoged_id]);
-
-
-
-  useEffect(() => {
     if(userLoged_id) {
+        setCreateGrupoInfo((prevInfo) => ({
+          ...prevInfo,
+          userId: userLoged_id,
+        }));
         fnGetGrupos(userLoged_id)
         if(errorGetGrupos) return console.error(errorGetGrupos)
         fnGetDeptos(userLoged_id)
         if(errorDeptos) return console.error(errorGetGrupos)
         fnGetBalances(userLoged_id)
         if(errorGetBalances) return console.error(errorGetBalances)
+        fnGetRoleUser({userLoged_id})
+        if(errorGetRoles) return console.error(errorGetBalances)
+        fnGetAllUsers();
     }
   }, [userLoged_id])
 
@@ -193,7 +247,7 @@ export default function DashboardGrupos() {
     if(grupos && grupos.length > 0) {
         const mappedGrupos = grupos.reverse().map(grupo => ({
             grupo_id: grupo.id,
-            grupo_name: grupo.grupo_name, 
+            grupo_name: grupo.grupo_name,
             user_id: grupo.user_id,
             shared_with: grupo.shared_with,
             grupo_createdAt: grupo.created_at
@@ -208,6 +262,13 @@ export default function DashboardGrupos() {
     }
     return setValidated(true)
   }, [createGrupoInfo.nombreGrupo])
+
+  useEffect(() => {
+    if(rolesUsers) {
+      const arrayAgrupado = agruparUserRole(rolesUsers)
+      setRolePerUser(arrayAgrupado)
+    }
+  }, [rolesUsers, data]); // Added data to the dependency array
 
   const handleSelectUserChange = (value) => {
     let arrayUsersId = [] 
@@ -245,12 +306,6 @@ export default function DashboardGrupos() {
   };
 
   useEffect(() => {
-    if (userLoged_id) {
-      fnGetAllUsers();
-    }
-  }, [userLoged_id]);
-
-  useEffect(() => {
     if (data) {
       setUsersInfo(
         data.map((user) => ({
@@ -263,13 +318,27 @@ export default function DashboardGrupos() {
     }
   }, [data, error]);
 
-  const filteredUsers = usersInfo.filter(
+  const filteredUsers = usersInfo ? usersInfo.filter(
     (user) =>
       user.user_id !== userLoged_id &&
       (user.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.user_lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.user_dni.includes(searchTerm))
-  );
+  ) : [];
+
+  function agruparUserRole(rolesUsers) {
+    if (!rolesUsers || !data) return [];
+
+    const allUsers = data;
+
+    const arrayGeneral = rolesUsers.map((grupo) => ({
+      grupo: grupo.grupo_id,
+      user_with_access: allUsers.find(user => user.id === grupo.user_id_access) || null,
+      role: grupo.role
+    }));
+
+    return arrayGeneral
+  }
 
   return (
     <div className={`w-full py-10`}>
@@ -589,46 +658,57 @@ export default function DashboardGrupos() {
                   <div className="flex-col justify-between items-center">
                     <div className="flex justify-between items-center">
                       <ul>
-                        {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 ? (
-                        usersInfo
-                          .filter((user) => grupo.shared_with.includes(user?.user_id))
-                          .map((user, i) => (
-                            <li key={i} className="flex items-center mb-3 text-left w-full">
-                              <Dot />
-                              <p className="overflow-hidden text-ellipsis w-full mr-4 whitespace-nowrap pl-1 text-md">
-                                {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
-                                <small>(D.N.I.)</small>
-                              </p>
-                              {/* BOTON PARA BORRAR ACCESO A USER */}
-                              <AlertDialog>
-                                <AlertDialogTrigger>
-                                  <XSquare
-                                    size={23}
-                                    className="cursor-pointer hover:text-red-500 transition-all ml-auto"
-                                  />
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-center">
-                                      Estás a punto de sacar el acceso a <span className="text-red-600">{user.user_name + " " + user.user_lastname}</span> de este grupo
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription className="text-center">
-                                      Puedes volver a darle acceso luego si quieres
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
-                                    <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      className="h-10"
-                                      onClick={() => handleRemoveAccess(user.user_id, grupo.grupo_id)}
-                                    >
-                                      Sacar Acceso
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </li>
-                          ))
+                        {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 && usersInfo ? (
+                          usersInfo.filter((user) => grupo.shared_with.includes(user?.user_id)).map((user) => {
+                              const userRole = rolePerUser.find((role) => role?.user_with_access.id === user.user_id)?.role;
+
+                              return (
+                                <li key={user.user_id} className="flex items-center mb-3 text-left w-full">
+                                  <Dot />
+                              
+                                  {/* User Info */}
+                                  <p className="overflow-hidden text-ellipsis w-full mr-4 whitespace-nowrap pl-1 text-md">
+                                    {`${user.user_name} ${user.user_lastname}`} - {user.user_dni} <small>(D.N.I.)</small> -
+                                    <span className="ml-2 text-blue-900"> 
+                                      {userRole === 'editor' ? 'Ver y Editar' : 'Solo Ver'} 
+                                    </span>
+                                  </p>
+                              
+                                  {/* Remove Access Button */}
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <XSquare
+                                        size={23}
+                                        className="cursor-pointer hover:text-red-500 transition-all ml-auto"
+                                      />
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-center">
+                                          Estás a punto de sacar el acceso a{" "}
+                                          <span className="text-red-600">
+                                            {`${user.user_name} ${user.user_lastname}`}
+                                          </span>{" "}
+                                          de este grupo
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="text-center">
+                                          Puedes volver a darle acceso luego si quieres.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                                        <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          className="h-10"
+                                          onClick={() => handleRemoveAccess(user.user_id, grupo.grupo_id)}
+                                        >
+                                          Sacar Acceso
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </li>
+                              );
+                            })
                         ) : (
                           <li className="text-gray-500 text-sm w-full">Nadie más tiene acceso a este grupo.</li>
                         )}
@@ -695,31 +775,14 @@ export default function DashboardGrupos() {
 
                             {/* SELECT DEL ROL DEL ACCESO */}
                             <Select 
-                              onValueChange={(value) => {
-                                setRole(value);
-                                setIsSelectOpen(false);
-                              }} 
+                              onValueChange={(value) => setRole(value)} 
                             >
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Rol del usuario (por defecto Solo ver)" />
+                                <SelectValue placeholder="Rol de usuario (Solo Ver por default)" />
                               </SelectTrigger>
                               <SelectContent>
-                                      <SelectItem
-                                        value='viewer'
-                                        className="flex items-center w-full"
-                                      >
-                                        <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
-                                          Solo ver
-                                        </p>
-                                      </SelectItem>
-                                      <SelectItem
-                                        value='editor'
-                                        className="flex items-center w-full"
-                                      >
-                                        <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
-                                          Ver y editar
-                                        </p>
-                                      </SelectItem>
+                                <SelectItem value="viewer">Solo Ver</SelectItem>
+                                <SelectItem value="editor">Ver y Editar</SelectItem>
                               </SelectContent>
                             </Select>
                             
@@ -739,7 +802,7 @@ export default function DashboardGrupos() {
                                 onClick={() => handleAddAccess(grupo.grupo_id)}
                                 disabled={!selectedUser}
                               >
-                                Confirmar
+                               Confirmar
                               </Button>
                             </div>
                           </div>
@@ -753,7 +816,6 @@ export default function DashboardGrupos() {
                   <DialogClose asChild>
                     <Button className="px-10"> Cerrar </Button>
                   </DialogClose>
-
                     {/* BOTON BORRAR GRUPO */}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -814,3 +876,4 @@ export default function DashboardGrupos() {
     </div>
   );
 }
+
