@@ -11,7 +11,7 @@ import Spinner from '../helpers/loaderIcon';
 import { createDepto } from '../../database/crudDeptos';
 import useFetch from '../../hooks/use-fetch';
 import { useUser } from '../../hooks/use-user';
-import { validateRequired, validateDate, validateNumber } from '../helpers/validation';
+import { validateRequired } from '../helpers/validation';
 import { Label } from "../ui/label";
 import { SuccessDialog } from "./SuccesDialog";
 import { Switch } from "../ui/switch";
@@ -99,45 +99,8 @@ export default function CreateDepto() {
     let error = null;
     switch (name) {
       case 'ubicacion_completa':
-      case 'propietario_name':
-      case 'locador_name':
-      case 'cobrador_name':
-      case 'facturador_name':
-      case 'metodo_cobro':
-      case 'monto_cobro_inicio':
       case 'grupo_id':
         error = validateRequired(value);
-        break;
-      case 'fecha_actualizacion_cobro':
-        error = validateDate(value);
-        break;
-      case 'monto_cobro':
-        error = validateNumber(value);
-        break;
-      case 'inquilino_name':
-        if (newDepto.ocupado) {
-          error = validateRequired(value);
-        }
-        break;
-      case 'inicio_contrato':
-        if (newDepto.ocupado) {
-          error = validateDate(value);
-        }
-        break;
-      case 'finalizacion_contrato':
-        if (newDepto.ocupado) {
-          error = validateDate(value);
-        }
-        break;
-      case 'inicio_usufructo':
-        if (newDepto.usufructuario_name) {
-          error = validateDate(value);
-        }
-        break;
-      case 'finalizacion_usufructo':
-        if (newDepto.usufructuario_name) {
-          error = validateDate(value);
-        }
         break;
       default:
         break;
@@ -270,31 +233,26 @@ export default function CreateDepto() {
     const requiredFields = [
       'grupo_id',
       'ubicacion_completa',
-      'propietario_name',
-      'locador_name',
-      'cobrador_name',
-      'facturador_name',
-      'monto_cobro_inicio',
     ];
 
     const isValid = requiredFields.every(field => newDepto[field] !== '');
     
-    // Check inquilino_name only if the property is occupied
-    if (newDepto.ocupado && newDepto.inquilino_name === '') {
-      return false;
-    }
+    // // Check inquilino_name only if the property is occupied
+    // if (newDepto.ocupado && newDepto.inquilino_name === '') {
+    //   return false;
+    // }
 
-    if (newDepto.ocupado && newDepto.inicio_contrato === '' && newDepto.finalizacion_contrato === '') {
-      return false;
-    }
+    // if (newDepto.ocupado && newDepto.inicio_contrato === '' && newDepto.finalizacion_contrato === '') {
+    //   return false;
+    // }
 
-    if (newDepto.ocupado && newDepto.monto_cobro === '') {
-      return false;
-    }
+    // if (newDepto.ocupado && newDepto.monto_cobro === '') {
+    //   return false;
+    // }
 
-    if (newDepto.usufructuario_name && newDepto.inicio_usufructo === '' && newDepto.finalizacion_usufructo === '') {
-      return false;
-    }
+    // if (newDepto.usufructuario_name && newDepto.inicio_usufructo === '' && newDepto.finalizacion_usufructo === '') {
+    //   return false;
+    // }
 
     return isValid && Object.values(errors).every(error => error === null);
   };
@@ -313,7 +271,7 @@ export default function CreateDepto() {
           value={newDepto.ubicacion_completa}
           onChange={handleInputChange}
           error={errors.ubicacion_completa}
-          disabled={false}
+          // disabled={false}
         />
 
         {/* OCUPADO */}
@@ -328,20 +286,20 @@ export default function CreateDepto() {
             setNewDepto((prev) => ({
               ...prev,
               ocupado: checked,
-              inquilino_name: checked ? prev.inquilino_name : '',
-              inicio_contrato: checked ? prev.inicio_contrato : '',
-              finalizacion_contrato: checked ? prev.finalizacion_contrato : '',
-              monto_cobro: checked ? prev.monto_cobro : '',
+              // inquilino_name: checked ? prev.inquilino_name : '',
+              // inicio_contrato: checked ? prev.inicio_contrato : '',
+              // finalizacion_contrato: checked ? prev.finalizacion_contrato : '',
+              // monto_cobro: checked ? prev.monto_cobro : '',
             }));
-            if (!checked) {
-              setErrors((prev) => ({
-                ...prev,
-                inquilino_name: null,
-                inicio_contrato: null,
-                finalizacion_contrato: null,
-                monto_cobro: null
-              }));
-            }
+            // if (!checked) {
+            //   setErrors((prev) => ({
+            //     ...prev,
+            //     inquilino_name: null,
+            //     inicio_contrato: null,
+            //     finalizacion_contrato: null,
+            //     monto_cobro: null
+            //   }));
+            // }
             }}
           />
           <Label>
@@ -375,7 +333,7 @@ export default function CreateDepto() {
           onChange={handleInputChange}
           error={errors.inquilino_name}
           optional={!newDepto.ocupado}
-          disabled={!newDepto.ocupado}
+          // disabled={!newDepto.ocupado}
         />
 
         <FormInput
@@ -422,7 +380,7 @@ export default function CreateDepto() {
           type="date"
           value={newDepto.inicio_usufructo}
           onChange={handleInputChange}
-          disabled={!newDepto.usufructuario_name}
+          // disabled={!newDepto.usufructuario_name}
         />
 
         <FormInput
@@ -431,7 +389,7 @@ export default function CreateDepto() {
           type="date"
           value={newDepto.finalizacion_usufructo}
           onChange={handleInputChange}
-          disabled={!newDepto.usufructuario_name}
+          // disabled={!newDepto.usufructuario_name}
         />
 
         <FormInput
@@ -441,7 +399,7 @@ export default function CreateDepto() {
           value={newDepto.inicio_contrato}
           onChange={handleInputChange}
           error={errors.inicio_contrato}
-          disabled={!newDepto.ocupado}
+          // disabled={!newDepto.ocupado}
         />
 
         <FormInput
@@ -451,7 +409,7 @@ export default function CreateDepto() {
           value={newDepto.finalizacion_contrato}
           onChange={handleInputChange}
           error={errors.finalizacion_contrato}
-          disabled={!newDepto.ocupado}
+          // disabled={!newDepto.ocupado}
         />
 
         <div className="min-w-56 flex items-center gap-5 mt-8">
@@ -493,7 +451,7 @@ export default function CreateDepto() {
           type="number"
           placeholder="Ej: 360000"
           value={newDepto.monto_cobro}
-          disabled={!newDepto.ocupado}
+          // disabled={!newDepto.ocupado}
           onChange={handleInputChange}
           error={errors.monto_cobro}
           hint="Solo números, como el ej."

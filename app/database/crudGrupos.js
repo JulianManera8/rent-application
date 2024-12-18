@@ -100,3 +100,24 @@ export async function editAccess( id_NewAccess ) {
     return null;
   }
 }
+
+export async function setRoleUser( id_NewAccess ) {
+  try {
+    const {data, error} = await supabase
+    .from('roles-group-shared')
+    .insert([
+      {
+        user_id: id_NewAccess.selectedUser,
+        grupo_id: id_NewAccess.grupoId,
+        role: id_NewAccess.roleUser
+      }
+    ])
+    .select('*')
+
+    if(data) console.log(data)
+
+    if(error) throw new Error(error)
+  } catch (error){
+    console.alert(error)
+  }
+}

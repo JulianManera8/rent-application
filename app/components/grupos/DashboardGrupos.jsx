@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Pencil, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search, ExpandIcon, CheckSquareIcon } from 'lucide-react';
 import useFetch from "../../hooks/use-fetch";
-import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess } from "../../database/crudGrupos";
+import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess, setRoleUser } from "../../database/crudGrupos";
 import { useUser } from '../../hooks/use-user'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
@@ -27,6 +27,7 @@ export default function DashboardGrupos() {
   const [loadingDelete, setLoadingDelete] = useState(false)
   const userLoged_id = useUser()
   const [usersInfo, setUsersInfo] = useState([])
+  const [role, setRole] = useState('viewer')
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
     userId: userLoged_id,
     nombreGrupo: "",
@@ -53,6 +54,7 @@ export default function DashboardGrupos() {
   const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
   const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
   const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
+  const { error: errorSetRole, fn: fnsetRoleUser } = useFetch(setRoleUser, { id_NewName } )
   const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   useEffect(() => {
@@ -71,8 +73,6 @@ export default function DashboardGrupos() {
     }
   }, [inputBorrar])
 
-
-  
   useEffect(() => {
     if (id_NewName.idGrupo && id_NewName.newGroupName) {
       fnUpdateNameGroup({id_NewName}) 
@@ -130,6 +130,8 @@ export default function DashboardGrupos() {
     const id_NewAccess = {
       arrayUsersId: newSharedWith,
       grupoId: grupoId,
+      selectedUser: selectedUser,
+      roleUser: role
     };
 
     try {
@@ -241,7 +243,6 @@ export default function DashboardGrupos() {
       console.error("Error al crear el grupo:", error.message || error);
     }
   };
-
 
   useEffect(() => {
     if (userLoged_id) {
@@ -598,6 +599,7 @@ export default function DashboardGrupos() {
                                 {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
                                 <small>(D.N.I.)</small>
                               </p>
+                              {/* BOTON PARA BORRAR ACCESO A USER */}
                               <AlertDialog>
                                 <AlertDialogTrigger>
                                   <XSquare
@@ -642,7 +644,8 @@ export default function DashboardGrupos() {
                           <UserPlus className="mr-2 h-4 w-4" /> Agregar accesos
                         </Button>
                         {addUserAccess && (
-                          <div className="mt-4">
+                          <div className="mt-4 space-y-6">
+                            {/* SELECT DEL USUARIO PARA DARLE ACCESO */}
                             <Select 
                               onOpenChange={(open) => setIsSelectOpen(open)} 
                               onValueChange={(value) => {
@@ -652,7 +655,7 @@ export default function DashboardGrupos() {
                               open={isSelectOpen}
                             >
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Elegir Usuarios" />
+                                <SelectValue placeholder="Elegir Usuario" />
                               </SelectTrigger>
                               <SelectContent>
                                 <div className="flex items-center border-b px-3 pb-2">
@@ -689,12 +692,44 @@ export default function DashboardGrupos() {
                                 )}
                               </SelectContent>
                             </Select>
+
+                            {/* SELECT DEL ROL DEL ACCESO */}
+                            <Select 
+                              onValueChange={(value) => {
+                                setRole(value);
+                                setIsSelectOpen(false);
+                              }} 
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Rol del usuario (por defecto Solo ver)" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                      <SelectItem
+                                        value='viewer'
+                                        className="flex items-center w-full"
+                                      >
+                                        <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
+                                          Solo ver
+                                        </p>
+                                      </SelectItem>
+                                      <SelectItem
+                                        value='editor'
+                                        className="flex items-center w-full"
+                                      >
+                                        <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
+                                          Ver y editar
+                                        </p>
+                                      </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            
                             <div className="flex justify-center gap-x-5 pb-4 pt-3">
                               <Button
                                 className="bg-red-600 hover:bg-red-700 text-white"
                                 onClick={() => {
                                   setAddUserAccess(false);
                                   setSelectedUser("");
+                                  setRole('viewer')
                                 }}
                               >
                                 Cancelar
