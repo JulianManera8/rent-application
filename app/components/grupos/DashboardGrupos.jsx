@@ -8,16 +8,15 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Pencil, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search, ExpandIcon, CheckSquareIcon } from 'lucide-react';
 import useFetch from "../../hooks/use-fetch";
-import { getGrupos, insertGrupo, editGroupName, removeGrupo, editAccess, setRoleUser, getRoleUser, removeRoleUser } from "../../database/crudGrupos";
+import { getGrupos, insertGrupo, editGroupName, removeGrupo, editRoleUser,  editAccess, setRoleUser, getRoleUser, removeRoleUser } from "../../database/crudGrupos";
 import { useUser } from '../../hooks/use-user'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { getDeptos } from "../../database/crudDeptos";
 import { getBalances } from "../../database/crudBalances";
-import { AlertDialog, AlertDialogAction, AlertDialogHeader, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,AlertDialogHeader, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import SkeCard from "../grupos/skeletonCardsGroups";
 import { Separator } from "../ui/separator"
-import HandleUsers from "../propiedades/HandleUsers";
 import { getAllUser } from "../../database/crudUsers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
@@ -200,12 +199,43 @@ export default function DashboardGrupos() {
     fnGetRoleUser({userLoged_id});
 
     setSelectedUser("");
-    setRole('viewer');
     setAddUserAccess(false);
   } catch (error) {
     console.error("Error updating access:", error);
+  } finally {
+    setRole('viewer');
   }
 };
+
+  const handleRoleChange = async (userId, grupoId, newRole) => {
+
+    const updateRole = {
+      userLoged_id: userLoged_id,
+      grupoId: grupoId,
+      selectedUser: userId,
+      roleUser: newRole
+    }
+
+    try {
+      const response = await editRoleUser({updateRole});
+      console.log(response);
+      if (!response) throw new Error("Failed to update role");
+
+      // Update local state
+      setRolePerUser((prevRoles) =>
+        prevRoles.map((role) =>
+          role.user_with_access.id === userId && role.grupo === grupoId
+            ? { ...role, role: newRole }
+            : role
+        )
+      );
+
+      console.log(`Role updated successfully for user ${userId}`);
+    } catch (error) {
+      console.error("Error updating role:", error);
+      // You might want to show an error message to the user here
+    }
+  };
 
   console.log(role)
 
@@ -270,12 +300,6 @@ export default function DashboardGrupos() {
     }
   }, [rolesUsers, data]); // Added data to the dependency array
 
-  const handleSelectUserChange = (value) => {
-    let arrayUsersId = [] 
-    value?.map(user => arrayUsersId.push(user.user_id))
-    setCreateGrupoInfo({...createGrupoInfo, shared_with: arrayUsersId})
-  }
-
   const handleCreateGrupo = async (e) => {
     e.preventDefault();
     setCerrar(true)
@@ -292,7 +316,6 @@ export default function DashboardGrupos() {
                         grupo_id: result[0].id,
                         grupo_name: result[0].grupo_name,
                         grupo_createdAt: result[0].created_at,
-                        shared_with: result[0].shared_with,
                         user_id: result[0].user_id,
                     },
                 ]);
@@ -334,7 +357,8 @@ export default function DashboardGrupos() {
     const arrayGeneral = rolesUsers.map((grupo) => ({
       grupo: grupo.grupo_id,
       user_with_access: allUsers.find(user => user.id === grupo.user_id_access) || null,
-      role: grupo.role
+      role: grupo.role,
+      grupo_id: grupo.grupo_id
     }));
 
     return arrayGeneral
@@ -374,7 +398,6 @@ export default function DashboardGrupos() {
                       })
                     }
                   />
-                  <HandleUsers onSelectUserChange={handleSelectUserChange} />
                   <Button
                     className={`flex justify-center w-full mt-3 ${
                       cerrar ? "bg-green-600 hover:bg-gree-600" : "bg-black"
@@ -657,24 +680,38 @@ export default function DashboardGrupos() {
                   </h3>
                   <div className="flex-col justify-between items-center">
                     <div className="flex justify-between items-center">
-                      <ul>
-                        {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 && usersInfo ? (
+                      <ul className="w-full">
+                      {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 && usersInfo ? (
                           usersInfo.filter((user) => grupo.shared_with.includes(user?.user_id)).map((user) => {
-                              const userRole = rolePerUser.find((role) => role?.user_with_access.id === user.user_id)?.role;
+                              const userRole = rolePerUser.find((role) => role?.user_with_access.id === user.user_id && role.grupo_id === grupo.grupo_id)?.role || 'viewer';
 
                               return (
-                                <li key={user.user_id} className="flex items-center mb-3 text-left w-full">
+                                <li key={user.user_id} className="flex items-center mb-3 text-left w-full justify-start">
                                   <Dot />
                               
                                   {/* User Info */}
-                                  <p className="overflow-hidden text-ellipsis w-full mr-4 whitespace-nowrap pl-1 text-md">
-                                    {`${user.user_name} ${user.user_lastname}`} - {user.user_dni} <small>(D.N.I.)</small> -
-                                    <span className="ml-2 text-blue-900"> 
-                                      {userRole === 'editor' ? 'Ver y Editar' : 'Solo Ver'} 
-                                    </span>
+                                  <p className="overflow-hidden text-ellipsis w-fit mr-2 whitespace-nowrap pl-1 text-md">
+                                    {`${user.user_name} ${user.user_lastname}`} - {user.user_dni} <small className="ml-0">(D.N.I.)</small>
                                   </p>
                               
-                                  {/* Remove Access Button */}
+                                  <Select 
+                                    value={userRole} 
+                                    className="w-max"
+                                    onValueChange={(value) => {
+                                      handleRoleChange(user.user_id, grupo.grupo_id, value)
+                                      setRole(value)
+                                    } }
+                                  >
+                                    <SelectTrigger className="w-fit ml-0 mr-auto">
+                                      <SelectValue placeholder="Seleccionar rol" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="viewer">Solo Ver</SelectItem>
+                                      <SelectItem value="editor">Ver y Editar</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+
+
                                   <AlertDialog>
                                     <AlertDialogTrigger>
                                       <XSquare
@@ -762,30 +799,26 @@ export default function DashboardGrupos() {
                                         className="flex items-center w-full"
                                       >
                                         <p className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-md">
-                                          {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
-                                          <small>(D.N.I.)</small>
+                                          {user.user_name + " " + user.user_lastname} - {user.user_dni} <small>(D.N.I.)</small>
                                         </p>
                                       </SelectItem>
                                     ))
                                 ) : (
-                                  <p className="my-2 ml-2">No se encontraron usuarios.</p>
+                                  <p className="my-2 ml-2"> No se encontraron usuarios</p>
                                 )}
                               </SelectContent>
                             </Select>
-
-                            {/* SELECT DEL ROL DEL ACCESO */}
-                            <Select 
-                              onValueChange={(value) => setRole(value)} 
-                            >
+                            
+                            <Select onValueChange={(value)=> setRole(value)}>
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Rol de usuario (Solo Ver por default)" />
+                                <SelectValue placeholder="Rol de usuario (Solo Ver por default)" /> 
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="viewer">Solo Ver</SelectItem>
-                                <SelectItem value="editor">Ver y Editar</SelectItem>
+                                <SelectItem value="viewer"> Solo Ver </SelectItem>
+                                <SelectItem value="editor"> Ver y Editar</SelectItem>
                               </SelectContent>
                             </Select>
-                            
+
                             <div className="flex justify-center gap-x-5 pb-4 pt-3">
                               <Button
                                 className="bg-red-600 hover:bg-red-700 text-white"

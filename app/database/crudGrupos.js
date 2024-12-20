@@ -137,6 +137,31 @@ export async function setRoleUser( id_NewAccess ) {
   }
 }
 
+export async function editRoleUser( {updateRole} ) {
+
+  try {
+    const { data, error } = await supabase
+    .from('roles_group_shared')
+    .update({ role: updateRole.roleUser })
+    .match({
+      user_id_access: updateRole.selectedUser,
+      grupo_id: updateRole.grupoId,
+    })
+    .select();
+
+    if (error) {
+        console.error("Error en la update:", error.message);
+        throw new Error(error.message);
+    }
+    console.log(data)
+    return data;  
+
+  } catch (error) {
+    console.error("Error:", error.message);
+    return null;
+  }
+}
+
 export async function removeRoleUser(grupo_id, user_id_access) {
   try {
     const { error } = await supabase

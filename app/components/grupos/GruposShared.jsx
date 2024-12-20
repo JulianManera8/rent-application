@@ -18,9 +18,6 @@ import useFetch from "../../hooks/use-fetch";
 import { editAccess } from "../../database/crudGrupos";
 
 
-
-
-
 export default function GruposShared() {
 
   const userLoged_id = useUser();
@@ -196,7 +193,8 @@ export default function GruposShared() {
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="relative h-4/5">
-                
+
+                          {/* RENDER DE LOS DEPTOS */}
                           <div className="h-[36%]">
                             <p className="mb-2 text-lg font-medium flex items-center gap-x-2">
                               <Building2 className="w-4 h-4"/> Propiedades del grupo:
@@ -230,6 +228,7 @@ export default function GruposShared() {
                         
                           <Separator className="mb-3 bg-zinc-300 h-[1.5px]"/>
                         
+                          {/* RENDER DE LOS BALANCES */}
                           <div className="h-1/2">
                             <p className="mb-2 text-lg font-medium flex items-center gap-x-2">
                               <FileChartColumnIcon className="w-4 h-4"/> Balances del grupo:
@@ -265,6 +264,7 @@ export default function GruposShared() {
                             )}
                           </div>
                         
+                          {/* RENDER DE LOS ACCESOS  */}
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-x-2 text-sm">
                               <Globe size={20}/>

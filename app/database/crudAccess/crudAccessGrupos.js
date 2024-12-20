@@ -14,4 +14,19 @@ export async function getAccessGrupos(user_id) {
 
   return data;
 }
+
+export async function getRoleUser( grupo_id ) {
+  try {
+    const {data, error} = await supabase
+    .from('roles_group_shared')
+    .select('*')
+    .eq("grupo_id", grupo_id);
+
+    if(error) throw new Error(error.message)
+
+    return data
+  } catch (error){
+    alert(error)
+  }
+}
   
