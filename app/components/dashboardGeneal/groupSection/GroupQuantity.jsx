@@ -32,23 +32,23 @@ export default function GroupQuantity({ userId }) {
     }, [loading])
 
     return (
-        <>
+        <h1 className="flex items-center gap-x-3"> Grupos:
             {loading || showSkeleton ? (
-                <>
-                    <span className="text-lg text-zinc-200 font-normal mb-2 -mt-3"> <Skeleton className="w-28 h-4 bg-zinc-200"/> </span> 
-                </>
+                <div className="flex items-center">
+                    <Skeleton className="w-20 h-4 bg-zinc-200"/> 
+                </div>
             ) : (
                 <>
                     {groupInfo.length === 0 
-                        ? <span className="text-md ml-2 text-zinc-600 font-normal mb-2">No hay grupos creados</span> 
+                        ? <span className="text-md ml-2 text-zinc-600 font-normal"> No hay grupos creados</span> 
                         : 
                             <>
-                            <span className="text-2xl text-blue-400 font-medium mb-2"> {groupInfo.length}</span>
+                            <h1 className="text-blue-400 font-medium"> {groupInfo.length}</h1>
                             </>
                     }
                 </>
             )}
-        </>
+        </h1>
     )
 }
 

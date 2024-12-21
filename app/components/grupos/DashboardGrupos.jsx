@@ -425,9 +425,9 @@ export default function DashboardGrupos() {
 
                 {/* CARDS DE LOS GRUPOS */}
                 <Card className="shadow-lg my-5 bg-gradient-to-br from-sky-100/70 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[460px]">
-                  <CardHeader className="h-1/5">
-                    <CardTitle>Grupo: {grupo.grupo_name} </CardTitle>
-                    <CardDescription className="pt-1">
+                  <CardHeader className="h-1/5 mb-3">
+                    <CardTitle> {grupo.grupo_name} </CardTitle>
+                    <CardDescription>
                       Creado en fecha: {new Date(grupo.grupo_createdAt).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
@@ -542,7 +542,7 @@ export default function DashboardGrupos() {
                   ) : (
                     <>
                       <DialogTitle className="md:text-2xl text-lg text-left font-bold">
-                        Grupo: {grupo.grupo_name}
+                        {grupo.grupo_name}
                       </DialogTitle>
                       <Button
                         size="sm"

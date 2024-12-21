@@ -8,8 +8,7 @@ export default function SectionGrupos() {
 
     return (
         <div>
-            <h1 className="text-3xl font-medium text-[#0c426bd3] mb-3"> 
-                Grupos: 
+            <h1 className=" flex flex-row items-center text-3xl font-medium text-[#0c426bd3] mb-3"> 
                 <GroupQuantity userId={userLoged_id}/>
             </h1>
 
