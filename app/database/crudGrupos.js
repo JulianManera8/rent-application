@@ -176,7 +176,7 @@ export async function editRoleUser( {updateRole} ) {
         console.error("Error en la update:", error.message);
         throw new Error(error.message);
     }
-    console.log(data)
+
     return data;  
 
   } catch (error) {

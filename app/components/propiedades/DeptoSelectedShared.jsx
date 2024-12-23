@@ -17,13 +17,12 @@ export default function DeptoSelected() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
 
   const location = useLocation()
-  const {infoDepto, infoGrupo} = location.state
-
+  const {dataDepto, infoGrupo} = location.state
 
   const { data: userData, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
-  const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${infoDepto?.id}`})
-  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', '*' ,{col: 'depto_id', key: `${infoDepto?.id}`})
+  const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${dataDepto?.id}`})
+  const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', '*' ,{col: 'depto_id', key: `${dataDepto?.id}`})
 
   useEffect(() => {
     if (userLoged_id) {
@@ -65,19 +64,19 @@ export default function DeptoSelected() {
     if (item.label === "Inscripto en RELI" || item.label === "Estado") {
       return (
         <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-          {item.label === "Estado" ? (infoDepto[item.key] ? "Ocupado" : "Desocupado") : (infoDepto[item.key] ? "Sí" : "No")}
+          {item.label === "Estado" ? (dataDepto[item.key] ? "Ocupado" : "Desocupado") : (dataDepto[item.key] ? "Sí" : "No")}
         </dd>
       )
     } else if (item.type === "number") {
       return (
                <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
-                  $ {infoDepto[item.key] ? formatNumber(infoDepto[item.key]) : "-"}
+                  $ {dataDepto[item.key] ? formatNumber(dataDepto[item.key]) : "-"}
                </dd>
            );
     } else {
       return (
         <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
-          {infoDepto[item.key] ? infoDepto[item.key] : "-"}
+          {dataDepto[item.key] ? dataDepto[item.key] : "-"}
         </dd>
       )
     }
@@ -88,6 +87,7 @@ export default function DeptoSelected() {
     return new Intl.NumberFormat('es-AR').format(num);
   }
 
+
   return (
     <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 gap-x-8">
@@ -96,13 +96,14 @@ export default function DeptoSelected() {
         </h1>
       </div>
 
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* INFO GENERAL */}
         <Card className="lg:col-span-2">
         <CardHeader className='flex-col sm:flex-row items-start sm:items-center justify-between'>
             <CardTitle className='text-xl sm:text-2xl mb-2 sm:mb-0'>Pertenece al grupo: {infoGrupo.grupo_name} </CardTitle>
-            <Badge variant={infoDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
-              {infoDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
+            <Badge variant={dataDepto?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
+              {dataDepto?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
             </Badge>          
           </CardHeader>
           <CardContent>

@@ -31,10 +31,10 @@ export default function DeptoSelected() {
   const [inputBorrar, setInputBorrar ] = useState('')
   const [disabledContinue, setDisabledContinue ] = useState(true)
   const [loadingDelete, setLoadingDelete] = useState(false)
-  // const [errors, setErrors] = useState(false)
+
   const navigate = useNavigate()
   const location = useLocation()
-  const {dataDepto, infoGrupo} = location.state
+  const { dataDepto, infoGrupo } = location.state || {}; 
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -43,7 +43,7 @@ export default function DeptoSelected() {
 
   const { data: userData, fn: fnGetAllUsers } = useFetch(getAllUser, {});
   const { data: deptoData, fn: fetchDepto } = useFetch(getDeptoById, dataDepto?.id);
-
+  
   const { data: propertyImages, isLoading: imagesLoading } = useFetchBuckets('fotos_deptos', 'foto_url' ,{col: 'depto_id', key: `${dataDepto.id}`})
   const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', '*' ,{col: 'depto_id', key: `${dataDepto.id}`})
 
@@ -52,6 +52,7 @@ export default function DeptoSelected() {
       setDataDocs(propertyDocs);
     }
   }, [propertyDocs]);
+
   useEffect(() => {
     if (propertyImages) {
       setDataImagen(propertyImages);
@@ -73,9 +74,8 @@ export default function DeptoSelected() {
   useEffect(() => {
     if (deptoData) {
       setIsLoading(false);
-    }
+    } 
   }, [deptoData]);
-
 
   useEffect(() => {
     if (userData) {

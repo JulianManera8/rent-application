@@ -295,16 +295,30 @@ export default function GruposShared() {
                                         tabIndex={0}
                                         onKeyDown={(e) => {
                                           if (e.key === "Enter") {
-                                            navigate(`/dashboard/deptos/shared/${depto.id}`, {
-                                              state: { infoDepto: depto, infoGrupo: grupo },
-                                            });
+                                            console.log('Surprise!');
                                           }
-                                        }}             
-                                        onClick={() =>
-                                          navigate(`/dashboard/deptos/shared/${depto.id}`, {
-                                            state: { infoDepto: depto, infoGrupo: grupo },
-                                          })
-                                        }
+                                        }}
+                                        onClick={() => {
+                                          const userRole = rolesPerGroup?.find(
+                                            (roleInTable) => 
+                                              roleInTable.grupo_id === grupo.id && 
+                                              roleInTable.user_id_access === userLoged_id
+                                          )?.role;
+
+                                          const isEditor = userRole === 'editor';
+                                        
+                                          const targetRoute = isEditor 
+                                            ? `/dashboard/deptos/${depto.id}` 
+                                            : `/dashboard/deptos/shared/${depto.id}`;
+
+
+                                          navigate(targetRoute, {
+                                            state: { 
+                                              dataDepto: depto, 
+                                              infoGrupo: grupo,
+                                            },
+                                          });
+                                        }}
                                       >
                                         <ChevronsRight 
                                           size={28}
