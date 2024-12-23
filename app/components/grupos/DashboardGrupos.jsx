@@ -66,6 +66,24 @@ export default function DashboardGrupos() {
   }, [loadingGetGrupos])
 
   useEffect(() => {
+    if(userLoged_id) {
+        setCreateGrupoInfo((prevInfo) => ({
+          ...prevInfo,
+          userId: userLoged_id,
+        }));
+        fnGetGrupos(userLoged_id)
+        if(errorGetGrupos) return console.error(errorGetGrupos)
+        fnGetDeptos(userLoged_id)
+        if(errorDeptos) return console.error(errorGetGrupos)
+        fnGetBalances(userLoged_id)
+        if(errorGetBalances) return console.error(errorGetBalances)
+        fnGetRoleUser({userLoged_id})
+        if(errorGetRoles) return console.error(errorGetRoles)
+        fnGetAllUsers();
+    }
+  }, [userLoged_id])
+
+  useEffect(() => {
     if(inputBorrar === 'CONFIRMO BORRAR TODO') {
       return setDisabledContinue(false)
     } else {
@@ -111,22 +129,18 @@ export default function DashboardGrupos() {
   
     try {
       // Actualizar acceso (Supabase)
-      console.log("Actualizando acceso...");
       const response = await editAccess(id_NewAccess);
       if (!response) {
         console.error("La respuesta de editAccess es nula o indefinida");
         throw new Error("Falló al actualizar acceso en la base de datos");
       }
-      console.log("Acceso actualizado exitosamente");
   
       // Eliminar rol del usuario (Supabase)
-      console.log("Eliminando rol del usuario...");
       const responseDeleteRole = await removeRoleUser(grupoId, userId);
       if (responseDeleteRole === null) {
         console.error("La respuesta de removeRoleUser es nula");
         throw new Error("Falló al eliminar rol del usuario");
       }
-      console.log("Rol del usuario eliminado exitosamente");
   
       // Actualizar estado local (grupos)
       setGetGrupoInfo((prevGrupos) =>
@@ -140,7 +154,6 @@ export default function DashboardGrupos() {
         prevRoles.filter((role) => role.user_with_access.id !== userId)
       );
   
-      console.log(`Acceso eliminado correctamente para el usuario ${userId}`);
     } catch (error) {
       console.error("Error al actualizar acceso:", error.message);
       // You might want to show an error message to the user here
@@ -205,7 +218,7 @@ export default function DashboardGrupos() {
   } finally {
     setRole('viewer');
   }
-};
+  };
 
   const handleRoleChange = async (userId, grupoId, newRole) => {
 
@@ -218,7 +231,6 @@ export default function DashboardGrupos() {
 
     try {
       const response = await editRoleUser({updateRole});
-      console.log(response);
       if (!response) throw new Error("Failed to update role");
 
       // Update local state
@@ -230,14 +242,11 @@ export default function DashboardGrupos() {
         )
       );
 
-      console.log(`Role updated successfully for user ${userId}`);
     } catch (error) {
       console.error("Error updating role:", error);
       // You might want to show an error message to the user here
     }
   };
-
-  console.log(role)
 
   const handleDeleteGrupo = async (grupoId) => {
    try {
@@ -255,23 +264,7 @@ export default function DashboardGrupos() {
     }
   }
 
-  useEffect(() => {
-    if(userLoged_id) {
-        setCreateGrupoInfo((prevInfo) => ({
-          ...prevInfo,
-          userId: userLoged_id,
-        }));
-        fnGetGrupos(userLoged_id)
-        if(errorGetGrupos) return console.error(errorGetGrupos)
-        fnGetDeptos(userLoged_id)
-        if(errorDeptos) return console.error(errorGetGrupos)
-        fnGetBalances(userLoged_id)
-        if(errorGetBalances) return console.error(errorGetBalances)
-        fnGetRoleUser({userLoged_id})
-        if(errorGetRoles) return console.error(errorGetBalances)
-        fnGetAllUsers();
-    }
-  }, [userLoged_id])
+
 
   useEffect(() => {
     if(grupos && grupos.length > 0) {

@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import SkeCard from "../grupos/skeletonCardsGroups";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { EditIcon, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, LucideUserCheck, Expand, UserCheck } from 'lucide-react';
+import { EditIcon, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Expand } from 'lucide-react';
 import { Separator } from "../ui/separator"
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ import { getAccessBalances } from '../../database/crudAccess/crudAccessBalances'
 import { useNavigate } from "@remix-run/react";
 import { getAllUser } from "../../database/crudUsers";
 import useFetch from "../../hooks/use-fetch";
-import { editAccess } from "../../database/crudGrupos";
+import { editAccess, getRolesPerGroup, editRoleUser } from "../../database/crudGrupos";
 
 
 export default function GruposShared() {
@@ -26,27 +27,18 @@ export default function GruposShared() {
   
   const [loadingRemoveAccess, setLoadingRemoveAccess] = useState(false);
 
-
   const [accessGrupos, setAccessGrupos] = useState([]);
   const [loadingGetGrupos, setLoadingGetGrupos] = useState(true);
   const [errorGrupos, setErrorGrupos] = useState(null);
 
   const [accessDeptos, setAccessDeptos] = useState([]);
-  const [loadingGetDeptos, setLoadingGetDeptos] = useState(true);
   const [errorDeptos, setErrorDeptos] = useState(null);
+  const [rolesPerGroup, setRolesPerGroup] = useState([])
 
   const [accessBalances, setAccessBalances] = useState([]);
-  const [loadingGetBalances, setLoadingGetBalances] = useState(true);
-  const [errorBalances, setErrorBalances] = useState(null);
   const [showSkeleton, setShowSkeleton] = useState(true)
 
   const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
-
-  useEffect(() => {
-    if (userLoged_id) {
-      fnGetAllUsers();
-    }
-  }, [userLoged_id]);
 
   useEffect(() => {
     if(!loadingGetGrupos) {
@@ -72,10 +64,19 @@ export default function GruposShared() {
   useEffect(() => {
     async function fetchAccessGrupos() {
       if (userLoged_id) {
+        fnGetAllUsers();
+
         try {
           setLoadingGetGrupos(true);
           const data = await getAccessGrupos(userLoged_id);
           setAccessGrupos(data);
+
+          const gruposId = data.map(grupo => grupo.id)
+          const dataRoles = await getRolesPerGroup(gruposId)
+          if(dataRoles) {
+            setRolesPerGroup(dataRoles)
+          }
+
         } catch (err) {
           console.error("Error fetching access grupos:", err);
           setErrorGrupos(err.message);
@@ -90,43 +91,24 @@ export default function GruposShared() {
   
   useEffect(()=> {
 
-    async function fetchAccessDeptos() {
+    async function fetchAccessData() {
       if (userLoged_id && accessGrupos.length > 0) {
         try {
-          setLoadingGetDeptos(true);
-          const data = await getAccessDeptos(accessGrupos);
-          setAccessDeptos(data);
+          const dataDeptos = await getAccessDeptos(accessGrupos);
+          const dataBalances = await getAccessBalances(accessGrupos);
+
+          setAccessDeptos(dataDeptos);
+          setAccessBalances(dataBalances);
+
         } catch (err) {
           console.error("Error fetching access grupos:", err);
           setErrorDeptos(err.message);
-        } finally {
-          setLoadingGetDeptos(false);
         }
       }
     }
 
-    fetchAccessDeptos()
-  }, [userLoged_id, accessGrupos])
-
-  useEffect(() => {
-    async function fetchAccessBalances() {
-      if (userLoged_id && accessGrupos.length > 0) {
-        try {
-          setLoadingGetBalances(true);
-          const data = await getAccessBalances(accessGrupos);
-          setAccessBalances(data);
-        } catch (err) {
-          console.error("Error fetching access balances:", err);
-          setErrorBalances(err.message);
-        } finally {
-          setLoadingGetBalances(false);
-        }
-      }
-    }
-
-    fetchAccessBalances();
-  }, [userLoged_id, accessGrupos]);
-
+    fetchAccessData()
+  }, [accessGrupos])
 
   const handleRemoveAccess = async (userId, grupoId, e) => {
     e.preventDefault();
@@ -165,8 +147,7 @@ export default function GruposShared() {
 
     }, 3000);
     
-};
-
+  };
 
   return (
     <div className={`w-full py-10`}>
@@ -183,18 +164,16 @@ export default function GruposShared() {
                 {accessGrupos?.map((grupo) => (
                   <Dialog key={grupo?.id}>
                     <DialogTrigger asChild>
-                
                       {/* CARDS DE LOS GRUPOS */}
-                      <Card className="shadow-lg my-5 relative bg-gradient-to-br from-green-100/60 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[460px]">
-                        <CardHeader className="h-1/5">
-                          <CardTitle>Grupo: {grupo?.grupo_name} </CardTitle>
+                      <Card className="shadow-lg my-5 bg-gradient-to-br from-green-100/60 to-white hover:border-gray-300 transition-all border-2 border-gray-100 cursor-pointer min-w-[310px] min-h-[460px]">
+                        <CardHeader className="h-1/5 mb-3">                        
+                          <CardTitle>{grupo?.grupo_name} </CardTitle>
                           <CardDescription className="pt-1">
                             Creado en fecha: {new Date(grupo?.created_at).toLocaleDateString()}
                           </CardDescription>
                         </CardHeader>
-                        <CardContent className="relative h-4/5">
 
-                          {/* RENDER DE LOS DEPTOS */}
+                        <CardContent className="relative h-4/5">
                           <div className="h-[36%]">
                             <p className="mb-2 text-lg font-medium flex items-center gap-x-2">
                               <Building2 className="w-4 h-4"/> Propiedades del grupo:
@@ -278,15 +257,13 @@ export default function GruposShared() {
                         
                         </CardContent>
                       </Card>
-                        
+
                     </DialogTrigger>
                     <DialogContent className="max-h-[90%] md:min-w-[440px] w-11/12 rounded-md overflow-auto">
-                        
                       <DialogHeader>
-                        
                         <DialogTitle className="text-2xl justify-center sm:justify-between gap-y-2 w-full flex flex-wrap items-center gap-x-8">
                           <p>
-                            Grupo: {grupo?.grupo_name}
+                            {grupo?.grupo_name}
                           </p>
                         </DialogTitle>
                         
@@ -344,7 +321,7 @@ export default function GruposShared() {
                         </ul>
                       </div>
                       
-                      {/* CARDS DE LOS BALANCES */}
+                      {/* RENDER DE LOS BALANCES */}
                       <div className="mt-4">
                         <h3 className="text-lg font-semibold mb-2 underline-offset-custom">
                           Balances:
@@ -413,62 +390,75 @@ export default function GruposShared() {
                         </h3>
                         <div className="flex-col justify-between items-center">
                           <div className="flex justify-between items-center">
-                            <ul>
+                            <ul className="w-full">
                               {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 ? (
-                              usersInfo
-                                .filter((user) => grupo.shared_with.includes(user?.user_id))
-                                .map((user, i) => (
-                                  <li key={i} className="flex items-center mb-3 text-left w-full">
-                                    <Dot />
-                                    <p className="overflow-hidden text-ellipsis w-full mr-4 whitespace-nowrap pl-1 text-md">
-                                      {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
-                                      <small>(D.N.I.)</small>
-                                    </p>
-                                    {user?.user_id === userLoged_id 
-                                    ? (
-                                        <AlertDialog>
-                                        <AlertDialogTrigger >
-                                          <XSquare
-                                            size={23}
-                                            className="cursor-pointer hover:text-red-500 transition-all ml-auto"
-                                          />
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                          <AlertDialogHeader>
-                                            <AlertDialogTitle className="text-center">
-                                                Estas a punto de sacarte el acceso a este grupo
-                                            </AlertDialogTitle>
-                                            <AlertDialogDescription className="text-center">
-                                              El creador del grupo deberá volver a darte acceso en caso de querer recuperarlo.
-                                            </AlertDialogDescription>
-                                          </AlertDialogHeader>
-                                          <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
-                                            <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
-                                            <AlertDialogAction
-                                              className="h-10"
-                                              disabled={loadingRemoveAccess}
-                                              onClick={(e) => handleRemoveAccess(user.user_id, grupo.id, e)}
-                                            >
-                                              {loadingRemoveAccess ? 'Borrando acceso' : 'Borrarme'}
-                                            </AlertDialogAction>
-                                          </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                      </AlertDialog>
-                                    )
+                                usersInfo
+                                  .filter((user) => grupo.shared_with.includes(user?.user_id))
+                                  .map((user, i) => {
+                                    // Filtrar el rol específico del usuario en el grupo actual
+                                    const roleEntry = rolesPerGroup?.find(
+                                      (roleInTable) => 
+                                        roleInTable.grupo_id === grupo.id && 
+                                        roleInTable.user_access_id === user.userd_id
+                                    );
+                                  
+                                    const userRole = roleEntry?.role === 'editor' ? 'Ver y Editar' : 'Solo Ver';
+                                  
+                                    return (
+                                      <li key={user.user_id} className="flex items-center mb-3 text-left w-full justify-start">
+                                        <Dot />
+                                        <p className="overflow-hidden text-ellipsis w-fit mr-2 whitespace-nowrap pl-1 text-md">
+                                          {`${user.user_name} ${user.user_lastname}`} - {user.user_dni} <small className="ml-0">(D.N.I.)</small>
+                                        </p>
                                     
-                                    : ''}
-
-                                  </li>
-
-                                ))
+                                        <Select className="w-max">
+                                          <SelectTrigger className="w-fit ml-0 mr-auto" disabled>
+                                            {userRole} {" "}
+                                          </SelectTrigger>
+                                        </Select>
+                                    
+                                        {user?.user_id === userLoged_id && (
+                                          <AlertDialog>
+                                            <AlertDialogTrigger>
+                                              <XSquare
+                                                size={23}
+                                                className="cursor-pointer hover:text-red-500 transition-all ml-auto"
+                                              />
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                              <AlertDialogHeader>
+                                                <AlertDialogTitle className="text-center">
+                                                  Estás a punto de sacarte el acceso a este grupo
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription className="text-center">
+                                                  El creador del grupo deberá volver a darte acceso en caso de querer
+                                                  recuperarlo.
+                                                </AlertDialogDescription>
+                                              </AlertDialogHeader>
+                                              <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                                                <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                  className="h-10"
+                                                  disabled={loadingRemoveAccess}
+                                                  onClick={(e) => handleRemoveAccess(user.user_id, grupo.id, e)}
+                                                >
+                                                  {loadingRemoveAccess ? "Borrando acceso" : "Borrarme"}
+                                                </AlertDialogAction>
+                                              </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                          </AlertDialog>
+                                        )}
+                                      </li>
+                                    );
+                                  })
                               ) : (
                                 <li className="text-gray-500 text-sm w-full">Nadie más tiene acceso a este grupo.</li>
                               )}
 
-                              <p className="text-sm text-center w-full text-muted-foreground">Solo puedes borrarte a ti mismo</p>
-
+                              <p className="text-sm text-center w-full text-muted-foreground">
+                                Solo puedes borrarte a ti mismo
+                              </p>
                             </ul>
-
 
                           </div>
                         </div>

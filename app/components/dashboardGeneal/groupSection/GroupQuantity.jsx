@@ -43,7 +43,7 @@ export default function GroupQuantity({ userId }) {
                         ? <span className="text-md ml-2 text-zinc-600 font-normal"> No hay grupos creados</span> 
                         : 
                             <>
-                            <h1 className="text-blue-400 font-medium"> {groupInfo.length}</h1>
+                            <p className="text-blue-400 font-medium"> {groupInfo.length}</p>
                             </>
                     }
                 </>

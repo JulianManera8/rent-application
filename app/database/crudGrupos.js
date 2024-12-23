@@ -116,6 +116,29 @@ export async function getRoleUser( {user_id} ) {
   }
 }
 
+export async function getRolesPerGroup(gruposId) {
+  let rolesPerGroup = [];
+
+  await Promise.all(
+    gruposId.map(async (id) => {
+      const { data, error } = await supabase
+        .from('roles_group_shared')
+        .select('*')
+        .eq('grupo_id', id);
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      if (data) {
+        rolesPerGroup.push(...data); // Spread to add each item to the array
+      }
+    })
+  );
+  
+  return rolesPerGroup;
+}
+
 export async function setRoleUser( id_NewAccess ) {
   try {
     const {data, error} = await supabase
