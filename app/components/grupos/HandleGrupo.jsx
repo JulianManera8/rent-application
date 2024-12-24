@@ -7,60 +7,80 @@ import { Label } from "../ui/label";
 import { useUser } from "../../hooks/use-user";
 import { useEffect, useState } from "react";
 import useFetch from "../../hooks/use-fetch";
-import { getGrupos, insertGrupo } from "../../database/crudGrupos";
-
+import { getGrupos, getRolesPerGroup } from "../../database/crudGrupos";
+import { getAccessGrupos } from "../../database/crudAccess/crudAccessGrupos";
 
 import { Skeleton } from "../ui/skeleton";
 
 export default function HandleGrupo({ onSelectChange }) {
   
   const userLoged_id = useUser();
-  const [createGrupoInfo, setCreateGrupoInfo] = useState({
-    userId: userLoged_id,
-    nombreGrupo: "",
-  });
   const [getGrupoInfo, setGetGrupoInfo] = useState([]);
   const [grupoSelectedId, setGrupoSelectedId] = useState(null);
-  const [cerrar, setCerrar] = useState(false);
-  const [validated, setValidated] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [rolesPerGroup, setRolesPerGroup] = useState([])
 
-  useEffect(() => {
-    if (userLoged_id) {
-      setCreateGrupoInfo({ ...createGrupoInfo, userId: userLoged_id });
-    }
-  }, [userLoged_id]);
-
-  //FUNCION PARA CAPTAR LOS GRUPOS SI ES Q HAY
+  //FUNCION PARA CAPTAR LOS GRUPOS SI ES QUE HAY
+  const { loading: loadingAccessGrupos, data: dataAccessGrupos, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
   const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
 
   useEffect(() => {
     if (userLoged_id) {
       fnGetGrupos({user_id: userLoged_id});
+      fnGetAccessGrupos(userLoged_id);
       if (errorGetGrupos) return console.error(errorGetGrupos);
     }
   }, [userLoged_id]);
 
   useEffect(() => {
-    if (grupos && grupos.length > 0) {
-      // Mapea los grupos y actualiza el estado con todos los grupos
-      const mappedGrupos = grupos.map((grupo) => ({
-        grupo_id: grupo.id,
-        grupo_name: grupo.grupo_name,
-        user_id: grupo.user_id,
-      }));
+    const filteredGrupos = [];
 
-      setGetGrupoInfo(mappedGrupos);
+    if (grupos && grupos.length > 0) {
+      grupos.forEach((grupo) => {
+        if (grupo.user_id === userLoged_id) {
+          filteredGrupos.push({
+            grupo_id: grupo.id,
+            grupo_name: grupo.grupo_name,
+            user_id: grupo.user_id,
+            shared: false
+          });
+        }
+      });
     }
-  }, [grupos, userLoged_id]);
+
+    if (dataAccessGrupos && dataAccessGrupos.length > 0 && rolesPerGroup.length > 0) {
+      dataAccessGrupos.forEach((grupo) => {
+        const userRole = rolesPerGroup.find(role => role.grupo_id === grupo.id && role.user_id_access === userLoged_id);
+        if (userRole && userRole.role === 'editor') {
+          filteredGrupos.push({
+            grupo_id: grupo.id,
+            grupo_name: grupo.grupo_name,
+            user_id: grupo.user_id,
+            shared: true
+          });
+        }
+      });
+    }
+
+    setGetGrupoInfo(filteredGrupos);
+  }, [grupos, dataAccessGrupos, rolesPerGroup, userLoged_id]);
 
   useEffect(() => {
-    if (createGrupoInfo.nombreGrupo !== "") {
-      return setValidated(false);
+    async function fetchAccessData() {
+      if (userLoged_id && dataAccessGrupos?.length > 0) {
+        try {
+          const gruposId = dataAccessGrupos.map(grupo => grupo.id)
+          const dataRoles = await getRolesPerGroup(gruposId)
+          if(dataRoles) {
+            setRolesPerGroup(dataRoles)
+          }
+        } catch (err) {
+          console.error("Error fetching access balances:", err);
+        }
+      }
     }
 
-    return setValidated(true);
-  }, [createGrupoInfo.nombreGrupo]);
+    fetchAccessData()
+  }, [dataAccessGrupos, userLoged_id]);
 
   useEffect(() => {
     if (grupoSelectedId != null) {
@@ -102,14 +122,14 @@ export default function HandleGrupo({ onSelectChange }) {
                 value={grupo.grupo_name}
                 className="flex items-center w-full"
               >
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap  text-md ">
-                  {grupo.grupo_name}
+                <p className={`overflow-hidden text-ellipsis whitespace-nowrap  text-md ${grupo.shared ? 'text-green-800' : ''}`}>
+                  {grupo.grupo_name} {grupo.shared ? <span className="text-muted-foreground text-xs"> (Grupo compartido) </span> : ''}
                 </p>
               </SelectItem>
             ))) : (
-            <p className="my-2 ml-2"> No tienes grupos,  
+            <p className="my-2 ml-2"> No tienes grupos con rol de editor,  
               <NavLink to="/dashboard/grupos" className="mb-4 bg-transparent text-green-500 font-medium text-center text-sm hover:scale-105 w-full transition-all">
-                {' '}Ir a crearlo
+                {' '}Ir a crearlo o solicitar acceso
               </NavLink>
             </p>)
           )}
@@ -118,3 +138,4 @@ export default function HandleGrupo({ onSelectChange }) {
     </div>
   );
 }
+

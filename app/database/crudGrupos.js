@@ -131,7 +131,7 @@ export async function getRolesPerGroup(gruposId) {
       }
       
       if (data) {
-        rolesPerGroup.push(...data); // Spread to add each item to the array
+        rolesPerGroup.push(...data);
       }
     })
   );

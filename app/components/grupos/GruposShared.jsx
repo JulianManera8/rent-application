@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-vars */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Select, SelectTrigger} from "../ui/select";
 import SkeCard from "../grupos/skeletonCardsGroups";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { EditIcon, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Expand } from 'lucide-react';
+import { FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Expand } from 'lucide-react';
 import { Separator } from "../ui/separator"
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import { getAccessBalances } from '../../database/crudAccess/crudAccessBalances'
 import { useNavigate } from "@remix-run/react";
 import { getAllUser } from "../../database/crudUsers";
 import useFetch from "../../hooks/use-fetch";
-import { editAccess, getRolesPerGroup, editRoleUser } from "../../database/crudGrupos";
+import { editAccess, getRolesPerGroup } from "../../database/crudGrupos";
 
 
 export default function GruposShared() {
@@ -29,16 +29,14 @@ export default function GruposShared() {
 
   const [accessGrupos, setAccessGrupos] = useState([]);
   const [loadingGetGrupos, setLoadingGetGrupos] = useState(true);
-  const [errorGrupos, setErrorGrupos] = useState(null);
 
   const [accessDeptos, setAccessDeptos] = useState([]);
-  const [errorDeptos, setErrorDeptos] = useState(null);
   const [rolesPerGroup, setRolesPerGroup] = useState([])
 
   const [accessBalances, setAccessBalances] = useState([]);
   const [showSkeleton, setShowSkeleton] = useState(true)
 
-  const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
+  const { data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   useEffect(() => {
     if(!loadingGetGrupos) {
@@ -79,7 +77,6 @@ export default function GruposShared() {
 
         } catch (err) {
           console.error("Error fetching access grupos:", err);
-          setErrorGrupos(err.message);
         } finally {
           setLoadingGetGrupos(false);
         }
@@ -102,7 +99,6 @@ export default function GruposShared() {
 
         } catch (err) {
           console.error("Error fetching access grupos:", err);
-          setErrorDeptos(err.message);
         }
       }
     }
@@ -408,7 +404,7 @@ export default function GruposShared() {
                               {Array.isArray(grupo?.shared_with) && grupo.shared_with.length > 0 ? (
                                 usersInfo
                                   .filter((user) => grupo.shared_with.includes(user?.user_id))
-                                  .map((user, i) => {
+                                  .map((user) => {
                                     // Filtrar el rol específico del usuario en el grupo actual
                                     const roleEntry = rolesPerGroup?.find(
                                       (roleInTable) => 

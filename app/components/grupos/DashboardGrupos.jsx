@@ -264,8 +264,6 @@ export default function DashboardGrupos() {
     }
   }
 
-
-
   useEffect(() => {
     if(grupos && grupos.length > 0) {
         const mappedGrupos = grupos.reverse().map(grupo => ({

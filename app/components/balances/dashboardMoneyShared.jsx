@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import useFetch from "../../hooks/use-fetch";
 import { useUser } from "../../hooks/use-user";
-import { getBalances, removeBalance } from "../../database/crudBalances";
-import { getGrupos } from "../../database/crudGrupos";
+import { removeBalance } from "../../database/crudBalances";
+import { getRolesPerGroup } from "../../database/crudGrupos";
+import { getAccessBalances } from "../../database/crudAccess/crudAccessBalances";
+import { getAccessGrupos } from "../../database/crudAccess/crudAccessGrupos";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { FileLineChartIcon as FileChartColumnIncreasingIcon, XSquare, Download } from 'lucide-react';
 import { Skeleton } from "../ui/skeleton";
@@ -16,39 +18,63 @@ import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 
 export default function DashboardMoneyAll({ balanceCreated }) {
   const userLoged_id = useUser();
+  const [balanceInfoInicio, setBalanceInfoInicio] = useState([]);
   const [balanceInfo, setBalanceInfo] = useState([]);
   const [sortOrder, setSortOrder] = useState("Mas reciente");
   const [showSkeleton, setShowSkeleton] = useState(true)
+  const [rolesPerGroup, setRolesPerGroup] = useState([])
 
-  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
-  // const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
-  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
+
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
+  
+  useEffect(() => {
+      if(!loadingGrupos) {
+        setTimeout(() => {
+          setShowSkeleton(false)
+        }, (4000));
+      }
+  }, [loadingGrupos])
 
   useEffect(() => {
     if (userLoged_id) {
-      fnGetBalances({ userId: userLoged_id });
-      fnGetGrupos({ user_id: userLoged_id });
-      if (error) console.error(error);
-      if (errorGrupo) console.error(errorGrupo);
+        fnGetAccessGrupos({ user_id: userLoged_id });
+        if (errorGrupo) console.error(errorGrupo);
     }
   }, [userLoged_id]);
 
   useEffect(() => {
-    if(!loadingGrupos) {
-      setTimeout(() => {
-        setShowSkeleton(false)
-      }, (4000));
+
+    async function fetchAccessData() {
+      if (userLoged_id && dataGrupos.length > 0) {
+        try {
+
+          const gruposId = dataGrupos.map(grupo => grupo.id)
+          const dataRoles = await getRolesPerGroup(gruposId)
+          if(dataRoles) {
+            setRolesPerGroup(dataRoles)
+          }
+
+          const dataBalances = await getAccessBalances(dataGrupos);
+
+          setBalanceInfoInicio(dataBalances);
+
+        } catch (err) {
+          console.error("Error fetching access balances:", err);
+        }
+      }
     }
-  }, [loadingGrupos])
+
+    fetchAccessData()
+  }, [dataGrupos, balanceCreated]);
 
   useEffect(() => {
-    if (dataBalances) {
+    if (balanceInfoInicio) {
       const monthMap = {
         "Enero": 0, "Febrero": 1, "Marzo": 2, "Abril": 3, "Mayo": 4, "Junio": 5,
         "Julio": 6, "Agosto": 7, "Septiembre": 8, "Octubre": 9, "Noviembre": 10, "Diciembre": 11
       };
   
-      const sortedBalances = [...dataBalances].sort((a, b) => {
+      const sortedBalances = [...balanceInfoInicio].sort((a, b) => {
         const yearA = parseInt(a.año_balance, 10);
         const yearB = parseInt(b.año_balance, 10);
         const monthA = monthMap[a.mes_balance];
@@ -67,7 +93,8 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   
       setBalanceInfo(sortedBalances);
     }
-  }, [dataBalances, sortOrder]);
+
+  }, [balanceInfoInicio, sortOrder]);
 
   const handleDeleteBalance = async (balanceSelected) => {
     const getPath = balanceSelected.url_excel.substring(75);
@@ -87,16 +114,11 @@ export default function DashboardMoneyAll({ balanceCreated }) {
     }
   };
 
-  useEffect(() => {
-    if (userLoged_id && balanceCreated) {
-      fnGetBalances({ userId: userLoged_id });
-    }
-  }, [balanceCreated]);
-
-  const isLoading = loadingGrupos || loadingBalance;
+  const isLoading = loadingGrupos;
 
   return (
     <div className='w-full py-10'>
+
       {isLoading ? (
         // Skeleton loading for groups
         Array.from({ length: 2 }).map((_, index) => (
@@ -114,9 +136,9 @@ export default function DashboardMoneyAll({ balanceCreated }) {
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>
             <Accordion type="multiple" className="w-full" defaultValue={[`item${grupo.id}`]}>
               <AccordionItem value={`item${grupo.id}`}>
-                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-sky-100/80 to-white w-full px-3 rounded-t-xl">
+                <AccordionTrigger className="flex justify-between bg-gradient-to-br from-green-100/60 to-white w-full px-3 rounded-t-xl">
                   <div className="flex justify-between items-center mb-1">
-                    <h1 className="text-xl md:text-2xl font-medium text-[#194567]">
+                    <h1 className="text-xl md:text-2xl font-medium text-[#176c2b]">
                       Grupo: {grupo.grupo_name}
                     </h1>
                   </div>
@@ -158,35 +180,36 @@ export default function DashboardMoneyAll({ balanceCreated }) {
                                 </TableCell>
                                 <TableCell className="h-full">
                                   <div className="h-full flex flex-row items-center gap-4 sm:gap-7">
-                                    <AlertDialog>
-                                      <AlertDialogTrigger>
-                                        <XSquare
-                                          size={20}
-                                          className="cursor-pointer hover:text-red-500 transition-all"
-                                        />
-                                      </AlertDialogTrigger>
-                                      <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                          <AlertDialogTitle className="text-center">
-                                            Estás a punto de borrar un balance
-                                          </AlertDialogTitle>
-                                          <AlertDialogDescription className="text-center">
-                                            ¡Esta acción no se puede revertir!
-                                          </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
-                                          <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
-                                          <AlertDialogAction
-                                            className={`h-10 ${isLoading ? "opacity-50" : ""}`}
-                                            disabled={isLoading}
-                                            onClick={() => handleDeleteBalance(balance)}
-                                          >
-                                            {isLoading ? "Cargando..." : "Continuar"}
-                                          </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                      </AlertDialogContent>
-                                    </AlertDialog>
-
+                                    {rolesPerGroup.find(role => role.grupo_id === grupo.id && role.user_id_access === userLoged_id)?.role === 'editor' && (
+                                      <AlertDialog>
+                                        <AlertDialogTrigger>
+                                          <XSquare
+                                            size={20}
+                                            className="cursor-pointer hover:text-red-500 transition-all"
+                                          />
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle className="text-center">
+                                              Estás a punto de borrar un balance
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription className="text-center">
+                                              ¡Esta acción no se puede revertir!
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter className="sm:justify-center justify-evenly flex flex-row items-center">
+                                            <AlertDialogCancel className="h-10 mt-0">Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction
+                                              className={`h-10 ${isLoading ? "opacity-50" : ""}`}
+                                              disabled={isLoading}
+                                              onClick={() => handleDeleteBalance(balance)}
+                                            >
+                                              {isLoading ? "Cargando..." : "Continuar"}
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                    )}
                                     <Download
                                       size={20}
                                       className="cursor-pointer hover:text-green-500 transition-all"

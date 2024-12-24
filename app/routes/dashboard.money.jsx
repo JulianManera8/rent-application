@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import AddBalance from '../components/balances/AddBalance'
 import DashboardMoneyAll from "../components/balances/dashboardMoneyAll";
+import DashboardMoneyShared from "../components/balances/dashboardMoneyShared";
 import { Separator } from '../components/ui/separator';
 
 export default function MoneyHistorial() {
@@ -25,6 +26,11 @@ export default function MoneyHistorial() {
       </div>
       
       <DashboardMoneyAll months={months} balanceCreated={balanceCreated}/>
+
+      <h1 className="text-3xl font-medium text-[#176c2b] flex justify-between">
+        Balances de grupos compartidos
+      </h1>
+      <DashboardMoneyShared months={months} balanceCreated={balanceCreated}/>
     </div>
   );
 }
