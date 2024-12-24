@@ -24,7 +24,6 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   const [showSkeleton, setShowSkeleton] = useState(true)
   const [rolesPerGroup, setRolesPerGroup] = useState([])
 
-
   const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
   
   useEffect(() => {
@@ -43,7 +42,6 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   }, [userLoged_id]);
 
   useEffect(() => {
-
     async function fetchAccessData() {
       if (userLoged_id && dataGrupos.length > 0) {
         try {

@@ -68,6 +68,30 @@ export async function getBalances({userId}) {
   }
 }
 
+export async function getAccessBalances(usersShared_ids) {
+  if (usersShared_ids.length === 0) {
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("balances")
+      .select("*")
+      .in('user_id', usersShared_ids.map(user => user.user_id_shared))
+      .in('grupo_id', usersShared_ids.map(user => user.grupoId));
+
+    if (error) {
+      console.error(error.message);
+      throw new Error("Error fetching balances");
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error(error.message);
+    throw error;
+  }
+}
+
 //FUNCION PARA BORRAR UN BALANCE
 export async function removeBalance( infoBalance ) {
 
