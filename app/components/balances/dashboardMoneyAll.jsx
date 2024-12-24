@@ -17,83 +17,82 @@ import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 
 export default function DashboardMoneyAll({ balanceCreated }) {
   const userLoged_id = useUser();
-const [balanceInfo, setBalanceInfo] = useState([]);
-const [sortOrder, setSortOrder] = useState("Mas reciente");
-const [showSkeleton, setShowSkeleton] = useState(true);
+  const [balanceInfo, setBalanceInfo] = useState([]);
+  const [sortOrder, setSortOrder] = useState("Mas reciente");
+  const [showSkeleton, setShowSkeleton] = useState(true);
 
-const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
-const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
+  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
 
-useEffect(() => {
-  if (userLoged_id) {
-    fnGetBalances({ userId: userLoged_id });
-    fnGetGrupos({ user_id: userLoged_id });
-    if (error) console.error(error);
-    if (errorGrupo) console.error(errorGrupo);
-  }
-}, [userLoged_id]);
+  useEffect(() => {
+    if (userLoged_id) {
+      fnGetBalances({ userId: userLoged_id });
+      fnGetGrupos({ user_id: userLoged_id });
+      if (error) console.error(error);
+      if (errorGrupo) console.error(errorGrupo);
+    }
+  }, [userLoged_id]);
 
-useEffect(() => {
-  if (!loadingGrupos) {
-    setTimeout(() => {
-      setShowSkeleton(false);
-    }, 4000);
-  }
-}, [loadingGrupos]);
+  useEffect(() => {
+    if (!loadingGrupos) {
+      setTimeout(() => {
+        setShowSkeleton(false);
+      }, 4000);
+    }
+  }, [loadingGrupos]);
 
-useEffect(() => {
-  async function fetchAccessData() {
-    if (userLoged_id && dataGrupos?.length > 0 && dataBalances?.length > 0) {
-      try {
-        const gruposId = dataGrupos.map(grupo => grupo.id);
-        const dataRoles = await getRolesPerGroup(gruposId);
-        if (dataRoles) {
-          const usersShared_ids = agruparUsersAccessPorGrupo(dataRoles);
-          const balancesAddedByShared = await getAccessBalances(usersShared_ids);
-
-          setBalanceInfo(() => {
-            const combinedBalances = [
-              ...dataBalances,
-              ...balancesAddedByShared
-            ];
-            return ordenarBalances(combinedBalances, sortOrder);
-          });
+  useEffect(() => {
+    async function fetchAccessData() {
+      if (userLoged_id && dataGrupos?.length > 0 && dataBalances?.length > 0) {
+        try {
+          const gruposId = dataGrupos.map(grupo => grupo.id);
+          const dataRoles = await getRolesPerGroup(gruposId);
+          if (dataRoles) {
+            const usersShared_ids = agruparUsersAccessPorGrupo(dataRoles);
+            const balancesAddedByShared = await getAccessBalances(usersShared_ids);
+          
+            setBalanceInfo(() => {
+              const combinedBalances = [
+                ...dataBalances,
+                ...balancesAddedByShared
+              ];
+              return ordenarBalances(combinedBalances, sortOrder);
+            });
+          }
+        } catch (err) {
+          console.error("Error fetching access balances:", err);
         }
-      } catch (err) {
-        console.error("Error fetching access balances:", err);
       }
     }
-  }
-
-  fetchAccessData();
-}, [dataGrupos, sortOrder, dataBalances]);
+  
+    fetchAccessData();
+  }, [dataGrupos, sortOrder, dataBalances]);
 
 
 // Función para ordenar balances
-function ordenarBalances(balances, sortOrder) {
-  const monthMap = {
-    "Enero": 0, "Febrero": 1, "Marzo": 2, "Abril": 3, "Mayo": 4, "Junio": 5,
-    "Julio": 6, "Agosto": 7, "Septiembre": 8, "Octubre": 9, "Noviembre": 10, "Diciembre": 11
-  };
+  function ordenarBalances(balances, sortOrder) {
+    const monthMap = {
+      "Enero": 0, "Febrero": 1, "Marzo": 2, "Abril": 3, "Mayo": 4, "Junio": 5,
+      "Julio": 6, "Agosto": 7, "Septiembre": 8, "Octubre": 9, "Noviembre": 10, "Diciembre": 11
+    };
 
-  return balances.sort((a, b) => {
-    const yearA = parseInt(a.año_balance, 10);
-    const yearB = parseInt(b.año_balance, 10);
-    const monthA = monthMap[a.mes_balance];
-    const monthB = monthMap[b.mes_balance];
+    return balances.sort((a, b) => {
+      const yearA = parseInt(a.año_balance, 10);
+      const yearB = parseInt(b.año_balance, 10);
+      const monthA = monthMap[a.mes_balance];
+      const monthB = monthMap[b.mes_balance];
 
-    if (isNaN(monthA) || isNaN(monthB)) {
-      console.error("Mes inválido:", a.mes_balance, b.mes_balance);
-      return 0;
-    }
+      if (isNaN(monthA) || isNaN(monthB)) {
+        console.error("Mes inválido:", a.mes_balance, b.mes_balance);
+        return 0;
+      }
 
-    const dateA = new Date(yearA, monthA);
-    const dateB = new Date(yearB, monthB);
+      const dateA = new Date(yearA, monthA);
+      const dateB = new Date(yearB, monthB);
 
-    return sortOrder === "Mas reciente" ? dateB - dateA : dateA - dateB;
-  });
-}
-
+      return sortOrder === "Mas reciente" ? dateB - dateA : dateA - dateB;
+    });
+  }
 
   const handleDeleteBalance = async (balanceSelected) => {
     const getPath = balanceSelected.url_excel.substring(75);
@@ -146,6 +145,7 @@ function ordenarBalances(balances, sortOrder) {
             </div>
           </div>
         ))
+        
       ) : dataGrupos && dataGrupos.length > 0 ? (
         dataGrupos.map((grupo) => (
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>

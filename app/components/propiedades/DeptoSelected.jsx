@@ -373,6 +373,7 @@ export default function DeptoSelected() {
                 { icon: Home, label: "Inquilino", key: "inquilino_name" },
                 { icon: User, label: "Locador", key: "locador_name" },
                 { icon: CreditCard, label: "Facturador", key: "facturador_name" },
+                { icon: CreditCard, label: "Cobrador", key: "cobrador_name" },
                 { icon: CreditCard, label: "Usufructuario", key: "usufructuario_name" },
                 { icon: Calendar, label: "Inicio del Usufructo", key: "inicio_usufructo", type: "date" },
                 { icon: Calendar, label: "Finalización del Usufructo", key: "finalizacion_usufructo", type: "date" },

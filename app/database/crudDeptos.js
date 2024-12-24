@@ -16,6 +16,30 @@ export async function getDeptos({ user_id }) {
   return data;
 }
 
+export async function getAccessdeptos(usersShared_ids) {
+  if (usersShared_ids.length === 0) {
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("departamentos")
+      .select("*")
+      .in('grupo_id', usersShared_ids.map(user => user.grupoId))
+      .in('user_id', usersShared_ids.map(user => user.user_id_shared));
+
+    if (error) {
+      console.error(error.message);
+      throw new Error("Error fetching balances");
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error(error.message);
+    throw error;
+  }
+}
+
 export async function getDeptoById(id) {
   const { data, error } = await supabase
     .from("departamentos")

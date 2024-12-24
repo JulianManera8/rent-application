@@ -49,7 +49,6 @@ export async function insertBalance({ balanceInfo }) {
   }
 }
 
-
 //FUNCION PARA CAPTAR LOS BALANCES QUE TENGA EL USUARIO
 export async function getBalances({userId}) {
 
@@ -58,7 +57,6 @@ export async function getBalances({userId}) {
     .from("balances")
     .select("*")
     .eq("user_id", userId)
-
     
     if (error) throw new Error(error)
 
@@ -68,6 +66,7 @@ export async function getBalances({userId}) {
   }
 }
 
+//FUNCION PARA CAPRTAR LOS BALANCES QUE CREAN LOS QUE TIENEN ACCESO CONCEBIDO
 export async function getAccessBalances(usersShared_ids) {
   if (usersShared_ids.length === 0) {
     return [];
@@ -77,8 +76,8 @@ export async function getAccessBalances(usersShared_ids) {
     const { data, error } = await supabase
       .from("balances")
       .select("*")
-      .in('user_id', usersShared_ids.map(user => user.user_id_shared))
-      .in('grupo_id', usersShared_ids.map(user => user.grupoId));
+      .in('grupo_id', usersShared_ids.map(user => user.grupoId))
+      .in('user_id', usersShared_ids.map(user => user.user_id_shared));
 
     if (error) {
       console.error(error.message);

@@ -24,7 +24,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   const [showSkeleton, setShowSkeleton] = useState(true)
   const [rolesPerGroup, setRolesPerGroup] = useState([])
 
-  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGruposAccess, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
   
   useEffect(() => {
       if(!loadingGrupos) {
@@ -43,16 +43,16 @@ export default function DashboardMoneyAll({ balanceCreated }) {
 
   useEffect(() => {
     async function fetchAccessData() {
-      if (userLoged_id && dataGrupos.length > 0) {
+      if (userLoged_id && dataGruposAccess.length > 0) {
         try {
 
-          const gruposId = dataGrupos.map(grupo => grupo.id)
+          const gruposId = dataGruposAccess.map(grupo => grupo.id)
           const dataRoles = await getRolesPerGroup(gruposId)
           if(dataRoles) {
             setRolesPerGroup(dataRoles)
           }
 
-          const dataBalances = await getAccessBalances(dataGrupos);
+          const dataBalances = await getAccessBalances(dataGruposAccess);
 
           setBalanceInfoInicio(dataBalances);
 
@@ -63,7 +63,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
     }
 
     fetchAccessData()
-  }, [dataGrupos, balanceCreated]);
+  }, [dataGruposAccess, balanceCreated]);
 
   useEffect(() => {
     if (balanceInfoInicio) {
@@ -129,8 +129,8 @@ export default function DashboardMoneyAll({ balanceCreated }) {
             </div>
           </div>
         ))
-      ) : dataGrupos && dataGrupos.length > 0 ? (
-        dataGrupos.map((grupo) => (
+      ) : dataGruposAccess && dataGruposAccess.length > 0 ? (
+        dataGruposAccess.map((grupo) => (
           <div className="flex flex-col w-full mx-auto justify-between items-start md:items-center border rounded-xl shadow-md hover:shadow-lg p-3 relative mb-8 md:mb-12 transition-all" key={grupo.id}>
             <Accordion type="multiple" className="w-full" defaultValue={[`item${grupo.id}`]}>
               <AccordionItem value={`item${grupo.id}`}>
