@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { ChevronsUpDown, Plus, XSquare, FileCheckIcon } from "lucide-react";
+import { ChevronsUpDown, Plus, XSquare, FileCheckIcon } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "../ui/sheet";
 import { Form } from "@remix-run/react";
@@ -48,12 +48,10 @@ export default function AddBalance({months, setBalanceCreated}) {
   }, [userLoged_id]);
 
   const handleFileChange = (e) => {
-    const uploadedFile = e.target.files[0]; 
-    if (uploadedFile) {
-      setFile(uploadedFile);
-      setBalanceInfo((prev) => ({ ...prev, file: uploadedFile })); 
-      setDisabled(false)
-    }
+    const uploadedFile = e.target.files[0];
+    setFile(uploadedFile);
+    setBalanceInfo((prev) => ({ ...prev, file: uploadedFile }));
+    setDisabled(!uploadedFile);
   };
 
   const validate = (dataBalance) => {
@@ -91,6 +89,7 @@ export default function AddBalance({months, setBalanceCreated}) {
           año_balance: "",
           file: null,
         });
+        document.getElementById('file-upload').value = '';
         setDisabled(true)
         setLoading(false)
 
@@ -102,8 +101,13 @@ export default function AddBalance({months, setBalanceCreated}) {
 
   const removeFile = () => {
     setFile(null);
-    setBalanceInfo((prev) => ({ ...prev, file: null })); 
-    setDisabled(true)
+    setBalanceInfo((prev) => ({ ...prev, file: null }));
+    setDisabled(true);
+    // Reset the file input
+    const fileInput = document.getElementById('file-upload');
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   const handleSelectChange = (value) => {
@@ -169,7 +173,7 @@ export default function AddBalance({months, setBalanceCreated}) {
                 <span>Cargar documento</span>
                 <Plus size={20} color="green" className="border-[3px] border-green-500 w-5 h-5 rounded-full" />
               </Label>
-              <Input id="file-upload" accept=".pdf, .xls, .xlsx, .csv" className="hidden" type="file" onChange={handleFileChange} />
+              <Input key={file ? 'file-present' : 'no-file'} id="file-upload" accept=".pdf, .xls, .xlsx, .csv" className="hidden" type="file" onChange={handleFileChange} />
             </div>
 
             <Collapsible className={`bg-gray-100 border rounded-b-2xl w-full ${showFile ? "h-auto" : "h-10"}`}>
@@ -217,3 +221,4 @@ export default function AddBalance({months, setBalanceCreated}) {
     </Sheet>
   );
 }
+
