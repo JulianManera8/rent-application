@@ -16,7 +16,6 @@ import FilterComponent from './FilterComponent'
 export default function EndContract({ userId }) {
   const [deptosInfo, setDeptosInfo] = useState([]);
   const [filteredDeptos, setFilteredDeptos] = useState([]);
-  const [gruposInfo, setGruposInfo] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate()
@@ -25,21 +24,27 @@ export default function EndContract({ userId }) {
     async function getData() {
       if (userId) {
         setLoading(true);
-        const dataDeptos = await getDeptos(userId);
-        const dataGrupos = await getGroups(userId);
-        if (dataDeptos && dataGrupos) {
-          const orderedDeptos = orderProperties(dataDeptos);
-          setDeptosInfo(orderedDeptos);
-          setFilteredDeptos(orderedDeptos);
-          setGruposInfo(dataGrupos)
+        try {
+          const [dataDeptos, dataGrupos] = await Promise.all([
+            getDeptos(userId),
+            getGroups(userId)
+          ]);
+          if (dataDeptos && dataGrupos) {
+            const orderedDeptos = orderProperties(dataDeptos, dataGrupos);
+            setDeptosInfo(orderedDeptos);
+            setFilteredDeptos(orderedDeptos);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     }
     getData();
   }, [userId]);
 
-  function orderProperties(deptos) {
+  function orderProperties(deptos, grupos) {
     const deptosOcupados = deptos
       .filter(depto => depto.ocupado)
       .filter(depto => {
@@ -65,7 +70,7 @@ export default function EndContract({ userId }) {
         ubicacion: depto.ubicacion,
         endContract: format(depto.endContract, 'dd/MM/yyyy', { locale: es }),
         status: daysRemaining <= 0 ? 'VENCIDO' : daysRemaining,
-        grupo_info: gruposInfo?.filter(grupo => grupo?.id === depto.grupo_id)
+        grupo_info: grupos.filter(grupo => grupo?.id === depto.grupo_id)
       };
     });
   }
@@ -138,7 +143,7 @@ export default function EndContract({ userId }) {
                       <Button 
                         variant="ghost" 
                         className="hover:bg-transparent text-blue-900 hover:text-blue-600 p-0 sm:p-2"                                 
-                        onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { dataDepto: depto, infoGrupo: depto.grupo_info}})}
+                        onClick={() => navigate(`/dashboard/deptos/${depto.id}`, { state: { dataDepto: depto, infoGrupo: depto.grupo_info[0]}})}
                       >
                         <span className="hidden sm:inline">Ver Propiedad</span>
                         <ArrowRightSquare className="min-h-6 min-w-6" />

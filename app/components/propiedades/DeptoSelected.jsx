@@ -360,7 +360,7 @@ export default function DeptoSelected() {
         {/* INFO GENERAL */}
         <Card className="lg:col-span-2">
           <CardHeader className='flex-col sm:flex-row items-start sm:items-center justify-between'>
-            <CardTitle className='text-xl sm:text-2xl mb-2 sm:mb-0'>Pertenece al grupo: {infoGrupo.grupo_name} </CardTitle>
+            <CardTitle className='text-xl sm:text-2xl mb-2 sm:mb-0'>Grupo: {infoGrupo.grupo_name} </CardTitle>
             <Badge variant={deptoData?.ocupado ? "ocupado" : "destructive"} className='h-8 sm:h-10 text-sm sm:text-md'>
               {deptoData?.ocupado ? 'OCUPADO' : 'DESOCUPADO'}
             </Badge>          

@@ -575,11 +575,9 @@ export default function DashboardGrupos() {
                                   tabIndex={0}
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
-                                      navigate(`/dashboard/deptos/${depto.id}`, {
-                                        state: { dataDepto: depto, infoGrupo: grupo },
-                                      });
+                                      console.log('Surprise!');
                                     }
-                                  }}             
+                                  }}            
                                   onClick={() =>
                                     navigate(`/dashboard/deptos/${depto.id}`, {
                                       state: { dataDepto: depto, infoGrupo: grupo },
@@ -643,9 +641,9 @@ export default function DashboardGrupos() {
                                   tabIndex={0}
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
-                                      navigate(`/dashboard/money`);
+                                      console.log('Surprise!');
                                     }
-                                  }}             
+                                  }}           
                                   onClick={() => navigate(`/dashboard/money`)}
                                 >
                                   <ChevronsRight 

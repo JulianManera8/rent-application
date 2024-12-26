@@ -8,7 +8,6 @@ export const validateEmail = (value) => {
 };
 
 export const validateDate = (value) => {
-  console.log(value);
   const date = new Date(value);
   return !isNaN(date.getTime()) || value === '' ? null : 'Fecha inválida';
 };

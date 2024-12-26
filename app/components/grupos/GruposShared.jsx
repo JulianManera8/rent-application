@@ -372,9 +372,9 @@ export default function GruposShared() {
                                         tabIndex={0}
                                         onKeyDown={(e) => {
                                           if (e.key === "Enter") {
-                                            navigate(`/dashboard/money`);
+                                            console.log('Surprise!');
                                           }
-                                        }}             
+                                        }}          
                                         onClick={() => window.open(`${balance.url_excel}`, "_blank")}
                                       >
                                         <ChevronsRight 
