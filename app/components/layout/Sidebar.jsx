@@ -79,7 +79,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
         fixed inset-y-0 left-0 z-50 flex flex-col h-dvh min-h-dvh
         bg-[#003156]
         ${isMobileHidden ? '-translate-x-[100%]' : 'translate-x-0'}
-        ${responsive ? 'w-20 bg-[#003156]' : 'w-screen sm:w-60 bg-[#003156]'}
+        ${responsive ? 'w-20 ' : 'w-screen sm:w-60'}
         min-w-[5rem] text-white p-4
         transition-all duration-300 ease-in-out
         md:translate-x-0
@@ -96,7 +96,7 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
             <>
               <img src="/logo.png" alt="Logo" className={`${responsive ? 'h-12 w-12' : 'h-16 w-16'} mb-2 transition-all`} />
               <div className={`mt-2 text-center transition-all duration-300 ease-in-out ${responsive ? 'w-0 opacity-0' : 'w-auto opacity-100'} overflow-hidden whitespace-nowrap`}>
-                <h2 className="text-md md:text-lg font-semibold">{name} {lastname}</h2>
+                <h2 className="text-sm md:text-md font-semibold">{name} {lastname}</h2>
               </div>
             </>
           )}
@@ -114,9 +114,9 @@ export default function Sidebar({ responsive, setResponsive, onMobileHiddenChang
               `}
             >
               <div className="w-6 flex-shrink-0 flex justify-center">
-                <item.icon className="h-6 w-6" />
+                <item.icon className="h-5 w-5" />
               </div>
-              <span className={`text-sm md:text-base transition-all duration-300 ease-in-out ${responsive ? 'w-0 opacity-0' : 'w-auto opacity-100'} overflow-hidden whitespace-nowrap`}>
+              <span className={`text-sm md:text-md transition-all duration-300 ease-in-out ${responsive ? 'w-0 opacity-0' : 'w-auto opacity-100'} overflow-hidden whitespace-nowrap`}>
                 {item.label}
               </span>
             </NavLink>

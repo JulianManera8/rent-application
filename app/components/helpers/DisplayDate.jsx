@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { es } from 'date-fns/locale';
@@ -14,7 +15,7 @@ export default function DisplayDate({responsive}) {
 
     return (
         <div className='w-full text-center'>
-            <h1 className={`first-letter:uppercase ${responsive ? 'text-xs' : 'text-lg'}`}> {date} </h1>
+            <h1 className={`first-letter:uppercase ${responsive ? 'text-xs' : 'text-md'}`}> {date} </h1>
         </div>
     )
 }
