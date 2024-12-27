@@ -147,13 +147,13 @@ export default function DashboardDeptoPage() {
 
       </div>
 
-      <DashboardDeptos searchTerm={searchTerm} filteredDepartamentos={filteredDepartamentos} deptos={deptos} loadingDeptos={loadingDeptos}/>
+      <DashboardDeptos searchTerm={searchTerm} filteredDepartamentos={filteredDepartamentos} deptos={deptos} loadingDeptos={loadingDeptos} userId={userLoged_id}/>
 
       <h1 className="text-3xl font-medium text-[#176c2b] flex justify-between">
         Propiedades de grupos compartidos
       </h1>
       
-      <DashboardDeptosShared searchTerm={searchTerm} filteredDepartamentos={filteredDepartamentosShared} deptos={deptoInfoInicio} loadingDeptos={loadingDeptos}/>
+      <DashboardDeptosShared searchTerm={searchTerm} filteredDepartamentos={filteredDepartamentosShared} deptos={deptoInfoInicio} loadingDeptos={loadingDeptos} userId={userLoged_id}/>
     </div>
   );
   

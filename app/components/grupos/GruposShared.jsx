@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
@@ -9,7 +10,6 @@ import { Separator } from "../ui/separator"
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
-import { useUser } from '../../hooks/use-user'
 import { getAccessGrupos } from '../../database/crudAccess/crudAccessGrupos';
 import { getAccessDeptos } from '../../database/crudAccess/crudAccessDeptos';
 import { getAccessBalances } from '../../database/crudAccess/crudAccessBalances';
@@ -19,9 +19,8 @@ import useFetch from "../../hooks/use-fetch";
 import { editAccess, getRolesPerGroup } from "../../database/crudGrupos";
 
 
-export default function GruposShared() {
+export default function GruposShared({userId}) {
 
-  const userLoged_id = useUser();
   const navigate = useNavigate();
   const [usersInfo, setUsersInfo] = useState([])
   
@@ -61,12 +60,12 @@ export default function GruposShared() {
 
   useEffect(() => {
     async function fetchAccessGrupos() {
-      if (userLoged_id) {
+      if (userId) {
         fnGetAllUsers();
 
         try {
           setLoadingGetGrupos(true);
-          const data = await getAccessGrupos(userLoged_id);
+          const data = await getAccessGrupos(userId);
           setAccessGrupos(data);
 
           const gruposId = data.map(grupo => grupo.id)
@@ -84,12 +83,12 @@ export default function GruposShared() {
     }
 
     fetchAccessGrupos();
-  }, [userLoged_id]);
+  }, [userId]);
   
   useEffect(()=> {
 
     async function fetchAccessData() {
-      if (userLoged_id && accessGrupos.length > 0) {
+      if (userId && accessGrupos.length > 0) {
         try {
           const dataDeptos = await getAccessDeptos(accessGrupos);
           const dataBalances = await getAccessBalances(accessGrupos);
@@ -298,7 +297,7 @@ export default function GruposShared() {
                                           const userRole = rolesPerGroup?.find(
                                             (roleInTable) => 
                                               roleInTable.grupo_id === grupo.id && 
-                                              roleInTable.user_id_access === userLoged_id
+                                              roleInTable.user_id_access === userId
                                           )?.role;
 
                                           const isEditor = userRole === 'editor';
@@ -427,7 +426,7 @@ export default function GruposShared() {
                                           </SelectTrigger>
                                         </Select>
                                     
-                                        {user?.user_id === userLoged_id && (
+                                        {user?.user_id === userId && (
                                           <AlertDialog>
                                             <AlertDialogTrigger>
                                               <XSquare

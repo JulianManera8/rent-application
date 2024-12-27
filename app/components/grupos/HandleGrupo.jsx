@@ -4,7 +4,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { NavLink } from "@remix-run/react";
 import { Label } from "../ui/label";
-import { useUser } from "../../hooks/use-user";
 import { useEffect, useState } from "react";
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, getRolesPerGroup } from "../../database/crudGrupos";
@@ -12,31 +11,30 @@ import { getAccessGrupos } from "../../database/crudAccess/crudAccessGrupos";
 
 import { Skeleton } from "../ui/skeleton";
 
-export default function HandleGrupo({ onSelectChange }) {
+export default function HandleGrupo({ onSelectChange, userId }) {
   
-  const userLoged_id = useUser();
   const [getGrupoInfo, setGetGrupoInfo] = useState([]);
   const [grupoSelectedId, setGrupoSelectedId] = useState(null);
   const [rolesPerGroup, setRolesPerGroup] = useState([])
 
   //FUNCION PARA CAPTAR LOS GRUPOS SI ES QUE HAY
-  const { loading: loadingAccessGrupos, data: dataAccessGrupos, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
-  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
+  const { loading: loadingAccessGrupos, data: dataAccessGrupos, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userId );
+  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userId });
 
   useEffect(() => {
-    if (userLoged_id) {
-      fnGetGrupos({user_id: userLoged_id});
-      fnGetAccessGrupos(userLoged_id);
+    if (userId) {
+      fnGetGrupos({user_id: userId});
+      fnGetAccessGrupos(userId);
       if (errorGetGrupos) return console.error(errorGetGrupos);
     }
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     const filteredGrupos = [];
 
     if (grupos && grupos.length > 0) {
       grupos.forEach((grupo) => {
-        if (grupo.user_id === userLoged_id) {
+        if (grupo.user_id === userId) {
           filteredGrupos.push({
             grupo_id: grupo.id,
             grupo_name: grupo.grupo_name,
@@ -49,7 +47,7 @@ export default function HandleGrupo({ onSelectChange }) {
 
     if (dataAccessGrupos && dataAccessGrupos.length > 0 && rolesPerGroup.length > 0) {
       dataAccessGrupos.forEach((grupo) => {
-        const userRole = rolesPerGroup.find(role => role.grupo_id === grupo.id && role.user_id_access === userLoged_id);
+        const userRole = rolesPerGroup.find(role => role.grupo_id === grupo.id && role.user_id_access === userId);
         if (userRole && userRole.role === 'editor') {
           filteredGrupos.push({
             grupo_id: grupo.id,
@@ -62,11 +60,11 @@ export default function HandleGrupo({ onSelectChange }) {
     }
 
     setGetGrupoInfo(filteredGrupos);
-  }, [grupos, dataAccessGrupos, rolesPerGroup, userLoged_id]);
+  }, [grupos, dataAccessGrupos, rolesPerGroup, userId]);
 
   useEffect(() => {
     async function fetchAccessData() {
-      if (userLoged_id && dataAccessGrupos?.length > 0) {
+      if (userId && dataAccessGrupos?.length > 0) {
         try {
           const gruposId = dataAccessGrupos.map(grupo => grupo.id)
           const dataRoles = await getRolesPerGroup(gruposId)
@@ -80,7 +78,7 @@ export default function HandleGrupo({ onSelectChange }) {
     }
 
     fetchAccessData()
-  }, [dataAccessGrupos, userLoged_id]);
+  }, [dataAccessGrupos, userId]);
 
   useEffect(() => {
     if (grupoSelectedId != null) {

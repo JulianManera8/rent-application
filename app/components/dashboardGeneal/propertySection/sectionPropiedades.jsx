@@ -1,10 +1,9 @@
-import { useUser } from '../../../hooks/use-user'
+/* eslint-disable react/prop-types */
 import PropOcupation from './PropOcupation'
 import PropQuantity from './PropQuantity'
 import PropTotalIncome from './PropTotalncome'
 
-export default function SectionPropiedades() {
-    const userLoged_id = useUser()
+export default function SectionPropiedades({userId}) {
 
     return (
         <div className="-z-10">
@@ -13,14 +12,14 @@ export default function SectionPropiedades() {
             <div className="flex gap-10 flex-wrap">
 
                 <div className=" space-y-4 flex flex-col md:w-[288px] w-full justify-between">
-                    <PropQuantity userId={userLoged_id}/>
+                    <PropQuantity userId={userId}/>
                 </div>
 
                 <div className="flex flex-col gap-y-5 md:max-w-72 md:min-w-72 w-full h-full -z-10">
-                    <PropTotalIncome userId={userLoged_id}/>
+                    <PropTotalIncome userId={userId}/>
                 </div>
                 <div className="flex flex-col gap-y-5 md:max-w-72 md:min-w-72 w-full h-full -z-10">
-                    <PropOcupation userId={userLoged_id}/>
+                    <PropOcupation userId={userId}/>
                 </div>
 
                 {/* <Card className="border-1 shadow-md shadow-black/15 border-[0.6px] border-t-[1px] md:w-[350px] w-full flex flex-col justify-evenly -z-10">

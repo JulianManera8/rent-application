@@ -2,9 +2,10 @@
 import DashboardGrupos from "../components/grupos/DashboardGrupos";
 import GruposShared from "../components/grupos/GruposShared";
 import { Separator } from "../components/ui/separator"
-// import { Button } from "../components/ui/button";
+import { useUser } from "../hooks/use-user";
 
 export default function DashboardGruposPage() {
+  const userLoged_id = useUser()
   return (
     <div className="flex flex-col w-full mr-14 px-0 md:px-3">
       <div className="flex items-center md:mt-8 mt-0 md:justify-between justify-center ">
@@ -13,9 +14,9 @@ export default function DashboardGruposPage() {
         </h1>
       </div>
       <Separator />
-      <DashboardGrupos rows={10} border="border-none" showBtn={false} showAll={true}/>
+      <DashboardGrupos rows={10} border="border-none" showBtn={false} showAll={true} userId={userLoged_id}/>
       <Separator />
-      <GruposShared />
+      <GruposShared userId={userLoged_id}/>
     </div>
   );
 }

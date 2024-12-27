@@ -4,7 +4,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import useFetch from "../../hooks/use-fetch";
-import { useUser } from "../../hooks/use-user";
 import { removeBalance } from "../../database/crudBalances";
 import { getRolesPerGroup } from "../../database/crudGrupos";
 import { getAccessBalances } from "../../database/crudAccess/crudAccessBalances";
@@ -16,15 +15,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 
-export default function DashboardMoneyAll({ balanceCreated }) {
-  const userLoged_id = useUser();
+export default function DashboardMoneyAll({ balanceCreated, userId }) {
+
   const [balanceInfoInicio, setBalanceInfoInicio] = useState([]);
   const [balanceInfo, setBalanceInfo] = useState([]);
   const [sortOrder, setSortOrder] = useState("Mas reciente");
   const [showSkeleton, setShowSkeleton] = useState(true)
   const [rolesPerGroup, setRolesPerGroup] = useState([])
 
-  const { loading: loadingGrupos, error: errorGrupo, data: dataGruposAccess, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userLoged_id );
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGruposAccess, fn: fnGetAccessGrupos } = useFetch(getAccessGrupos, userId );
   
   useEffect(() => {
       if(!loadingGrupos) {
@@ -35,15 +34,15 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   }, [loadingGrupos])
 
   useEffect(() => {
-    if (userLoged_id) {
-        fnGetAccessGrupos({ user_id: userLoged_id });
+    if (userId) {
+        fnGetAccessGrupos({ user_id: userId });
         if (errorGrupo) console.error(errorGrupo);
     }
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     async function fetchAccessData() {
-      if (userLoged_id && dataGruposAccess.length > 0) {
+      if (userId && dataGruposAccess.length > 0) {
         try {
 
           const gruposId = dataGruposAccess.map(grupo => grupo.id)
@@ -178,7 +177,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
                                 </TableCell>
                                 <TableCell className="h-full">
                                   <div className="h-full flex flex-row items-center gap-4 sm:gap-7">
-                                    {rolesPerGroup.find(role => role.grupo_id === grupo.id && role.user_id_access === userLoged_id)?.role === 'editor' && (
+                                    {rolesPerGroup.find(role => role.grupo_id === grupo.id && role.user_id_access === userId)?.role === 'editor' && (
                                       <AlertDialog>
                                         <AlertDialogTrigger>
                                           <XSquare

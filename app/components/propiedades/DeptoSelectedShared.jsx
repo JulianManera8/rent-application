@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand} from 'lucide-react'
@@ -6,13 +7,11 @@ import { useLocation } from "@remix-run/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { getAllUser } from "../../database/crudUsers"
-import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch"
 import { useFetchBuckets } from '../../hooks/use-fetchBucket'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger} from "../ui/dialog"
 
-export default function DeptoSelected() {
-  const userLoged_id = useUser();
+export default function DeptoSelected({userId}) {
   const [usersInfo, setUsersInfo] = useState([])
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
 
@@ -25,10 +24,10 @@ export default function DeptoSelected() {
   const { data: propertyDocs, isLoading: docsLoading } = useFetchBuckets('docs_deptos', '*' ,{col: 'depto_id', key: `${dataDepto?.id}`})
 
   useEffect(() => {
-    if (userLoged_id) {
+    if (userId) {
       fnGetAllUsers();
     }
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     if (userData) {
@@ -188,7 +187,7 @@ export default function DeptoSelected() {
                           {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
                           <small>(D.N.I.)</small>
                         </p>
-                        {user?.user_id === userLoged_id}
+                        {user?.user_id === userId}
                       </li>
                     ))
                 ) : (

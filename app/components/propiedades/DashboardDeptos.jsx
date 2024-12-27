@@ -6,30 +6,28 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import useFetch from '../../hooks/use-fetch'
 import { getGrupos, getRolesPerGroup } from "../../database/crudGrupos";
 import SkeletonLoading from '../helpers/skeletonTable'
-import { useUser } from '../../hooks/use-user'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Skeleton } from "../ui/skeleton";
 import { getAccessdeptos } from "../../database/crudDeptos";
 import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 
-export default function DashboardDeptos({ searchTerm, filteredDepartamentos, loadingDeptos }) {
-  const userLoged_id = useUser();
+export default function DashboardDeptos({ searchTerm, filteredDepartamentos, loadingDeptos, userId }) {
   const navigate = useNavigate();
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [deptosAddedByShared, setDeptosAddedByShared] = useState([]);
 
-  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userId });
 
   useEffect(() => {
-    if (userLoged_id) {
-      fnGetGrupos({ user_id: userLoged_id });
+    if (userId) {
+      fnGetGrupos({ user_id: userId });
       if (errorGrupo) console.error(errorGrupo);
     }
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     async function fetchAccessData() {
-      if (userLoged_id && dataGrupos?.length > 0) {
+      if (userId && dataGrupos?.length > 0) {
         try {
           const gruposId = dataGrupos.map(grupo => grupo.id);
           const dataRoles = await getRolesPerGroup(gruposId);
@@ -44,7 +42,7 @@ export default function DashboardDeptos({ searchTerm, filteredDepartamentos, loa
       }
     }
     fetchAccessData();
-  }, [dataGrupos, userLoged_id]);
+  }, [dataGrupos, userId]);
 
   useEffect(() => {
     if (!loadingGrupos) {

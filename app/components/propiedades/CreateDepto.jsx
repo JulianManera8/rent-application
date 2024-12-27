@@ -262,7 +262,7 @@ export default function CreateDepto() {
       <Form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 gap-y-8 items-start justify-items-stretch">
         <SuccessDialog showSuccessDialog={showSuccessDialog}/>
 
-        <HandleGrupo onSelectChange={handleSelectChange} />
+        <HandleGrupo onSelectChange={handleSelectChange} userId={userLoged_id}/>
 
         <FormInput
           label="Ubicación"

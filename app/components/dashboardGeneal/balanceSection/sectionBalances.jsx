@@ -2,7 +2,6 @@
 import { useEffect, useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card"
 import { Button } from "../../ui/button"
-import { useUser } from '../../../hooks/use-user'
 import { getGroups } from "../groupSection/getGroupData"
 import { getBalances } from "./getBalanceData"
 import { FileLineChartIcon as FileChartColumnIcon, FileLineChartIcon as FileChartColumnIncreasingIcon } from 'lucide-react'
@@ -64,20 +63,20 @@ function GroupBalanceRow({ groupBalance }) {
   )
 }
 
-export default function SectionPropiedades() {
-  const userLoged_id = useUser()
+export default function SectionPropiedades({userId}) {
+
   const [isLoading, setIsLoading] = useState(true)
   const [groups, setGroups] = useState([])
   const [balances, setBalances] = useState([])
 
   useEffect(() => {
     async function fetchData() {
-      if (userLoged_id) {
+      if (userId) {
         setIsLoading(true)
         try {
           const [dataGroups, dataBalances] = await Promise.all([
-            getGroups(userLoged_id),
-            getBalances(userLoged_id)
+            getGroups(userId),
+            getBalances(userId)
           ])
           setGroups(dataGroups || [])
           setBalances(dataBalances || [])
@@ -89,7 +88,7 @@ export default function SectionPropiedades() {
       }
     }
     fetchData()
-  }, [userLoged_id])
+  }, [userId])
 
   const balancesByGroup = useMemo(() => 
     calculateBalancesByGroup(groups, balances),

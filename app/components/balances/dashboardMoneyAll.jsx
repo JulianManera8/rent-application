@@ -4,7 +4,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import useFetch from "../../hooks/use-fetch";
-import { useUser } from "../../hooks/use-user";
 import { getBalances, getAccessBalances, removeBalance } from "../../database/crudBalances";
 import { getGrupos, getRolesPerGroup } from "../../database/crudGrupos";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
@@ -15,23 +14,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 
 
-export default function DashboardMoneyAll({ balanceCreated }) {
-  const userLoged_id = useUser();
+export default function DashboardMoneyAll({ balanceCreated, userId }) {
   const [balanceInfo, setBalanceInfo] = useState([]);
   const [sortOrder, setSortOrder] = useState("Mas reciente");
   const [showSkeleton, setShowSkeleton] = useState(true);
 
-  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id });
-  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userLoged_id });
+  const { loading: loadingBalance, error, data: dataBalances, fn: fnGetBalances } = useFetch(getBalances, { userId: userId });
+  const { loading: loadingGrupos, error: errorGrupo, data: dataGrupos, fn: fnGetGrupos } = useFetch(getGrupos, { user_id: userId });
 
   useEffect(() => {
-    if (userLoged_id) {
-      fnGetBalances({ userId: userLoged_id });
-      fnGetGrupos({ user_id: userLoged_id });
+    if (userId) {
+      fnGetBalances({ userId: userId });
+      fnGetGrupos({ user_id: userId });
       if (error) console.error(error);
       if (errorGrupo) console.error(errorGrupo);
     }
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     if (!loadingGrupos) {
@@ -43,7 +41,7 @@ export default function DashboardMoneyAll({ balanceCreated }) {
 
   useEffect(() => {
     async function fetchAccessData() {
-      if (userLoged_id && dataGrupos?.length > 0 && dataBalances?.length > 0) {
+      if (userId && dataGrupos?.length > 0 && dataBalances?.length > 0) {
         try {
           const gruposId = dataGrupos.map(grupo => grupo.id);
           const dataRoles = await getRolesPerGroup(gruposId);
@@ -113,8 +111,8 @@ export default function DashboardMoneyAll({ balanceCreated }) {
   };
 
   useEffect(() => {
-    if (userLoged_id && balanceCreated) {
-      fnGetBalances({ userId: userLoged_id });
+    if (userId && balanceCreated) {
+      fnGetBalances({ userId: userId });
     }
   }, [balanceCreated]);
 

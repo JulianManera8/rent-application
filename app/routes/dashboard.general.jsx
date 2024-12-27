@@ -4,9 +4,12 @@ import SectionGrupos from '../components/dashboardGeneal/groupSection/sectionGru
 import SectionPropiedades from '../components/dashboardGeneal/propertySection/sectionPropiedades'
 import QuickAccess from '../components/dashboardGeneal/QuickAccess'
 import { Separator } from '../components/ui/separator'
+import { useUser } from '../hooks/use-user'
 
 
 export default function DashboardIndexPage() {
+    const userLoged_id = useUser()
+
     return (
         <div className='flex flex-col w-full mr-7 md:px-3 px-0'> 
             <div className='fixed right-0 top-6 mr-4 z-50'>
@@ -23,16 +26,16 @@ export default function DashboardIndexPage() {
 
             <main className='space-y-16 mr-0 mb-20 mt-10'>
                 <section>
-                    <SectionGeneral />
+                    <SectionGeneral userId={userLoged_id}/>
                 </section>
                 <section>
-                    <SectionGrupos />
+                    <SectionGrupos userId={userLoged_id}/>
                 </section>
                 <section>
-                    <SectionPropiedades />   
+                    <SectionPropiedades userId={userLoged_id}/>   
                 </section>
                 <section>
-                    <SectionBalances />
+                    <SectionBalances userId={userLoged_id}/>
                 </section>
             </main>
         </div>

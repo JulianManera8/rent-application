@@ -4,8 +4,11 @@ import AddBalance from '../components/balances/AddBalance'
 import DashboardMoneyAll from "../components/balances/dashboardMoneyAll";
 import DashboardMoneyShared from "../components/balances/dashboardMoneyShared";
 import { Separator } from '../components/ui/separator';
+import { useUser } from '../hooks/use-user'
 
 export default function MoneyHistorial() {
+
+  const userLoged_id = useUser()
   const [ balanceCreated, setBalanceCreated ] = useState()
 
   const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -22,15 +25,15 @@ export default function MoneyHistorial() {
         <h1 className="sm:text-3xl text-2xl font-medium text-[#194567] flex justify-between">
           Mis Balances
         </h1>
-        <AddBalance months={months} setBalanceCreated={setBalanceCreated}/>
+        <AddBalance months={months} setBalanceCreated={setBalanceCreated} userId={userLoged_id}/>
       </div>
       
-      <DashboardMoneyAll months={months} balanceCreated={balanceCreated}/>
+      <DashboardMoneyAll months={months} balanceCreated={balanceCreated} userId={userLoged_id}/>
 
       <h1 className="text-3xl font-medium text-[#176c2b] flex justify-between">
         Balances de grupos compartidos
       </h1>
-      <DashboardMoneyShared months={months} balanceCreated={balanceCreated}/>
+      <DashboardMoneyShared months={months} balanceCreated={balanceCreated} userId={userLoged_id}/>
     </div>
   );
 }

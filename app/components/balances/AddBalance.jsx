@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 
 import { useEffect, useState } from "react";
-import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch";
 import { insertBalance } from "../../database/crudBalances";
 import { Input } from "../ui/input";
@@ -17,13 +16,12 @@ import Spinner from "../helpers/loaderIcon";
 import Error from "../helpers/Error";
 
 
-export default function AddBalance({months, setBalanceCreated}) {
+export default function AddBalance({months, setBalanceCreated, userId}) {
 
   const year = new Date().getFullYear();
   const yearMin = year - 50;
   const yearValues = Array.from({ length: year - yearMin + 1 }, (_, i) => year - i);
 
-  const userLoged_id = useUser()
   const [ loading, setLoading ] = useState(false)
   const [ errors, setErrors ] = useState([])
   const [ isOpen, setIsOpen ] = useState(false)
@@ -42,10 +40,10 @@ export default function AddBalance({months, setBalanceCreated}) {
   const { fn: dbInsertBalance } = useFetch(insertBalance, { balanceInfo });
 
   useEffect(() => {
-      if (userLoged_id) {
-        setBalanceInfo((prev) => ({ ...prev, user_id: userLoged_id }));
+      if (userId) {
+        setBalanceInfo((prev) => ({ ...prev, user_id: userId }));
       }
-  }, [userLoged_id]);
+  }, [userId]);
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
@@ -74,7 +72,7 @@ export default function AddBalance({months, setBalanceCreated}) {
       return setErrors({error:'Debes completar todos los campos'})
     }
 
-    if (userLoged_id !== null) {
+    if (userId !== null) {
 
       try {
         setLoading(true)
@@ -84,7 +82,7 @@ export default function AddBalance({months, setBalanceCreated}) {
         setBalanceCreated(balanceInfo)
         setIsOpen(false)
         setBalanceInfo({
-          user_id: userLoged_id, 
+          user_id: userId, 
           mes_balance: "",
           año_balance: "",
           file: null,
@@ -132,7 +130,7 @@ export default function AddBalance({months, setBalanceCreated}) {
 
           {/* GRUPO */}
           <div>
-            <HandleGrupo onSelectChange={handleSelectChange}/>
+            <HandleGrupo onSelectChange={handleSelectChange} userId={userId}/>
           </div>
 
           {/* MES */} 

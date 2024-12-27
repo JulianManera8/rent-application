@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
@@ -9,7 +10,6 @@ import { Label } from "../ui/label";
 import { Pencil, UserPlus, FileLineChartIcon as FileChartColumnIcon, Dot, ChevronsRight, Building2, Globe, XSquare, Search, ExpandIcon, CheckSquareIcon } from 'lucide-react';
 import useFetch from "../../hooks/use-fetch";
 import { getGrupos, insertGrupo, editGroupName, removeGrupo, editRoleUser,  editAccess, setRoleUser, getRoleUser, removeRoleUser } from "../../database/crudGrupos";
-import { useUser } from '../../hooks/use-user'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "../ui/dialog"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { getDeptos } from "../../database/crudDeptos";
@@ -26,15 +26,14 @@ import { getAllUser } from "../../database/crudUsers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
 
-export default function DashboardGrupos() {
+export default function DashboardGrupos({userId}) {
   const [isOpen, setIsOpen] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
-  const userLoged_id = useUser()
   const [usersInfo, setUsersInfo] = useState([])
   const [role, setRole] = useState('viewer')
   const [rolePerUser, setRolePerUser] = useState([])
   const [createGrupoInfo, setCreateGrupoInfo] = useState({
-    userId: userLoged_id,
+    userId: userId,
     nombreGrupo: "",
     shared_with: []
   });
@@ -56,11 +55,11 @@ export default function DashboardGrupos() {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [showSkeleton, setShowSkeleton] = useState(true)
 
-  const { data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userLoged_id});
-  const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userLoged_id});
-  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userLoged_id});
+  const { data: balances, error: errorGetBalances,  fn: fnGetBalances } = useFetch(getBalances, { userId: userId});
+  const { data: deptos, error: errorDeptos, fn: fnGetDeptos } = useFetch(getDeptos, {user_id: userId});
+  const { loading: loadingGetGrupos, data: grupos, error: errorGetGrupos, fn: fnGetGrupos } = useFetch(getGrupos, {user_id: userId});
   const { error: errorUpdateName, fn: fnUpdateNameGroup } = useFetch(editGroupName, { id_NewName } )
-  const { data: rolesUsers, error: errorGetRoles, fn: fnGetRoleUser} = useFetch(getRoleUser, {user_id: userLoged_id} )
+  const { data: rolesUsers, error: errorGetRoles, fn: fnGetRoleUser} = useFetch(getRoleUser, {user_id: userId} )
   const { loading, data, error, fn: fnGetAllUsers } = useFetch(getAllUser, {});
 
   useEffect(() => {
@@ -72,22 +71,22 @@ export default function DashboardGrupos() {
   }, [loadingGetGrupos])
 
   useEffect(() => {
-    if(userLoged_id) {
+    if(userId) {
         setCreateGrupoInfo((prevInfo) => ({
           ...prevInfo,
-          userId: userLoged_id,
+          userId: userId,
         }));
-        fnGetGrupos(userLoged_id)
+        fnGetGrupos(userId)
         if(errorGetGrupos) return console.error(errorGetGrupos)
-        fnGetDeptos(userLoged_id)
+        fnGetDeptos(userId)
         if(errorDeptos) return console.error(errorGetGrupos)
-        fnGetBalances(userLoged_id)
+        fnGetBalances(userId)
         if(errorGetBalances) return console.error(errorGetBalances)
-        fnGetRoleUser({userLoged_id})
+        fnGetRoleUser({userId})
         if(errorGetRoles) return console.error(errorGetRoles)
         fnGetAllUsers();
     }
-  }, [userLoged_id])
+  }, [userId])
 
   useEffect(() => {
     if(inputBorrar === 'CONFIRMO BORRAR TODO') {
@@ -182,7 +181,7 @@ export default function DashboardGrupos() {
   const newSharedWith = [...new Set([...currentSharedWith, selectedUser])];
   
   const id_NewAccess = {
-    userLoged_id: userLoged_id,
+    userId: userId,
     arrayUsersId: newSharedWith,
     grupoId: grupoId,
     selectedUser: selectedUser,
@@ -215,7 +214,7 @@ export default function DashboardGrupos() {
     ]);
 
     // Refresh the roles from the server
-    fnGetRoleUser({userLoged_id});
+    fnGetRoleUser({userId});
 
     setSelectedUser("");
     setAddUserAccess(false);
@@ -231,7 +230,7 @@ export default function DashboardGrupos() {
   const handleRoleChange = async (userId, grupoId, newRole) => {
 
     const updateRole = {
-      userLoged_id: userLoged_id,
+      userId: userId,
       grupoId: grupoId,
       selectedUser: userId,
       roleUser: newRole
@@ -283,7 +282,7 @@ export default function DashboardGrupos() {
         }));
         setGetGrupoInfo(mappedGrupos);
     }
-  }, [grupos, userLoged_id ]);
+  }, [grupos, userId ]);
 
   useEffect(() => {
     if(createGrupoInfo.nombreGrupo !== '') {
@@ -303,7 +302,7 @@ export default function DashboardGrupos() {
     e.preventDefault();
     setCerrar(true)
     try {
-        if (userLoged_id) {
+        if (userId) {
             const result = await insertGrupo({ createGrupoInfo });
             setTimeout(() => {
               setIsOpen(false)
@@ -349,7 +348,7 @@ export default function DashboardGrupos() {
     const user = usersInfo
       ? usersInfo.filter(
           (user) =>
-            user.user_id !== userLoged_id &&
+            user.user_id !== userId &&
             (user.user_dni.includes(searchTerm) || user.user_id === searchTerm)
         )
       : [];

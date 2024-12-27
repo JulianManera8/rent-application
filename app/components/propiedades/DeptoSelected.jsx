@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
@@ -11,7 +12,6 @@ import { Textarea } from "../ui/textarea"
 import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
 import { getAllUser } from "../../database/crudUsers"
-import { useUser } from '../../hooks/use-user'
 import useFetch from "../../hooks/use-fetch"
 import { useFetchBuckets } from '../../hooks/use-fetchBucket'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger} from "../ui/dialog"
@@ -22,8 +22,7 @@ import {AddImageDialog} from '../propiedades/AddImageDialog'
 // import Error from '../helpers/Error'
 
 
-export default function DeptoSelected() {
-  const userLoged_id = useUser();
+export default function DeptoSelected({userId}) {
   const [usersInfo, setUsersInfo] = useState([])
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const [isEditing, setIsEditing] = useState(false)
@@ -60,10 +59,10 @@ export default function DeptoSelected() {
   }, [propertyImages]);
 
   useEffect(() => {
-    if (userLoged_id) {
+    if (userId) {
       fnGetAllUsers();
     }
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     if (dataDepto.id) {
@@ -512,7 +511,7 @@ export default function DeptoSelected() {
                           {user.user_name + " " + user.user_lastname} - {user.user_dni}{" "}
                           <small>(D.N.I.)</small>
                         </p>
-                        {user?.user_id === userLoged_id}
+                        {user?.user_id === userId}
                       </li>
                     ))
                 ) : (

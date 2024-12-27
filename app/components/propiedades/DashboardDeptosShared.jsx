@@ -1,53 +1,32 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { NavLink, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import  useFetch  from '../../hooks/use-fetch'
 import { getRolesPerGroup } from "../../database/crudGrupos";
 import SkeletonLoading from '../helpers/skeletonTable'
-import { useUser } from '../../hooks/use-user'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle,} from "../ui/card";
 import { getAccessGrupos } from "../../database/crudAccess/crudAccessGrupos";
-import { getAllUser } from "../../database/crudUsers";
 
 
-export default function DashboardDeptos({searchTerm, filteredDepartamentos, loadingDeptos}) {
+export default function DashboardDeptos({searchTerm, filteredDepartamentos, loadingDeptos, userId}) {
 
-  const userLoged_id = useUser();
   const navigate = useNavigate()
   const [showSkeleton, setShowSkeleton] = useState(true)
   const [rolesPerGroup, setRolesPerGroup] = useState([])
-  const [usersInfo, setUsersInfo] = useState([])
   const [accessGrupos, setAccessGrupos] = useState([]);
 
-  const { data, fn: fnGetAllUsers } = useFetch(getAllUser, {});
-
-  useEffect(() => {
-    if (data) {
-      setUsersInfo(
-        data.map((user) => ({
-          user_id: user.id,
-          user_name: user.user_name,
-          user_lastname: user.user_lastname,
-          user_dni: user.user_dni,
-        }))
-      );
-    }
-  }, [data]);
 
   useEffect(() => {
 
     async function fetchAccessGrupos() {
-      if (userLoged_id) {
-        fnGetAllUsers();
+      if (userId) {
 
         try {
 
-          const data = await getAccessGrupos(userLoged_id);
+          const data = await getAccessGrupos(userId);
           setAccessGrupos(data);
 
           const gruposId = data.map(grupo => grupo.id)
@@ -64,7 +43,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
 
     fetchAccessGrupos();
 
-  }, [userLoged_id]);
+  }, [userId]);
 
   useEffect(() => {
     if(!loadingDeptos) {
@@ -149,7 +128,7 @@ export default function DashboardDeptos({searchTerm, filteredDepartamentos, load
                                   const userRole = rolesPerGroup?.find(
                                     (roleInTable) => 
                                       roleInTable.grupo_id === grupo.id && 
-                                      roleInTable.user_id_access === userLoged_id
+                                      roleInTable.user_id_access === userId
                                   )?.role;
 
                                   const isEditor = userRole === 'editor';

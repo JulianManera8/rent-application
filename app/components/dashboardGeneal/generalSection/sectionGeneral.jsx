@@ -1,8 +1,7 @@
-import { useUser } from '../../../hooks/use-user'
+/* eslint-disable react/prop-types */
 import EndContract from './endContract'
 
-export default function SectionGrupos() {
-    const userLoged_id = useUser()
+export default function SectionGrupos({userId}) {
 
     return (
         <div className='w-full'>
@@ -10,7 +9,7 @@ export default function SectionGrupos() {
 
             <div className="flex gap-10 flex-wrap w-full">
                 
-                <EndContract userId={userLoged_id}/>
+                <EndContract userId={userId}/>
 
             </div>
         </div>
