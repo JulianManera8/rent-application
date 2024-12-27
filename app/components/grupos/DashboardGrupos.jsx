@@ -18,6 +18,11 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,A
 import SkeCard from "../grupos/skeletonCardsGroups";
 import { Separator } from "../ui/separator"
 import { getAllUser } from "../../database/crudUsers";
+
+
+//IMPORTAR getUserByDni y hacer el fetch on demand por el DNI del usuario buscado.
+
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
 
@@ -33,6 +38,7 @@ export default function DashboardGrupos() {
     nombreGrupo: "",
     shared_with: []
   });
+  const [filteredUsers, setFilteredUsers] = useState(usersInfo)
   const [getGrupoInfo, setGetGrupoInfo] = useState([]);
   const navigate = useNavigate();
   const [validated, setValidated] = useState(true)
@@ -213,6 +219,8 @@ export default function DashboardGrupos() {
 
     setSelectedUser("");
     setAddUserAccess(false);
+    setSearchTerm("")
+    setFilteredUsers([])
   } catch (error) {
     console.error("Error updating access:", error);
   } finally {
@@ -332,13 +340,23 @@ export default function DashboardGrupos() {
     }
   }, [data, error]);
 
-  const filteredUsers = usersInfo ? usersInfo.filter(
-    (user) =>
-      user.user_id !== userLoged_id &&
-      (user.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.user_lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.user_dni.includes(searchTerm))
-  ) : [];
+  function searchUser(searchTerm) {
+    if (searchTerm.length < 8) {
+      setFilteredUsers([]); 
+      return;
+    }
+  
+    const user = usersInfo
+      ? usersInfo.filter(
+          (user) =>
+            user.user_id !== userLoged_id &&
+            (user.user_dni.includes(searchTerm) || user.user_id === searchTerm)
+        )
+      : [];
+  
+    setFilteredUsers(user);
+  }
+
 
   function agruparUserRole(rolesUsers) {
     if (!rolesUsers || !data) return [];
@@ -751,6 +769,7 @@ export default function DashboardGrupos() {
                         </Button>
                         {addUserAccess && (
                           <div className="mt-4 space-y-6">
+                            
                             {/* SELECT DEL USUARIO PARA DARLE ACCESO */}
                             <Select 
                               onOpenChange={(open) => setIsSelectOpen(open)} 
@@ -767,10 +786,14 @@ export default function DashboardGrupos() {
                                 <div className="flex items-center border-b px-3 pb-2">
                                   <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
                                   <Input
-                                    placeholder="Buscar usuarios..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    placeholder="Buscar usuarios por D.N.I..."
                                     className="border-0 bg-transparent p-1 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                    value={searchTerm ? searchTerm : ''}
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      setSearchTerm(value);
+                                      searchUser(value); 
+                                    }}
                                   />
                                 </div>
                                 {loading ? (
@@ -793,7 +816,7 @@ export default function DashboardGrupos() {
                                       </SelectItem>
                                     ))
                                 ) : (
-                                  <p className="my-2 ml-2"> No se encontraron usuarios</p>
+                                  <p className="my-2 ml-2"> Ingresa su D.N.I (sin puntos, solo numeros)</p>
                                 )}
                               </SelectContent>
                             </Select>
@@ -815,6 +838,8 @@ export default function DashboardGrupos() {
                                   setAddUserAccess(false);
                                   setSelectedUser("");
                                   setRole('viewer')
+                                  setSearchTerm("")
+                                  setFilteredUsers([])
                                 }}
                               >
                                 Cancelar
