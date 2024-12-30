@@ -10,7 +10,8 @@ export default function GroupQuantity({ userId }) {
     const [showSkeleton, setShowSkeleton] = useState(true)
 
     useEffect(() => {
-        async function getData() {
+
+        (async () => {
             if (userId) {
                 setLoading(true)
                 const data = await getGroups(userId);
@@ -19,8 +20,8 @@ export default function GroupQuantity({ userId }) {
                 }
                 setLoading(false)
             }
-        }
-        getData();
+        })()
+
     }, [userId])
 
     useEffect(() => {

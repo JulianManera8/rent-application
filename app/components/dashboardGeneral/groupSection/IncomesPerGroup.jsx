@@ -71,7 +71,7 @@ export default function IncomesPerGroups({ userId }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    async function fetchData() {
+    (async () => {
       if (userId) {
         setIsLoading(true)
         try {
@@ -87,15 +87,14 @@ export default function IncomesPerGroups({ userId }) {
           setIsLoading(false)
         }
       }
-    }
-    fetchData()
+    })()
   }, [userId])
 
   const distribution = useMemo(() => 
     calculateDistribution(groupInfo, deptosInfo),
     [groupInfo, deptosInfo]
   )
-
+  
   return (
     <Card className="border-[0.6px] border-t-[1px] shadow-md shadow-black/15 md:w-[500px] w-full min-h-[120px] flex flex-col justify-evenly">
       <CardHeader className="flex flex-row items-center justify-start w-full mt-3 space-y-0 pt-0 h-1/3">

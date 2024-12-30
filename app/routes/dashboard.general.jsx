@@ -1,8 +1,8 @@
-import SectionBalances from '../components/dashboardGeneal/balanceSection/sectionBalances'
-import SectionGeneral from '../components/dashboardGeneal/generalSection/sectionGeneral'
-import SectionGrupos from '../components/dashboardGeneal/groupSection/sectionGrupos'
-import SectionPropiedades from '../components/dashboardGeneal/propertySection/sectionPropiedades'
-import QuickAccess from '../components/dashboardGeneal/QuickAccess'
+import SectionBalances from '../components/dashboardGeneral/balanceSection/sectionBalances'
+import SectionGeneral from '../components/dashboardGeneral/generalSection/sectionGeneral'
+import SectionGrupos from '../components/dashboardGeneral/groupSection/sectionGrupos'
+import SectionPropiedades from '../components/dashboardGeneral/propertySection/sectionPropiedades'
+import QuickAccess from '../components/dashboardGeneral/QuickAccess'
 import { Separator } from '../components/ui/separator'
 import { useUser } from '../hooks/use-user'
 

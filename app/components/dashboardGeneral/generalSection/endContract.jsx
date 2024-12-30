@@ -17,11 +17,11 @@ export default function EndContract({ userId }) {
   const [deptosInfo, setDeptosInfo] = useState([]);
   const [filteredDeptos, setFilteredDeptos] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate()
 
   useEffect(() => {
-    async function getData() {
+
+    ( async () => {
       if (userId) {
         setLoading(true);
         try {
@@ -39,19 +39,26 @@ export default function EndContract({ userId }) {
         } finally {
           setLoading(false);
         }
-      }
-    }
-    getData();
+      } 
+    })();
+
   }, [userId]);
 
   function orderProperties(deptos, grupos) {
+
+    const misGruposIds = grupos.map(g => g.id)
+
     const deptosOcupados = deptos
       .filter(depto => depto.ocupado)
+      //ACA FILTRO LOS DEPTOS QUE SOLO YO HAYA CREADO EN MIS GRUPOS, SIN LOS SHARED ACCESS
+      .filter(depto => misGruposIds.includes(depto.grupo_id))
+      
       .filter(depto => {
         const finContratoDif = differenceInDays(new Date(depto.finalizacion_contrato), new Date());
         return finContratoDif < 93;
       });
-
+    
+    
     const propAndDates = deptosOcupados.map(depto => ({
       idDepto: depto.id,
       ubicacion: depto.ubicacion_completa,
