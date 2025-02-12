@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { NavLink, useNavigate } from "@remix-run/react";
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import useFetch from '../../hooks/use-fetch'
@@ -65,6 +67,18 @@ export default function DashboardDeptos({ searchTerm, filteredDepartamentos, loa
     allDepartamentos.some((dep) => dep.grupo_id === grupo.id)
   );
 
+  function formatNumber(num) {
+    return new Intl.NumberFormat('es-AR').format(num);
+  }
+
+  function formateDate(date) {
+    if (!date) {
+      return "―"
+    } else {
+      return format(parseISO(date), 'dd/MM/yyyy', { locale: es })
+    }
+  }
+
   return (
     <div className='w-full py-10'>
       {loadingGrupos ? (
@@ -97,9 +111,9 @@ export default function DashboardDeptos({ searchTerm, filteredDepartamentos, loa
                         <TableRow className="text-sm">
                           <TableHead className="w-1/6 font-normal">Direccion</TableHead>
                           <TableHead className="w-1/6 font-normal">Propietario</TableHead>
-                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Facturador</TableHead>
-                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Cobrador</TableHead>
-                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Inquilino</TableHead>
+                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Precio mensual</TableHead>
+                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Próximo ajuste de precio</TableHead>
+                          <TableHead className="w-1/6 font-normal hidden md:table-cell">Fin de contrato</TableHead>
                           <TableHead className="w-1/6 font-normal">Estado</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -121,11 +135,11 @@ export default function DashboardDeptos({ searchTerm, filteredDepartamentos, loa
                             .map((dep) => (
                               <TableRow key={dep.id} className="text-sm md:text-md cursor-pointer"
                                 onClick={() => navigate(`/dashboard/deptos/${dep.id}`, { state: { dataDepto: dep, infoGrupo: grupo } })}>
-                                <TableCell className="w-1/6">{dep.ubicacion_completa}</TableCell>
-                                <TableCell className="w-1/6">{dep.propietario_name}</TableCell>
-                                <TableCell className="w-1/6 hidden md:table-cell">{dep.facturador_name}</TableCell>
-                                <TableCell className="w-1/6 hidden md:table-cell">{dep.cobrador_name}</TableCell>
-                                <TableCell className="w-1/6 hidden md:table-cell">{dep.inquilino_name || '―'}</TableCell>
+                                <TableCell className="w-1/6">{dep.ubicacion_completa || '―'}</TableCell>
+                                <TableCell className="w-1/6">{dep.propietario_name || '―'}</TableCell>
+                                <TableCell className="w-1/6 hidden md:table-cell">${formatNumber(dep.monto_cobro) || '―'}</TableCell>
+                                <TableCell className="w-1/6 hidden md:table-cell">{formateDate(dep.fecha_prox_actualizacion_cobro) || '―'}</TableCell>
+                                <TableCell className="w-1/6 hidden md:table-cell">{formateDate(dep.finalizacion_contrato) || '―'}</TableCell>
                                 <TableCell className="w-1/6">
                                   <span
                                       className={`px-2 py-1 rounded-full text-xs md:text-sm font-semibold ${

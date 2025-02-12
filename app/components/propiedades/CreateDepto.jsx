@@ -43,6 +43,7 @@ export default function CreateDepto() {
     monto_cobro: '',
     monto_cobro_inicio: '',
     fecha_actualizacion_cobro: '',
+    fecha_prox_actualizacion_cobro: '',
     user_id: '',
     obs_datos: '',
     files: [],
@@ -172,6 +173,7 @@ export default function CreateDepto() {
             monto_cobro: '',
             monto_cobro_inicio: '',
             fecha_actualizacion_cobro: '',
+            fecha_prox_actualizacion_cobro: '',
             user_id: '',
             obs_datos: '',
             grupo_id: '',
@@ -189,7 +191,7 @@ export default function CreateDepto() {
   };
 
   function removeEmptyDates(deptoInfo) {
-    const dateFields = ['finalizacion_contrato', 'finalizacion_usufructo', 'fecha_actualizacion_cobro', 'inicio_contrato', 'inicio_usufructo'];
+    const dateFields = ['finalizacion_contrato', 'finalizacion_usufructo', 'fecha_actualizacion_cobro', 'fecha_prox_actualizacion_cobro', 'inicio_contrato', 'inicio_usufructo'];
     
     const filteredDepto = { ...deptoInfo };
     
@@ -236,23 +238,6 @@ export default function CreateDepto() {
     ];
 
     const isValid = requiredFields.every(field => newDepto[field] !== '');
-    
-    // // Check inquilino_name only if the property is occupied
-    // if (newDepto.ocupado && newDepto.inquilino_name === '') {
-    //   return false;
-    // }
-
-    // if (newDepto.ocupado && newDepto.inicio_contrato === '' && newDepto.finalizacion_contrato === '') {
-    //   return false;
-    // }
-
-    // if (newDepto.ocupado && newDepto.monto_cobro === '') {
-    //   return false;
-    // }
-
-    // if (newDepto.usufructuario_name && newDepto.inicio_usufructo === '' && newDepto.finalizacion_usufructo === '') {
-    //   return false;
-    // }
 
     return isValid && Object.values(errors).every(error => error === null);
   };
@@ -464,6 +449,15 @@ export default function CreateDepto() {
           value={newDepto.fecha_actualizacion_cobro}
           onChange={handleInputChange}
           error={errors.fecha_actualizacion_cobro}
+        />
+
+        <FormInput
+          label="Próxima actualización del precio (opcional)"
+          name="fecha_prox_actualizacion_cobro"
+          type="date"
+          value={newDepto.fecha_prox_actualizacion_cobro}
+          onChange={handleInputChange}
+          error={errors.fecha_prox_actualizacion_cobro}
         />
 
         {/* File upload section */}

@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand} from 'lucide-react'
 import { Button } from "../ui/button"
 import { useLocation } from "@remix-run/react"
@@ -72,7 +74,13 @@ export default function DeptoSelected({userId}) {
                   $ {dataDepto[item.key] ? formatNumber(dataDepto[item.key]) : "-"}
                </dd>
            );
-    } else {
+    } else if (item.type === "date") {
+      return (
+          <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
+            {dataDepto[item.key] ? formateDate(dataDepto[item.key]) : "―"}
+          </dd>
+      );
+    }else {
       return (
         <dd className='spaceGrotesk text-base sm:text-lg font-medium tracking-wide'>
           {dataDepto[item.key] ? dataDepto[item.key] : "-"}
@@ -84,6 +92,14 @@ export default function DeptoSelected({userId}) {
 
   function formatNumber(num) {
     return new Intl.NumberFormat('es-AR').format(num);
+  }
+
+  function formateDate(date) {
+    if (!date) {
+      return "―"
+    } else {
+      return format(parseISO(date), 'dd/MM/yyyy', { locale: es })
+    }
   }
 
 
@@ -123,6 +139,7 @@ export default function DeptoSelected({userId}) {
                 { icon: DollarSign, label: "Precio Inicial", key: "monto_cobro_inicio", type: "number" },
                 { icon: DollarSign, label: "Precio Actual", key: "monto_cobro", type: "number" },
                 { icon: Calendar, label: "Última actualización del precio", key: "fecha_actualizacion_cobro", type: "date" },
+                { icon: Calendar, label: "Próxima actualización del precio", key: "fecha_prox_actualizacion_cobro", type: "date" },
                 { icon: FileText, label: "Inscripto en RELI", key: "inscripto_reli" },
                 { icon: Home, label: "Estado", key: "ocupado" },
                 { icon: FileText, label: "Descripción", key: "descripcion" },

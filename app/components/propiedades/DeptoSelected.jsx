@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { ChevronLeft, Dot, ChevronRight, Download, FileText, DollarSign, Calendar, MapPin, User, Home, CreditCard, NotebookPenIcon, Expand, Lock, Unlock, XSquare, Trash2 } from 'lucide-react'
 import { Button } from "../ui/button"
@@ -283,7 +285,13 @@ export default function DeptoSelected({userId}) {
                    $ {deptoData[item.key] ? formatNumber(deptoData[item.key]) : "―"}
                </dd>
            );
-       } else {
+       } else if (item.type === "date") {
+            return (
+                <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
+                  {deptoData[item.key] ? formateDate(deptoData[item.key]) : "―"}
+                </dd>
+            );
+        } else {
            return (
                <dd className="spaceGrotesk text-base sm:text-lg font-medium tracking-wide">
                    {deptoData[item.key] ? deptoData[item.key] : "―"}
@@ -300,6 +308,14 @@ export default function DeptoSelected({userId}) {
 
   function formatNumber(num) {
     return new Intl.NumberFormat('es-AR').format(num);
+  }
+
+  function formateDate(date) {
+    if (!date) {
+      return "―"
+    } else {
+      return format(parseISO(date), 'dd/MM/yyyy', { locale: es })
+    }
   }
 
   return (
@@ -382,6 +398,7 @@ export default function DeptoSelected({userId}) {
                 { icon: DollarSign, label: "Precio Inicial", key: "monto_cobro_inicio", type: "number" },
                 { icon: DollarSign, label: "Precio Actual", key: "monto_cobro", type: "number" },
                 { icon: Calendar, label: "Última actualización del precio", key: "fecha_actualizacion_cobro", type: "date" },
+                { icon: Calendar, label: "Próxima actualización del precio", key: "fecha_prox_actualizacion_cobro", type: "date" },
                 { icon: FileText, label: "Inscripto en RELI", key: "inscripto_reli" },
                 { icon: Home, label: "Estado", key: "ocupado" },
                 { icon: FileText, label: "Descripción", key: "descripcion" },
