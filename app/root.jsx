@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 /* eslint-disable react/prop-types */
 import {
   Links,
@@ -18,6 +19,8 @@ export const meta = () => {
   ];
 };
 
+
+
 export function Layout({ children }) {
   return (
     <html lang="es">
@@ -25,6 +28,7 @@ export function Layout({ children }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" /> 
         <Meta />
         <Links />
       </head>
@@ -40,6 +44,14 @@ export function Layout({ children }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(() => console.log("Service Worker registrado"))
+        .catch((err) => console.error("Error registrando el Service Worker", err));
+    }
+  }, []);
   return <Outlet />;
 }
 
